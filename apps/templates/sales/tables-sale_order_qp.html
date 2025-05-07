@@ -1,0 +1,229 @@
+{% extends 'layouts/base_table.html' %}
+
+{% block table_header %}
+{% include 'sales/headers/sale_order-header.html' %}
+{% endblock table_header %}
+
+{% block table_scripts %}
+<script>    
+
+$(document).ready(function(){
+    $(document).on('click', '.title-tab', function() {
+      const goto = $(this).attr("value")
+      if(goto == $('#tab').attr("value")){
+        return
+      }
+      var current_tab = $(this)
+
+      $.ajax({
+        url: `${address}?${goto}=True`,
+        dataType: 'json',
+        success: function(data) {
+          history.pushState({}, '', `${address}?${goto}=True`);
+          $('#my-table-container').html(data.table_html);
+          $('#my-paginator-container').html(data.paginator_html);
+          
+          $('.title-tab').addClass("faded-title cursor-pointer");
+          current_tab.removeClass("faded-title cursor-pointer");
+        }
+      });
+    });
+    $('.approval-check').on('change', function(){
+        $('#'+ $(this).attr('id') + '-r').toggleClass('text-primary')
+        $('#'+ $(this).attr('id') + '-a').toggleClass('text-primary')
+    })
+
+    $('.suggest-check').on('change', function(){
+        $('#'+ $(this).attr('id') + '-field').toggleClass('d-none')
+        $('#'+ $(this).attr('id') + '-select').val(null).trigger('change')
+    })
+
+    $('.modal-form').each(function(){
+      var c = $(this).attr('counter')
+      
+      $('#return-treview-form-'+c).on('submit', function(e) {
+        e.preventDefault();
+        $(this).find('button[type="submit"]').prop('disabled', true)
+        var formData = $(this).serialize();
+        var pk = $(this).attr('rid')
+        $.ajax({
+          url: '/sale_orders/treview/'+pk+'/return',
+          data: formData,
+          type: 'POST',
+          dataType: 'json',
+          success: function(data) {
+            if(data.status == 'success'){
+              setTimeout(function() {
+                $('#modal-id-'+c+'-return').modal('hide');
+                $('#buscador').trigger('keyup');
+              }, 200);
+            }else{
+              /*
+              var messageObj = JSON.parse(data.message);
+              $('#error-message-t').text(messageObj.name[0].message);*/
+            }
+          },
+          error: function(xhr,errmsg,err) {
+            $('#error-message-t').text('Oops! un error tipo: '+errmsg+
+              ' \nPorfavor intente nuevamente, si el error persiste, contacte a soporte técnico.');
+          }
+        });
+      });
+
+      $('#treview-form-'+c).on('submit', function(e) {
+        e.preventDefault();
+        $(this).find('button[type="submit"]').prop('disabled', true)
+        var formData = $(this).serialize();
+        $.ajax({
+          url: '{% url "review_sale_order" %}',
+          data: formData,
+          type: 'POST',
+          dataType: 'json',
+          success: function(data) {
+            if(data.status == 'success'){
+              setTimeout(function() {
+                $('#modal-id-'+c).modal('hide');
+                $('#buscador').trigger('keyup');
+              }, 200);
+            }else{
+              /*
+              var messageObj = JSON.parse(data.message);
+              $('#error-message-t').text(messageObj.name[0].message);*/
+            }
+          },
+          error: function(xhr,errmsg,err) {
+            $('#error-message-t').text('Oops! un error tipo: '+errmsg+
+              ' \nPorfavor intente nuevamente, si el error persiste, contacte a soporte técnico.');
+          }
+        });
+      });
+
+      $(this).on('hidden.bs.modal', function () {
+        $(this).find('form')[0].reset();
+
+        $('#suggested-id-'+c+'-field').removeClass('d-none')
+        $('#suggested-id-'+c+'-field').addClass('d-none')
+
+        $('#approved-'+c+'-r').removeClass('text-primary')
+
+        $('#approved-'+c+'-a').removeClass('text-primary')
+        $('#approved-'+c+'-a').addClass('text-primary')
+
+        $(this).find('select').val(null).trigger('change');
+      });
+
+    })
+
+    $('.suggested-replace-field').each(function(){
+      $(this).select2({
+        placeholder: 'Seleccione Plan de Calidad...',
+          width: '100%',
+          selectionCssClass: ':all:',
+          dropdownCssClass: ':all:',
+          ajax: {
+            url: '{% url "plans" %}',
+            dataType: 'json',
+            data: function (params) {
+              var queryParameters = {
+                search_text: params.term,
+                list_index: true
+              }
+              return queryParameters;
+            },
+            processResults: function (data) {
+              return {
+                results: JSON.parse(data).map(function(item) {
+                  return { id: item.pk, text: `${item.fields.gp_code} - PC-ASC-${item.fields.pc} - ${item.fields.product}` };
+                })
+              };
+            },
+          },
+          language: {
+            noResults: function () {
+              return "No hay resultados";
+            },
+            searching: function () {
+              return "Buscando...";
+            }
+          }
+      })
+        
+    })
+  })
+    var address = "{% url 'sale_order_list' %}";
+
+
+$('#my-table-container').on('mouseenter', '.table-row', function() {
+  // Mouse enters the container (delegate to .table-row)
+  const id = $(this).attr('pid');
+  const check = $('[name="sc-' + id + '"]')
+  check.addClass('d-inline');
+}).on('mouseleave', '.table-row', function() {
+  // Mouse leaves the container (delegate to .table-row)
+  const id = $(this).attr('pid');
+  const check = $('[name="sc-' + id + '"]')
+  check.removeClass('d-inline');
+});
+
+$('#my-table-container').on('change', '.pre-print-check', function() {
+  const soid = $(this).attr('soid');
+  const sost = $(this).attr('sost');
+  const nature = $(this).attr('nature');
+  const countdownElement = $('#countdown-' + soid); // Get the countdown element
+
+  if (this.checked) {
+    const timeoutMillis = 5000; // 5 seconds
+    let xhr;
+    let remainingSeconds = Math.ceil(timeoutMillis / 1000);
+
+    // Recursive function to handle AJAX request
+    function sendAjaxRequest() {
+      xhr = $.ajax({
+        url: "{% url 'update_pp_status' %}",
+        method: 'POST',
+        data: { soid: soid, sost: sost, nature: nature },
+        success: function(data) {
+          if (data.success) {
+            $('#status-' + soid).html(data.response);
+          } else {
+            console.error('Error updating PrePrint status:', data.error);
+          }
+        },
+        error: function(xhr, status, error) {
+          console.error('AJAX request failed:', error);
+        },
+        headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+      });
+    }
+
+    // Set the initial countdown display
+    countdownElement.text(remainingSeconds);
+
+    // Countdown interval
+    const countdownInterval = setInterval(() => {
+      remainingSeconds--;
+      countdownElement.text(remainingSeconds);
+
+      if (remainingSeconds <= 0) {
+        clearInterval(countdownInterval);
+        sendAjaxRequest();
+        countdownElement.text(''); // Clear the countdown content
+      }
+    }, 1000);
+
+    // Cancel the request if checkbox is unchecked
+    $('.pre-print-check').on('change', function() {
+      if (!this.checked) {
+        clearInterval(countdownInterval);
+        if (xhr) {
+          xhr.abort();
+        }
+        countdownElement.text(''); // Clear the countdown content
+      }
+    });
+  } else {
+    countdownElement.text(''); // Clear the countdown initially
+  }
+});
+</script>
+{% endblock table_scripts %}

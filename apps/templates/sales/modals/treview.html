@@ -1,0 +1,49 @@
+<div class="modal modal-form fade user-select-none" counter="{{ counter }}" id="modal-id-{{ counter }}" role="dialog">
+
+    <div class="modal-dialog">
+      <div class="modal-content px-3">
+        <div class="bg-primary modal-header px-4 mx-n3">
+          <h4 class="modal-title font-weight-bolder text-white" id="exampleModalLabel">Revisión de pedido</h4>
+        </div>
+        <form id="treview-form-{{ counter }}">
+          {% csrf_token %}
+          <input type="hidden" name="plan" value="{{ sale_order.plan.id }}">
+          <input type="hidden" name="sale_order" value="{{ sale_order.id }}">
+          <div class="modal-body text-start px-1" id="modal-form-{{ counter }}">
+            <div class="d-flex flex-row flex-wrap justify-content-between">
+              <div class="labeled-switch" style="margin-top: 0.125rem !important">
+                <label class="m-0 fw-bold cursor-pointer transition-3" for="approved-{{ counter }}" id="approved-{{ counter }}-r">Rechazado&ensp;</label>
+                <div class="form-check form-switch">
+                  <input class="form-check-input approval-check" type="checkbox" name="approved" checked id="approved-{{ counter }}">
+                </div>
+                <label class="m-0 fw-bold cursor-pointer transition-4 text-primary" for="approved-{{ counter }}" id="approved-{{ counter }}-a">&thinsp;Aprobado</label>
+              </div>
+              <div class="form-check p-0">
+                <label class="m-0 form-check-label fw-bold" for="deincorporate-id-{{ counter }}">
+                  Solicitar desincomp. <abbr class="me-1 cursor-pointer" title="{{ sale_order.plan.gp_code }} - {{ sale_order.plan.product }}">PC-ASC-{{ sale_order.plan.pc }}</abbr>
+                </label>
+                <input class="form-check-input" style="margin-top: 0.125rem !important" type="checkbox" name="deincorporate" id="deincorporate-id-{{ counter }}">
+              </div>
+            </div>
+            <hr class="my-2">
+            <div class="form-check p-0">
+              <label class="ms-0 form-check-label fw-bold" for="suggested-id-{{ counter }}">
+                Sugerir Reemplazo
+              </label>
+              <input class="form-check-input suggest-check" style="margin-top: 0.125rem !important" type="checkbox" name="suggested" id="suggested-id-{{ counter }}">
+              <div class="d-none pb-2" id="suggested-id-{{ counter }}-field">
+                <select class="form-control myform-focus suggested-replace-field" style="line-height: 22px !important;" name="suggested_replace" id="suggested-id-{{ counter }}-select"></select>
+              </div>
+            </div>
+            <label for="observation-{{ counter }}" class="mt-1 m-0 font-weight-bold text-sm text-primary">Observación / Motivo de rechazo</label>
+            <textarea name="observation" class="form-control align-items-center myform-focus py-1 px-2" style="transition: none !important;" id="observation-{{ counter }}"></textarea>
+          </div>
+          <div class="modal-footer text-center justify-content-center py-2">
+            <button type="button" class="m-0 mx-1 btn btn-secondary"
+            data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="m-0 mx-1 btn btn-info">Confirmar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>

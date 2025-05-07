@@ -1,0 +1,58 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<link href="{{ ASSETS_ROOT }}/css/client-provider-form.css" rel="stylesheet" />
+
+<div class="container pt-1 pb-3">
+  <div class="row min-vh-80 justify-content-center h-100">
+    <div class=" container-sm col-12" style="max-width: 700px;">
+
+      <div class="card justify-content-center my-4" style="min-width: 450px !important;">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2" style="user-select: none">
+          <div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2">
+            <div class="mt-2 justify-content-center">
+              <h5 class="text-white text-center font-weight-bolder me-3">Solicitud de Desincorporación</h5>
+            </div>
+          </div>
+        </div>
+        <div class="card-body container justify-content-center px-0 pb-2">
+          <div class="form-group justify-content-center d-flex input-group input-group-outline px-3">
+            <form class="form" action="{% url 'disincorporate_plan' obj.plan.id %}" method="POST" id="main-form">
+
+              {% csrf_token %}
+              <div class="text-start text-dark px-1">
+                <p class="mb-3 font-weight-bold" style="line-height: 1.25; font-weight: 500 !important;">
+                  ¿Seguro que desea desincorporar el Plan de Calidad <b style="color: var(--mc-color)">PC-ASC-{{ obj.plan.pc }} - {{ obj.plan.gp_code }} - {{ obj.plan.product }}</b>?</p>
+                  <p class="mt-1 mb-0 font-weight-bold text-sm text-primary">Razón</p>
+                  <p style="line-height: 1.25;">{{ obj.description }}</p>
+                  <input type="hidden" name="disincorporate_reason" value="{{ obj.description }}">
+                  <input type="hidden" name="disincorporate_request" value="{{ obj.id }}">
+
+                </div>
+                <div class="modal-footer text-center justify-content-center py-2">
+                  <a href="/plans/"><button type="button" class="m-0 mx-1 btn btn-secondary">Cancelar</button></a>
+                  <button type="button" id="reject" class="m-0 mx-1 btn btn-danger">Rechazar</button>
+                  <button type="submit" class="m-0 mx-1 btn btn-success">Confirmar</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  $('#main-form').on('submit', function() {
+    $(this).find('button[type="submit"]').prop('disabled', true);
+  });
+  $('#reject').on('click', function() {
+    var form = $('#main-form');
+    form.attr('action', '{% url "reject_disincorporate_request" obj.id %}');
+    form.submit();
+  });
+</script>
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

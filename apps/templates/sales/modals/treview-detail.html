@@ -1,0 +1,44 @@
+<div class="modal fade" counter="{{ counter }}" tabindex="-1" id="modal-id-{{ counter }}-detail" role="dialog">
+
+    <div class="modal-dialog">
+      <div class="modal-content px-3">
+        <div class="bg-primary modal-header px-4 mx-n3 user-select-none">
+          <h4 class="modal-title font-weight-bolder text-white" id="exampleModalLabel">Detalles de Revisión</h4>
+        </div>
+        <div class="modal-body text-start px-1">
+          <p class="m-0">El pedido realizado en base al Plan de Calidad <x class="fw-bold">{{ sale_order.plan.gp_code }} - <a href="{% if perms.home.view_disincorporate_plan %}{% url 'plan_view' sale_order.plan.id %}{% endif %}">PC-ASC-{{ sale_order.plan.pc }}</a> - {{ sale_order.plan }}</x> ha sido rechazado{% if sale_order.treview.by %} por: <x class="fw-bold">{{ sale_order.treview.by }}</x>{% endif %}.</p>
+          
+          {% if sale_order.treview.observation %}
+          <hr class="my-3">
+          <h6 class="text-primary fw-bold mb-0">Motivo del rechazo</h6>
+          <p class="m-0">{{ sale_order.treview.observation }}</p>
+          {% endif %}
+          {% if sale_order.treview.suggested_replace %}
+          <hr class="my-3">
+          <h6 class="text-primary fw-bold mb-0">Se sugiere crear el pedido en base al Plan de Calidad 
+            {% if perms.sales.change_saleorder %}
+              <a class="ps-1" title="Crear Pedido" href="{% url 'sale_order_edit' sale_order.treview.id %}?suggest">
+                <i class="material-icons" style="position: relative; bottom: -5px">price_check</i>
+              </a>
+            {% endif %}
+            </h6>
+          <p class="m-0 text-xs fw-bold">{{ sale_order.treview.suggested_replace.gp_code }} - <a href="{% url 'plan_view' sale_order.treview.suggested_replace.id %}">PC-ASC-{{ sale_order.treview.suggested_replace.pc }}</a> - {{ sale_order.treview.suggested_replace }}
+            
+          </p>
+          {% endif %}
+          
+          {% if sale_order.plan.disincorporated %}
+            <hr class="my-3">
+            <p class="m-0">El Plan de Calidad <x class="fw-bold">{{ sale_order.plan.gp_code }} - PC-ASC-{{ sale_order.plan.pc }} - {{ sale_order.plan }}</x> ha sido desincorportado de los planes públicos.</p>
+          {% elif sale_order.treview.deincorporate_request and not sale_order.treview.deincorporate_request.rejected == 'True' %}
+            <hr class="my-3">
+            <p class="m-0"><x class="fw-bold">{{ sale_order.treview.by }}</x> solicitó la desincorporación del Plan de Calidad <x class="fw-bold">{{ sale_order.plan.gp_code }} - PC-ASC-{{ sale_order.plan.pc }} - {{ sale_order.plan }}</x>.</p>
+          {% elif sale_order.treview.deincorporate_request.rejected == 'True' %}
+            <hr class="my-3">
+            <p class="m-0"><x class="fw-bold">{{ sale_order.treview.by }}</x> solicitó la desincorporación del Plan de Calidad <x class="fw-bold">{{ sale_order.plan.gp_code }} - PC-ASC-{{ sale_order.plan.pc }} - {{ sale_order.plan }} pero fue rechazada</x>.</p>
+          {% endif %}
+            
+        </div>
+      </div>
+    </div>
+  </div>

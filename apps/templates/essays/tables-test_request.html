@@ -1,0 +1,130 @@
+{% extends 'layouts/base_table.html' %}
+
+{% block table_header %}
+  <h5 class="text-white font-weight-bolder text-nowrap pe-3">
+    {% if 'closed_test_request' in segment %}
+    Expedientes de IDAT
+    {% elif 'test_request' in segment %}
+    Expedientes de pruebas
+    {% else %}
+    {% if perms.essays.view_entryelement %}
+    <a class="title-tab text-white {% if tab != 'entry' %}faded-title cursor-pointer{% endif %}" redirect="{% url 'entry_element' %}" value="entry">Elementos de Entrada</a> | {% endif %}
+    <a class="title-tab text-white {% if tab != 'main' %}faded-title cursor-pointer{% endif %}" value="main">Solicitudes de Prueba</a>
+    {% if perms.essays.add_testrequest %} | <a class="title-tab text-white {% if tab != 'review' %}faded-title cursor-pointer{% endif %}" value="review">Pendientes
+      por Aprobar</a>{% endif %}
+    {% if perms.essays.view_exitelement %} | 
+    <a class="title-tab text-white {% if tab != 'exit' %}faded-title cursor-pointer{% endif %}" redirect="{% url 'exit_element' %}" value="exit">Elementos de Salida</a>{% endif %}
+    {% if perms.essays.view_archived_testrequest %} | <a class="title-tab text-white {% if tab != 'archived' %}faded-title cursor-pointer{% endif %}" value="archived">Archivo</a>{% endif %}
+    {% if perms.essays.view_deleted_testrequest %} | <a
+      class="title-tab text-white {% if tab != 'deleted' %}faded-title cursor-pointer{% endif %}"
+      value="deleted">Papelera</a>{% endif %}
+    {% endif %}
+  </h5>
+  <div class="ms-auto my-auto text-nowrap">
+    {% if perms.essays.add_entryelement and segment == 'requests' %}
+    <a id="add_ee" title="Crear Elemento de Entrada" {% if not tab == 'entry' %} style="display: none;" {% endif %}
+      href="{% url 'add_entry_element' %}">
+      <i class="material-symbols-rounded text-white" style="font-size: 21px !important;">new_window</i>
+    </a>
+    {% endif %}
+    
+    {% comment %}
+      {% if perms.essays.add_testrequest and segment == 'requests' %}
+      <a id="add_tr" title="Crear Solicitud de Prueba" {% if tab == 'entry' %} style="display: none;" {% endif %}
+        href="{% url 'add_test_request' %}">
+        <i class="material-icons text-white ">addchart</i>
+      </a>
+      {% endif %}
+    {% endcomment %}
+      
+    <a title="Filtrar" id="toggle-s" class="cursor-pointer" {% if tab == 'entry' or tab == 'exit' %} style="display: none;" {% endif %}>
+      <i class="material-icons text-white ">filter_list</i>
+    </a>
+    <a title="Limpiar filtros" class="cursor-pointer search-bar-toggle" id="clear-s">
+      <i class="material-icons text-white ">clear</i>
+    </a>
+  
+  </div>
+{% endblock table_header %}
+
+{% block table_filter %}
+{% include 'essays/filters/test_request.html' %}
+{% endblock table_filter %}
+
+
+{% block table_paginator %}
+{% include 'essays/paginators/test_request.html' %}
+{% endblock table_paginator %}
+
+
+{% block table_scripts %}
+
+<script>
+    var address = "{% url 'test_request' %}";
+    $(document).on('click', '.title-tab', function() {
+      if($(this).attr("value") == $('#tab').attr("value")){
+        return
+      }
+      var current_tab = $(this)
+      if($(this).attr("redirect")){
+        address = $(this).attr("redirect");
+        $('#toggle-s').hide()
+
+        if($(this).attr("value") == 'entry'){
+          $('#add_ee').show()
+        }
+    
+        $('#filter').find('input, select').each(function() {
+          $(this).val(null);
+        })
+        $("#expand-collapse-search").hide('fast');
+        $("#clear-s").hide('fast');
+        
+      }else{
+        $('#add_ee').hide()
+        $('#toggle-s').show()
+        address = "{% url 'test_request' %}"
+        var params = new URLSearchParams(window.location.search);
+        var data = {};
+        for (var pair of params.entries()) {
+          data[pair[0]] = pair[1];
+        }
+        
+        $('#filter').find('input, select').each(function() {
+          $(this).val(null);
+        })
+        $("#expand-collapse-search").hide('fast');
+        $("#clear-s").hide('fast');
+        
+        data['header'] = $(this).attr("value");
+      };
+  
+      $.ajax({
+        url: address,
+        data: data,
+        dataType: 'json',
+        success: function(data) {
+          $('#my-table-container').html(data.table_html);
+          $('#my-paginator-container').html(data.paginator_html);
+          $('#s_cl').select2({
+            language: "es",
+            allowClear: true,
+            placeholder: 'Cliente...',
+            width: '100%',
+            selectionCssClass: ':all:',
+            dropdownCssClass: ':all:'
+          });
+          $("#s_dt").datepicker( {
+            showOtherMonths: "true",
+            selectOtherMonths: "true",
+          }, $.datepicker.regional[ "es" ] );
+          $('.title-tab').addClass("faded-title cursor-pointer");
+          current_tab.removeClass("faded-title cursor-pointer");
+            var data = {};
+        }
+      });
+    });
+    
+  </script>
+{% endblock table_scripts %}
+  

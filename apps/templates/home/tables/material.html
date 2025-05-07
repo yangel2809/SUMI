@@ -1,0 +1,93 @@
+{% if objects %}
+<table class="table table-hover align-items-center mb-0">
+  <thead>
+    <tr>
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder">nombre</th>
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder">proveedor</th>                  
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder" colspan="{% if not perms.home.add_material %}2{% endif %}">tipo</th>                  
+      {% if perms.home.change_material or perms.home.delete_material %}
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center" style="user-select: none">editar</th>
+      {% endif %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for material in objects %}
+    <tr>
+      <td>
+        <h6 class="mb-0 font-weight-bold text-sm ms-3">
+          {{ material.name }}
+        </h6>
+      </td>
+      <td>
+        <h6 class="mb-0 text-sm ms-3">
+          {% if request.GET.provider %} 
+            <h6 class="text-sm m-0 ms-3">{{ material.provider }}</h6>
+          {% else %}
+            <a href="{% url 'materials' %}?provider={{ material.provider.id }}">{{ material.provider.name }}</a>
+          {% endif %} 
+        </h6>
+      </td>
+      
+      <td colspan="{% if not perms.home.add_material %}2{% endif %}">
+        <h6 class="mb-0 font-weight-bold text-sm ms-3">
+          {% if request.GET.material_type %} 
+            <h6 class="text-bold text-sm m-0">{{ material.material_type }}</h6>
+          {% else %}
+            <a href="{% url 'materials' %}?material_type={{ material.material_type.id }}">{{ material.material_type }}</a>
+          {% endif %}                  
+        </h6>
+      </td>
+
+      {% if perms.home.change_material or perms.home.delete_material %}
+      <td class="text-center icon-container">
+
+        {% if perms.home.change_material %}          
+        <a href="{% url 'edit_material' material.id %}" class="text-primary font-weight-bold text-xs" style="user-select: none"
+          title="Editar">
+          <i class="material-icons">drive_file_rename_outline</i>
+        </a>
+        {% endif %}
+
+        {% if perms.home.delete_material %}
+        <!-- Button trigger modal -->
+        <a class="font-weight-bold" data-bs-toggle="modal" data-bs-target="#id-{{ material.id }}"
+          style="user-select: none; cursor: pointer !important;" title="Eliminar">
+          <i class="material-icons">delete</i>
+        </a>
+        
+        <!-- Modal -->
+        <div class="modal fade" id="id-{{ material.id }}" tabindex="-1"
+          aria-labelledby="exampleModalLabel" aria-hidden="true" style="user-select: none;">
+          <div class="modal-dialog">
+            <div class="modal-content px-3">
+              <div class="modal-header px-4 mx-n3" style="background-color: var(--mc-color) !important;">
+                <h4 class="modal-title font-weight-bolder text-white" id="exampleModalLabel">¡Advertencia!
+                </h4>
+
+              </div>
+              <div class="modal-body text-start px-1">
+                <p class="mb-0 font-weight-bold" style="line-height: 1.25; font-weight: 500 !important;">
+                  ¿Seguro que desea eliminar el Material <b style="color: var(--mc-color)">{{ material.name }}</b>?</p>
+              </div>
+              <div class="modal-footer text-center justify-content-center py-2">
+                <form method="POST" action="{% url 'delete_material' material.id %}">
+                  {% csrf_token %}
+                  <button type="button" class="m-0 btn btn-secondary"
+                    data-bs-dismiss="modal">Cancelar</button>
+                  <button type="submit" class="m-0 btn btn-danger">Confirmar</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+      </td>
+      {% endif %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+  {% include 'includes/no-table-results.html' %}
+{% endif %}

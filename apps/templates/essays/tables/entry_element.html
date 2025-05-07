@@ -1,0 +1,118 @@
+{% load home_tags %}
+{% if objects %}
+<i class="hidden" id="tab" value="{{ tab }}"></i>
+<table class="table table-hover align-items-center mb-0">
+  <thead>
+    <tr>
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 px-2 ps-4" colspan="2">Producto</th>
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 px-2">Cliente</th>
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">Fecha</th>
+
+      {% if perms.essays.change_entryelement %}
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="user-select: none">Editar</th>
+      {% endif %}
+
+    </tr>
+  </thead>
+  <tbody>
+    {% for entry_element in objects %}
+    <tr>
+      <td class="fw-bold ps-3">
+        <a href="{% url 'view_entry_element' entry_element.id %}" class="fw-bold">
+          {{ entry_element.product }}
+        </a>
+      </td>
+      <td class="text-center icon-container">
+        {% if not entry_element.reviewer %}
+          <i class="material-symbols-rounded text-danger">
+            
+            {% if perms.essays.change_entryelement %}
+              <a title="Revisar y aprobar" href="{% url 'edit_entry_element' entry_element.id %}">draw</a>  
+            {% else %}
+              <x style="cursor: help;" title="Pendiente por revisión y aprobación">draw</x>
+            {% endif %}
+              
+          </i>
+        {% elif not entry_element.has_test_request %}
+        
+        <i class="material-symbols-rounded text-danger">
+          {% if perms.essays.add_testrequest %}
+          <a title="Crear Solicitud de Prueba" href="{% url 'add_test_request' entry_element.id %}">addchart</a>
+          {% else %}
+          <x style="cursor: help;" title="Pendiente por solicitud de prueba">addchart</x>
+          {% endif %}
+        </i>
+        {% elif entry_element.has_test_request and entry_element.test_request.deleted %}
+        
+        <i class="material-symbols-rounded text-danger">
+          <x class="cursor-help" title="Solicitud de Prueba en papelera, para asociar una nueva, debe eliminar la antigua totalmente, editar elemento de entrada y quitarla">error</x>
+        </i>
+        {% else %}
+        
+        {% endif %}
+      </td>
+      <td class="fw-bold">
+        <h6 class="mb-0 fw-bold text-sm">
+          {% if entry_element.check_test_client and not entry_element.client %}
+          {{ entry_element.test_client }}
+          {% else %}
+          {{ entry_element.client }}
+          {% endif %}
+        </h6>
+      </td>
+      <td class="text-center text-sm fw-bold text-uppercase">
+        {{ entry_element.date|date:"d/b/Y" }}
+      </td>
+      
+      
+      {% if perms.essays.change_entryelement or perms.essays.delete_entryelement %}
+      <td class="text-center icon-container" style="user-select: none;">
+
+        {% if perms.essays.change_entryelement %}
+        <a href="{% url 'edit_entry_element' entry_element.id %}" class="text-primary" data-toggle="tooltip"
+          data-original-title="Eliminar">
+          <i class="material-icons">drive_file_rename_outline</i>
+        </a>
+        {% endif %}
+        
+        {% if perms.essays.delete_entryelement %}
+        <!-- Button trigger modal -->
+        <a class="" data-bs-toggle="modal" data-bs-target="#id-{{ entry_element.id }}"
+          style="user-select: none; cursor: pointer !important;" title="Eliminar">
+          <i class="material-icons">delete</i>
+        </a>  
+        <!-- Modal -->
+        <div class="modal fade" id="id-{{ entry_element.id }}" tabindex="-1" aria-labelledby="exampleModalLabel"
+          aria-hidden="true" style="user-select: none;">
+          <div class="modal-dialog">
+            <div class="modal-content px-3">
+              <div class="bg-primary modal-header px-4 mx-n3">
+                <h4 class="modal-title font-weight-bolder text-white" id="exampleModalLabel">¡Advertencia!</h4>
+              </div>
+              <form method="POST" action="{% url 'delete_entry_element' entry_element.id %}">
+                {% csrf_token %}
+                <div class="modal-body text-start px-1">
+                  <p class="mb-1 font-weight-bold" style="line-height: 1.25;">
+                    ¿Seguro que desea eliminar el Elemento de Entrada?</p>
+                  <p class="mb-n1 text-xs">Esta acción no puede deshacerse</p>
+                </div>
+                <div class="modal-footer text-center justify-content-center py-2">
+                  <button type="button" class="m-0 mx-1 btn btn-secondary"
+                  data-bs-dismiss="modal">Cancelar</button>
+                  <button type="submit" class="m-0 mx-1 btn btn-danger">Confirmar</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+      </td>
+      {% endif %}
+
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+{% include 'includes/no-table-results.html' %}
+{% endif %}

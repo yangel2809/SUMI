@@ -1,0 +1,604 @@
+{% extends "layouts/base.html" %}<!--Extensión de la plantilla principal-->
+
+{% block content %}<!--Contenido principal-->
+<link href="{{ ASSETS_ROOT }}/css/plan-form.css" rel="stylesheet" />
+
+<div class="container-fluid pt-1 px-sm-4 px-3 pb-3">
+  <div class="row min-vh-80 h-100">
+    <div class="col-12 px-lg-3 px-sm-2 px-0">
+      <div class="card my-4">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2" style="user-select: none">
+          <div class="bg-primary shadow-primary border-radius-lg py-1">
+            <div class="mt-2 text-center">
+              <h5 class="text-white font-weight-bolder"> {% if 'edit' in request.get_full_path %}Editar {% else %}Crear {% endif %}Plan de Calidad</h5>
+            </div>
+          </div>
+        </div>
+        <div class="card-body px-md-2 px-0 py-2">
+          <div class="form-group d-flex input-group input-group-outline">
+            <form class="form justify-content-center col-12" method="POST" id="main-form" style="user-select: none">
+              {% csrf_token %}
+              <div class="d-flex flex-wrap px-lg-4 px-sm-3 px-2 pb-1">
+                <div class="col-md-7 col-12 pe-md-1 d-flex flex-wrap">
+                  <div class="col-12 p-1 {% if form.client.errors %}border-error{% endif %}">
+                    <label class="text-bold mb-n1" for="client">Cliente</label>{{ form.client }}
+                  </div>
+                  <div class="col-12 p-1 {% if form.product.errors %}border-error{% endif %}">
+                    <label class="text-bold mb-n1" for="product">Pruducto</label>{{ form.product }}
+                  </div>
+                  <div class="col-sm-6 col-12 p-1 {% if form.gp_code.errors %}border-error{% endif %}">
+                    <label class="text-bold mb-n1" for="gp_code">Código GP</label>{{ form.gp_code }}
+                  </div>
+                  <div class="col-sm-6 col-12 p-1 {% if form.code.errors %}border-error{% endif %}">
+                    <label class="text-bold mb-n1" for="code">Código Crystal</label>{{ form.code }}
+                  </div>
+                </div>
+                <div class="col-md-5 col-12 ps-md-1 d-flex flex-wrap align-content-end">
+                  <div class="col-12 p-1 pb-2" ><label class="text-bold mb-n1" for="format">Formato</label>
+                    <p class="mb-n1 ms-1 pt-1 fw-bold height-correct">F-ASC-L58</p>  
+                  </div>
+                  <div class="col-sm-6 col-12 p-1">
+                    <label class="text-bold mb-n1" for="pc">Código de PDC</label>
+                    <div class="{% if form.pc.errors %}border-error{% endif %}">{{ form.pc }}
+                      <x class="text-dark infield-text">PC-ASC-</x>
+                    </div>
+                  </div>
+                  <div class="col-6 p-1 {% if form.revission.errors %}border-error{% endif %}"><label class="text-bold mb-n1" for="revission">Rev PDC</label>{{ form.revission }}</div>
+                  <div class="col-sm-12 col-6 p-1 {% if form.rev_date.errors %}border-error{% endif %}"><label class="text-bold mb-n1" for="rev_date">Fecha de Revisión</label>{{ form.rev_date }}</div>
+                </div>
+              </div>
+              <!--------------------------------------------------INLINE FORMSETS-------------------------------------------------->
+              {% include 'home/formsets/plan.html' %}
+              <!------------------------------------------------------------------------------------------------------------------->              
+              <div class="col-12 px-lg-4 px-sm-3 px-2 mt-n2">                
+                <h5 class="font-weight-bolder text-center text-primary mb-0">Plan de Producción</h5>
+                <div class="px-1 py-1 {% if form.continuation.errors %}border-error{% endif %}">{{ form.continuation }}</div>
+                <h5 class="font-weight-bolder text-center text-primary mb-0 pt-2">Condiciones de Despacho</h5>
+                <div class="px-1 py-1 {% if form.dispatch_conditions.errors %}border-error{% endif %}">{{ form.dispatch_conditions }}</div>
+                <div class="font-weight-bold mb-n2 py-1 px-lg-4 p-3" style="overflow-wrap: break-word; font-size: 0.9rem;">
+                  • Todo lote entregado debe haber sido liberado por el laboratorio y debe llevar su respectivo certificado de análisis.
+                </div>
+                <div class="fst-italic mb-n3 py-1 px-lg-4 p-3" style="overflow-wrap: break-word; font-size: 0.9rem;">
+                  <x class="font-weight-bold">• Observación:</x> Los métodos de ensayo reflejados en este Plan de Calidad son elaborados tomando como referencia las Normas Covenin.
+                </div>
+                <div class="d-flex flex-row flex-wrap mx-1 mt-3 mb-1">
+                  <div class="col-sm-6 col-12 pt-1">
+                    <h6 class="text-center text-primary font-weight-bolder mb-0">Elaborado por</h6>
+                    <div class="pe-sm-1 {% if form.elaborator.errors %}border-error{% endif %}">{{ form.elaborator }}</div>
+                  </div>
+                  <div class="col-sm-6 col-12 pt-1">
+                    <h6 class="text-center text-primary font-weight-bolder mb-0">Revisado y aprobado por</h6>
+                    <div class="ps-sm-1 {% if form.reviewer.errors %}border-error{% endif %}">{{ form.reviewer }}</div>
+                  </div>
+                </div>
+                <hr class="my-2 mx-1">
+                {% if perms.home.change_plan and not request.user.username == 'Pasante' %} 
+                <h6 class="font-weight-bolder text-center text-primary mt-1 mb-0">Cambios</h6>
+                <div class="p-1 {% if form.observation.errors %}border-error{% endif %}">{{ form.observation }}</div>
+                {% endif %} 
+              </div>
+              <div class="col text-center pt-1">
+                <button type="submit" class="btn btn-primary mx-1 my-2">Guardar</button>
+                <button type="submit" id="save_and_view" class="btn btn-info mx-1 my-2">Guardar y Ver</button>
+                <a href="{{ request.META.HTTP_REFERER }}"><button type="button" class="btn btn-secondary mx-1 my-2">Cancelar</button></a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade user-select-none" id="materialTypeModal" role="dialog" aria-labelledby="materialTypeModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form id="materialTypeForm">
+        {% csrf_token %}
+        <div class="modal-header" style="background-color: var(--mc-color) !important;">
+          <h5 class="modal-title fw-bold text-white" id="cancelModalLabel">Agregar Tipo de Material</h5>
+        </div>
+        <div class="modal-body pb-0">
+          <div class="form-group">
+            <label class="fw-bold" for="name">Tipo de Material</label>
+            <input type="text" class="px-3 mb-2 form-control myform-focus" autocomplete="false" id="name" required
+              placeholder="Nombre...">
+          </div>
+          <p id="error-message-t" class="fw-bold text-danger"></p>
+          <p id="success-message-t" class="fw-bold text-success"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary mb-1">Guardar</button>
+          <button type="button" type="reset" id="mtDismiss" class="mb-1 btn btn-secondary" id="mt_modal_c" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="modal fade user-select-none" id="materialModal" role="dialog" aria-labelledby="materialModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form id="materialForm">
+        {% csrf_token %}
+        <div class="modal-header" style="background-color: var(--mc-color) !important;">
+          <h5 class="modal-title fw-bold text-white" id="cancelModalLabel">Agregar Material por Proveedor</h5>
+        </div>
+        <div class="modal-body pb-0">
+          <div class="form-group">
+
+            <label class="mb-0" for="name">Tipo de Material</label>
+            <select class="form-control myform-focus" style="line-height: 22px !important;" name="material_type" id="mt_modal">              
+            </select>
+
+            <label class="mb-0 mt-2" for="name">Proveedor</label>
+            <select class="form-control myform-focus" style="line-height: 22px !important;" name="provider" id="provider_modal">              
+            </select>
+           
+            <label class="mb-0 mt-2" for="name">Nombre del Material según su proveedor</label>
+            <input type="text" class="px-3 mb-2 form-control myform-focus" autocomplete="false" id="name_mat" required
+              placeholder="Nombre...">
+          </div>
+          <p id="error-message" class="fw-bold text-danger"></p>
+          <p id="success-message" class="fw-bold text-success"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary mb-1">Guardar</button>
+          <button type="button" type="reset" id="mtDismiss" class="mb-1 btn btn-secondary" id="m_modal_c" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+{% if not perms.home.change_plan %}
+<script>  
+  $(document).ready(function () {
+    $('#id_pc').attr('style', 'user-select: none !important;');
+    $('#id_pc').prop('readonly', true);
+  });
+</script>
+{% endif %}  
+{% if not perms.home.sign_plan %}
+<script>  
+  $(document).ready(function () {
+    $('#id_reviewer').attr('style', 'user-select: none !important;');
+    $('#id_reviewer').prop('readonly', true);
+  });
+</script>
+{% endif %}
+<script>
+  $('#save_and_view').click(function() {
+    $('<input />')
+        .attr('type', 'hidden')
+        .attr('name', 'save_and_view')
+        .attr('value', 'True')
+        .appendTo('#main-form');
+  });
+  
+  $('#main-form').on('submit', function() {
+    $(this).find('button[type="submit"]').prop('disabled', true);
+  });
+  
+  $('#gp_code').on('input', function() {
+    if ($(this).val().substring(0, 2).toUpperCase() === 'TM') {
+      $('meta[name="theme-color"]').attr('content', '#946037');
+      $(':root').css('--mc-color', '#946037');
+      $(':root').css('--mc-selection', '#ad7e5a');
+      $(':root').css('--mc-shadow-color', '#94603780');
+      $(':root').css('--mc-calendar-today', '#94603780');
+      $(':root').css('--critical-color', '#94603769');
+      $(':root').css('--mc-hover-color', '#94603759');
+    } else {
+      $('meta[name="theme-color"]').attr('content', '#fe5000');
+      $(':root').css('--mc-color', '#fe5000');
+      $(':root').css('--mc-selection', '#fe7a51');
+      $(':root').css('--mc-shadow-color', '#fe520080');
+      $(':root').css('--mc-calendar-today', '#fea67d');
+      $(':root').css('--critical-color', '#fedabf');
+      $(':root').css('--mc-hover-color', '#fed9b5');
+    };
+  });
+  $('#gp_code').trigger('input')
+  var qw = []
+  var n = 0;
+    $("select[name*='-material_type']").each(function () {
+
+      const w_counts = $('#id_structures-' + n + "-w_counts")
+      if (!w_counts.prop("checked")){
+        $('#' + n + "-w_counts").removeClass('c-selector-selected')
+      };
+      const t_counts = $('#id_structures-' + n + "-t_counts")
+      if (!t_counts.prop("checked")){
+        $('#' + n + "-t_counts").removeClass('c-selector-selected')
+      };
+
+      $("select[name|='structures-" + n + "-material_type']").attr("id", 'id_structures-' + n + "-material_type");
+      
+      $('#id_structures-' +  n + '-material_type').attr('idx', n).select2({
+        width: '100%',
+        selectionCssClass: ':all:',
+        dropdownCssClass: ':all:',
+        ajax: {
+          url: '{% url "x-material_types" %}',
+          type: "GET",
+          dataType: 'json',
+          data: function (params) {
+            var queryParameters = {
+                f: params.term
+            }
+            return queryParameters;
+          },
+          processResults: function (data) {
+              return {
+                  results: JSON.parse(data).map(function(item) {
+                      return { id: item.pk, text: item.fields.name };
+                  })
+              };
+          },
+        },
+        language: {
+          noResults: function () {
+            return "No hay resultados";
+          },
+          searching: function () {
+            return "Buscando...";
+          }
+        }
+      });
+      
+      $("select[name|='structures-" + n + "-material']").attr("id", 'id_structures-' + n + '-material');
+      
+      qw[n] = $('#id_structures-' +  n + '-material_type').val();
+      $('#id_structures-' + n + '-material').attr('idx', n).select2({
+        placeholder: 'Seleccione...',
+        width: '100%',
+        selectionCssClass: ':all:',
+        dropdownCssClass: ':all:',
+        ajax: {
+          url: "{% url 'x-materials' %}",
+          type: "GET",
+          dataType: 'json',
+          data: function (params) {
+                var queryParameters = {
+                    q: qw[$(this).attr('idx')],
+                    f: params.term
+                }
+                return queryParameters;
+            },
+            processResults: function (data) {
+                return {
+                  results: $.map(data, function (item) {
+                    if (item.name == item.material_type__name){
+                      var name = item.provider__name;
+                    }else{
+                      var name = item.name + ' - ' + item.provider__name;
+                    };
+                    
+                    return {
+                        text: name,
+                        id: item.pk
+                    };
+                  })
+                };
+            }
+        },
+        language: {
+          noResults: function () {
+            return "No hay resultados";
+          },
+          searching: function () {
+            return "Buscando...";
+          }
+        }
+      });
+      n++
+    });
+  var p = 0
+    
+    $("select[name*='-essay']").each(function () {
+
+      $("select[name|='tests-" + p + "-essay']").attr("id", 'id_tests-' + p + '-essay')
+
+      $('#id_tests-' + p + '-essay').select2({
+        width: '100%',
+        selectionCssClass: ':all:',
+        dropdownCssClass: ':all:', 
+      });
+      p++
+
+    });
+
+  $( function() {
+    $( "#date" ).datepicker( {
+      showOtherMonths: "true",
+      selectOtherMonths: "true",
+      }, $.datepicker.regional[ "es" ] );
+  } ); 
+  $(document).on('click', '.c-selector', function() {
+    $(this).toggleClass('c-selector-selected');
+    const checkBox = $('#id_structures-' + $(this).attr('id'));
+    checkBox.prop("checked", !checkBox.prop("checked"));
+  });
+  $(document).ready(function () {
+    $('#mt_modal').select2({
+      width: '100%',
+      selectionCssClass: ':all:',
+      placeholder: 'Seleccione...',
+      dropdownCssClass: ':all:',
+      ajax: {
+        url: '{% url "x-material_types" %}',
+        type: "GET",
+        dataType: 'json',
+        data: function (params) {
+          var queryParameters = {
+            f: params.term
+          }
+          return queryParameters;
+        },
+        processResults: function (data) {
+          return {
+            results: JSON.parse(data).map(function(item) {
+              return { id: item.pk, text: item.fields.name };
+            })
+          };
+        },
+      },
+      language: {
+        noResults: function () {
+          return "No hay resultados";
+        },
+        searching: function () {
+          return "Buscando...";
+        }
+      }
+    })
+    $('#provider_modal').select2({
+      width: '100%',
+      placeholder:'Seleccione...',
+      selectionCssClass: ':all:',
+      dropdownCssClass: ':all:',
+      ajax: {
+        url: '/x-providers/',
+        dataType: 'json',
+        data: function (params) {
+          var queryParameters = {
+            f: params.term
+          }
+          return queryParameters;
+        },
+        processResults: function (data) {
+          return {
+            results: JSON.parse(data).map(function(item) {
+              return { id: item.pk, text: item.fields.name };
+            })
+          };
+        },
+      },
+      language: {
+        noResults: function () {
+          return "No hay resultados";
+        },
+        searching: function () {
+          return "Buscando...";
+        }
+      }
+    })
+    $('#materialForm').on('submit', function(e) {
+      e.preventDefault();
+      $.ajax({
+        url: '{% url "x-add_material" %}',
+        data: {
+          'name': $('#name_mat').val(),
+          'material_type': $('#mt_modal').val(),
+          'provider': $('#provider_modal').val(),
+          'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+        },
+        type: 'POST',
+        dataType: 'json',
+        success: function(data) {
+          if(data.status == 'success'){
+            $('#success-message').text('Material creado exitosamente');
+            setTimeout(function() {
+              $('#materialModal').modal('hide');
+              $('#materialForm')[0].reset();
+              $('#materialForm').each(function(){$(this).trigger('change')});
+              $('#error-message').text('');
+              $('#success-message').text('');
+            }, 1000);
+          }else{
+            var messageObj = JSON.parse(data.message);
+            $('#error-message').text(messageObj.name[0].message);
+          }
+        },
+        error: function(xhr,errmsg,err) {
+          $('#error-message').text('Oops! un error tipo: '+errmsg+
+                ' \nPorfavor intente nuevamente, si el error persiste, contacte a soporte técnico.');
+        }
+      });
+    });
+
+    $('#materialTypeForm').on('submit', function(e) {
+      e.preventDefault();
+      $.ajax({
+        url: '{% url "x-add_material_types" %}',
+        data: {
+          'name': $('#name').val(),
+          'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+        },
+        type: 'POST',
+        dataType: 'json',
+        success: function(data) {
+          if(data.status == 'success'){
+            $('#success-message-t').text('Tipo de Material creado exitosamente');
+            setTimeout(function() {
+              $('#materialTypeModal').modal('hide');
+              $('#materialTypeForm')[0].reset();
+              $('#error-message-t').text('');
+              $('#success-message-t').text('');
+            }, 1000);
+          }else{
+            var messageObj = JSON.parse(data.message);
+            $('#error-message-t').text(messageObj.name[0].message);
+          }
+        },
+        error: function(xhr,errmsg,err) {
+          $('#error-message-t').text('Oops! un error tipo: '+errmsg+
+            ' \nPorfavor intente nuevamente, si el error persiste, contacte a soporte técnico.');
+        }
+      });
+    });
+    $('#materialTypeModal, #materialModal').on('hidden.bs.modal', function () {
+      $(this).find('form')[0].reset();
+      
+      $(this).find('select').val(null).trigger('change');
+  });
+  
+  $('#mtDismiss, #m_modal_c').click(function () {
+      $(this).closest('.modal').modal('hide');
+  });
+    $('#id_client').select2({
+      placeholder: 'Seleccione un cliente...',
+      width: '100%',
+      selectionCssClass: ':all:',
+      dropdownCssClass: ':all:'
+    });
+
+    $('#id_format').select2({
+      placeholder: 'Seleccione un formato...',
+      width: '100%',
+      selectionCssClass: ':all:',
+      dropdownCssClass: ':all:'
+    });
+
+    $(document).on('change', '.mat-type-fields', function() {      
+      var row = $(this).attr('idx');
+      qw[row] = $(this).val();
+      $('#id_structures-' + row + '-material').val(null).trigger('change');
+      if($(this).val() != null){
+        $('#id_structures-' + row + '-material').prop('disabled', false)
+      }
+    });
+    
+  });
+
+  $('#add_mores, #add_moresb').click(function () {
+    var sform_idx = parseInt($('#id_structures-TOTAL_FORMS').val());
+    $('#sform_set').append($('#sempty_form').html().replace(/__prefix__/g, sform_idx));
+    $('#id_structures-TOTAL_FORMS').val(parseInt(sform_idx) + 1);
+
+    $('#id_structures-' + sform_idx + '-material_type').attr('idx', sform_idx).select2({
+      placeholder: 'Seleccione...',
+      width: '100%',
+      selectionCssClass: ':all:',
+      dropdownCssClass: ':all:',
+      ajax: {
+        url: '{% url "x-material_types" %}',
+        type: "GET",
+        dataType: 'json',
+        data: function (params) {
+          var queryParameters = {
+            f: params.term
+          }
+          return queryParameters;
+        },
+        processResults: function (data) {
+          return {
+            results: JSON.parse(data).map(function(item) {
+              return { id: item.pk, text: item.fields.name };
+            })
+          };
+        },
+      },
+      language: {
+        noResults: function () {
+          return "No hay resultados";
+        },
+        searching: function () {
+          return "Buscando...";
+        }
+      }
+    });
+
+    $('#id_structures-' + sform_idx + '-material').attr('idx', sform_idx).prop('disabled', true).select2({
+      placeholder: 'Seleccione...',
+      width: '100%',
+      selectionCssClass: ':all:',
+      dropdownCssClass: ':all:',
+      multiple: true,
+      ajax: {
+        url: "{% url 'x-materials' %}",
+        type: "GET",
+        dataType: 'json',
+        data: function (params) {
+          var queryParameters = {
+            q: $('#id_structures-' + sform_idx + '-material_type').val(),
+            f: params.term
+          }
+          return queryParameters;
+        },
+        processResults: function (data) {
+          return {
+            results: $.map(data, function (item) {
+              if (item.name == item.material_type__name){
+                var name = item.provider__name;
+              }else{
+                var name = item.name + ' - ' + item.provider__name;
+              };
+              return {
+                text: name,
+                id: item.pk
+              }
+            })
+          };
+        }
+      },
+      language: {
+        noResults: function () {
+          return "No hay resultados";
+        },
+        searching: function () {
+          return "Buscando...";
+        }
+      }
+    });
+  });
+
+  $('#add_moret, #add_moretbot').click(function () {
+    var tform_idx =  parseInt($('#id_tests-TOTAL_FORMS').val());
+    $('#tform_set').append($('#tempty_form').html().replace(/__prefix__/g, tform_idx));
+    $('#id_tests-TOTAL_FORMS').val(parseInt(tform_idx) + 1);
+    $('#essay_number-'+tform_idx).text(parseInt(tform_idx) + 1);
+
+    $('#id_tests-' + tform_idx + '-essay').select2({
+      placeholder: 'Seleccione...',
+      width: '100%',
+      selectionCssClass: ':all:',
+      dropdownCssClass: ':all:'
+    });
+  });
+
+  $('#remove_s').click(function () {
+    var sform_idz = parseInt($('#id_structures-TOTAL_FORMS').val());
+    if(sform_idz > sform_minlimit){
+      sform_idz = sform_idz - 1
+      $('#strow-' + sform_idz).remove();
+      $('#id_structures-TOTAL_FORMS').val(parseInt(sform_idz));
+    }
+  });
+  
+  $('#remove_t').click(function () {
+    var tform_idz =  parseInt($('#id_tests-TOTAL_FORMS').val());
+    if (tform_idz > tform_minlimit){
+      tform_idz = tform_idz - 1;
+      $('#ttrow-' + tform_idz).remove();
+      $('#id_tests-TOTAL_FORMS').val(parseInt(tform_idz));
+    };
+  });
+  
+  const sform_minlimit = parseInt($('#id_structures-TOTAL_FORMS').val());
+  const tform_minlimit = parseInt($('#id_tests-TOTAL_FORMS').val());
+  
+</script>
+
+{% endblock javascripts %}

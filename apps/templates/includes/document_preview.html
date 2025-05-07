@@ -1,0 +1,59 @@
+{% load home_tags %}
+<h5 class="text-start text-md-center text-primary fw-bold mb-2">Documentos</h5>
+
+<div class="mx-1 mb-3 border rounded-3 p-2 text-center">
+
+    <div id="added-area" class="d-flex flex-wrap justify-content-center">
+        {% for doc in existing %}
+        <div class="card-document" id="existing-document-{{ forloop.counter0 }}">
+            <div class="card-document-img-top card-document-img-top-existent">
+                {% if doc|doc_ext == 'jpg' or doc|doc_ext == 'jpeg' or doc|doc_ext == 'png' %}
+                <img alt="Image preview" class="document-thumbnail" src="{{ doc.file.url }}">
+                {% else %}
+                <i class="fa-solid {{ doc|file_preview }} icon-thumbnail"></i>
+                {% endif %}
+                
+                {% comment %}
+                    <div class="remove-file-btn" id="remove-file-btn-{{ forloop.counter0 }}" data-bs-toggle="modal"
+                        data-bs-target="#remove_file_modal--{{ forloop.counter0 }}">
+                        <i class="fa-solid fa-trash fa-xs remove-icon"></i>
+                    </div>
+    
+                    <div class="modal fade" id="remove_file_modal--{{ forloop.counter0 }}" tabindex="-1"
+                        aria-labelledby="removeConfirmModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header bg-primary">
+                                    <h5 class="modal-title text-white fw-bold" id="removeConfirmModalLabel">Eliminar Documento</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <p class="text-start mb-0">¿Está seguro de que quiere eliminar este documento <x class="fw-bold text-dark">{% if doc.label %}{{ doc.label }}{% else %}Documento.{{ doc|doc_ext }}{% endif %}</x>?</p>
+                                </div>
+                                <div class="modal-footer text-center">
+                                    <button type="button" class="mb-0 btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="button" class="mb-0 btn btn-danger remove-file-confirm"
+                                        id="remove-file-btn-confirm-{{ forloop.counter0 }}" counter="{{ forloop.counter0 }}"
+                                        document-id="{{ doc.id }}" data-bs-dismiss="modal">Eliminar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endcomment %}
+                    
+
+            </div>
+
+            <div class="card-document-body">
+                <a class="card-document-text card-text text-center cursor-pointer" title="{{ doc|default_link_action }}" target="_blank"
+                    href="{{ doc.file.url }}" style="font-size: 12px;">
+                    {% if doc.label %}
+                    {{ doc.label|truncate_filename }}
+                    {% else %}
+                    Documento.{{ doc|doc_ext }}
+                    {% endif %}
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    </div>

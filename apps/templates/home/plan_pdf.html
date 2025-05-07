@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+  {% load static %}
+  {% load home_tags %}
+<head>
+  <meta charset="UTF-8">
+  <meta name="theme-color" content="{% if plan_details.gp_code|slice:':2' == 'TM' %}#946037{% else %}#fe5000{% endif %}">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="{{ ASSETS_ROOT }}/img/cx.svg">
+  <title>PC-ASC-{{ plan_details.pc }}. {{ plan_details.client }}. {{ plan_details.product }} - REV-PC-{{ plan_details.revission|stringformat:"02d" }}</title>
+  <link id="pagestyle" href="{{ ASSETS_ROOT }}/css/material-dashboard.css" rel="stylesheet" />
+  <link id="basepages" href="{{ ASSETS_ROOT }}/css/base.css" rel="stylesheet" />
+  <script src="https://code.jquery.com/jquery-3.6.2.min.js" integrity="sha256-2krYZKh//PcchRtd+H+VyyQoZ/e3EcrkxhM8ycwASPA=" crossorigin="anonymous"></script>
+</head>
+<style>  
+  @media print {
+    ::-webkit-scrollbar {display: none;}
+    .noScreens {display:none;}
+    .print-border{
+      border: .5px solid #bcc0c2;
+    }
+  }
+  .printcover {
+    z-index: 99999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(185deg, #42424a 0%, #191919 92%);
+  }
+</style>
+<body style="overflow: hidden !important;">
+  <div class="noScreens printcover"></div>
+  {% include 'home/plan_details.html' %}
+  <script>
+    $(document).ready(function () {
+      window.print()      
+    });
+    window.onafterprint = function() {
+      window.close();
+      close();
+    };
+    window.addEventListener("afterprint", (event) => {
+      window.close();
+      close();
+    });
+  </script>
+</body>
+
+</html>

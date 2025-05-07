@@ -1,0 +1,78 @@
+{% load home_tags %}
+{% if test_request_obj.company == 'mcl' %}
+<style>:root {--mc-color: #946037;--mc-selection: #ad7e5a;--mc-shadow-color: #94603780;--mc-calendar-today: #94603780;--critical-color: #94603769;--mc-hover-color: #94603759;}</style>
+<script>$('meta[name="theme-color"]').attr('content', '#946037')</script>
+{% endif %}
+<h4 class="text-center"><x class="text-primary fw-bold ">Anexos</x>
+    {% if not test_request_obj.signed_techspecs or request.user|is_asca_staff or request.user|has_group:"IDAT-A" %}
+		{% if perms.essays.add_annex %}
+			<a href="/test_requests/{{ test_request_obj.id }}/annexes/add/" title="Agregar anexo">
+				<i class="material-symbols-rounded" style="font-size:28px; vertical-align: text-bottom;">add_photo_alternate</i>
+			</a>
+		{% endif %}
+	{% endif %}
+</h4>
+<hr>
+<div class="d-flex flex-wrap justify-content-around">
+{% for image in annexes %}
+	<div class="col-12 col-sm-6 col-md-4 col-xxl-3">
+		<div class="card my-2 mx-2 overflow-hidden">
+			<img class="image-thumbail" src="{{image.image.url}}" alt="Anexo">
+			<a class="image-overlay" data-bs-toggle="modal" data-bs-target="#modal-view-{{ image.id }}"></a>
+			<div class="card-body pt-2 p-3" style="max-height: 102px; overflow-y: auto;">
+				<small><x class="text-primary fw-bold">Información:</x> {{ image.identification }}</small>
+			</div>
+			<div class="d-flex flex-row px-2">
+				<a data-bs-toggle="modal" data-bs-target="#modal-view-{{ image.id }}" href="#" class="flex-grow-1 btn btn-primary btn-sm ms-2 me-1">Ver</a>
+				{% if not test_request_obj.signed_techspecs or request.user|is_asca_staff or request.user|has_group:"IDAT-A" %}
+					{% if perms.essays.delete_annex %}
+						<a title="Eliminar" data-bs-toggle="modal" data-bs-target="#modal-delete-{{ image.id }}" href="#" class="paginator-icons btn btn-danger btn-sm ms-1 me-2">
+							<i class="material-symbols-rounded " style="font-size:14px; vertical-align: text-bottom;">delete</i>
+						</a>
+					{% endif %}
+				{% endif %}
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="modal-view-{{ image.id }}" aria-labelledby="TrueDelete" aria-hidden="true" style="user-select: none;">
+	  <div class="modal-dialog image-modal">
+		<i class="fas fa-times image-modal-close" data-dismiss="modal"></i>
+		  <img class="image-modal-content image-full" src="{{image.image.url}}" alt="Anexo">
+
+	  </div>
+	</div>
+	{% if perms.essays.delete_annex %}
+		<div class="modal fade" id="modal-delete-{{ image.id }}" tabindex="-1" aria-labelledby="TrueDelete" aria-hidden="true" style="user-select: none;">
+    	  <div class="modal-dialog">
+    	    <form method="POST" action="/test_requests/{{ test_request_obj.id }}/annexes/{{ image.id }}/delete/">
+    	      {% csrf_token %}
+    	      <div class="modal-content px-3">
+    	        <div class="modal-header px-4 mx-n3" style="background-color: var(--mc-color) !important;">
+    	          <h4 class="modal-title font-weight-bolder text-white" id="TrueDelete">¡Advertencia!</h4>
+    	        </div>
+    	        <div class="modal-body text-start px-1">
+    	          <p class="mb-1 font-weight-bold" style="line-height: 1.25; font-weight: 500 !important;">
+    	            ¿Seguro que desea eliminar esta imagen?</p>
+    	        </div>
+    	        <div class="modal-footer text-center justify-content-center py-2">
+    	          <button type="button" class="m-0 mx-1 btn btn-secondary"data-bs-dismiss="modal">Cancelar</button>
+    	          <button type="submit" class="m-0 mx-1 btn btn-danger">Confirmar</button>
+    	        </div>
+    	      </div>
+    	    </form>
+    	  </div>
+    	</div>
+	{% endif %}
+{% empty %}
+	<h3 class="text-center">No hay anexos...</h3>
+{% endfor %}
+</div>
+<script>
+	$(document).ready(function(){
+		$('.image-modal-content').zoom();
+		$('.image-modal-content').on('click', function(){
+			console.log("ping")
+		  $(this).zoom();
+		});
+	 });
+</script>

@@ -1,0 +1,347 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<!-- form_view.html -->
+{% if test_request_obj.company == 'mcl' %}
+<style>:root {--mc-color: #946037;--mc-selection: #ad7e5a;--mc-shadow-color: #94603780;--mc-calendar-today: #94603780;--critical-color: #94603769;--mc-hover-color: #94603759;}</style>
+<script>$('meta[name="theme-color"]').attr('content', '#946037')</script>
+{% endif %}
+<style>label{margin-bottom: 0 !important;}</style>
+<link href="{{ ASSETS_ROOT }}/css/essay-material-form.css" rel="stylesheet" />
+<div class="container-fluid pt-1 px-sm-4 px-3 pb-3">
+	<div class="row min-vh-80 h-100">
+		<div class="col-12 px-0 px-md-2">
+			<div class="card my-4">
+				<div class="card-header p-0 position-relative mt-n4 mx-2 mx-md-3 z-index-2" style="user-select: none">
+					<div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2">
+						<div class="mt-2 text-center">
+							<h4 class="text-white text-center font-weight-bolder me-3">{% if 'edit' in request.get_full_path %}Editar
+								{% endif %}Control de Arranque de Cortadora</h5>								
+						</div>
+					</div>
+					<div class="card-body px-md-0 px-2 py-2">
+						<div class="form-group d-flex input-group input-group-outline">
+							<input type="hidden" id="company" value="{{ test_request_obj.company }}">
+							<form class="form col-12" method="POST" style="user-select: none">
+								{% csrf_token %}
+								<div class="row pt-2 px-1 px-md-3">
+									<div class="d-flex flex-wrap justify-content-between pb-1">
+										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Pedido N°</label>
+											<p class="ps-1 mb-0 fw-bold">{{ test_request_obj.number }}</p>
+										</div>
+										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Cliente</label>
+											<p class="ps-1 mb-0 fw-bold">
+												{% if test_request_obj.check_test_client %}
+												{{ test_request_obj.test_client }}
+												{% else %}
+												{{ test_request_obj.client }}
+												{% endif %}
+											</p>
+										</div>
+										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Producto</label>
+											<p class="ps-1 mb-0 fw-bold">{{ test_request_obj.product }}</p>
+										</div>
+										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Repetición</label>
+											<p class="ps-1 mb-0 fw-bold">{{ test_request_obj.repetition }}{{ test_request_obj.repetition_unit }}</p>
+										</div>
+										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Producto</label>
+											<p class="ps-1 mb-0 fw-bold">{{ test_request_obj.product }}</p>
+										</div>
+										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Acho de Corte</label>
+											<p class="ps-1 mb-0 fw-bold">{{ test_request_obj.width_bobbin }}{{ test_request_obj.width_bobbin_unit }}</p>
+										</div>
+										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Gramaje</label>
+											<p class="ps-1 mb-0 fw-bold">{{ tr_weight }}μ</p>
+										</div>
+									</div>
+
+									<div class="d-flex flex-wrap justify-content-center gap-3 pb-3">
+										{% comment %}
+										<div class="d-flex flex-column flex-grow-1"><label for="format">Formato</label>{{ form.format }}</div>
+										{% endcomment %}
+										<div class="d-flex flex-column flex-grow-1"><label for="machine">Máquina cortadora</label>{{ form.machine }}</div>
+										<div class="d-flex flex-column flex-grow-1"><label for="rewinder">Máquina rebobinadora</label>{{ form.rewinder }}</div>
+										<div class="d-flex flex-column flex-grow-1" id="datetime_container"><label for="date_time">Fecha y hora</label>{{ form.date_time }}</div>
+										<div class="d-flex flex-column flex-grow-1"><label for="turn">Turno</label>{{ form.turn }}</div>
+										<div class="d-flex flex-column flex-grow-1"><label for="production_order">Orden de produción</label>
+											<input type="text" name="production_order" class="form-control myform-focus" value="{{ test_request_obj.production_order|default_if_none:'' }}" id="production_order" maxlength="5" required , style="text-transform: uppercase !important; padding-left: 34px !important;">
+											<x class="text-dark infield-text" style="margin-top: 32px !important;">PR-</x>
+										</div>
+										<div class="d-flex flex-column flex-grow-1"><label for="gp_code">Código GP</label>
+											<input type="text" name="gp_code" class="form-control myform-focus" readonly value="PR" id="gp_code">
+										</div>
+										<div class="d-flex flex-column flex-grow-1"><label for="machine_speed">Velocidad de Máquina (m/min)</label>{{ form.machine_speed }}</div>
+									</div>
+
+									<div class="col-12 d-flex align-items-baseline flex-row pb-2 ">
+										<label class="fw-bold" for="as_treatment">Tratamiento de antiestático</label>
+										<div class="px-1 p-0 form-check">{{ form.as_treatment }}</div>
+									</div>
+
+
+									<div class="card my-3">
+										<div class="card-header p-0 mt-n2 position-relative mx-1 z-index-2" style="user-select: none">
+										  <div class="bg-primary shadow-primary border-radius-lg px-3 pt-3 pb-2">
+											<div class="mt-0 d-flex ">
+											  <h5 class="text-white font-weight-bolder">Análisis de muestra</h5>
+											</div>
+										  </div>
+										</div>
+
+										<div class="card-body mt-n4 border-radius-lg px-0 pb-2">
+										  <div class="table-responsive p-0" style="overflow-y: hidden;">
+									  
+											  <table class="table  align-items-center text-align-center mb-0">
+											    <thead class="align-items-center text-xs mb-n1">
+											  	  <tr>
+											  	    <th>Ensayo</th>
+											  	    <th class="text-center" colspan="2">Unidad / Especificaciones</th>
+											  	    <th class="text-center">Resultados / Observaciones</th>
+											  	  </tr>
+											    </thead>
+											    <tbody id="form_set" class=" p-0 m-0" style="user-select: none;">
+                            <tr>
+                              <td class="fw-bold">Ancho</td>
+                              <td class="text-center"><abbr title="Milímetros">mm</abbr></td>
+                              <td class="text-center fw-bold">{{ test_request_obj.width_bobbin }}{{ test_request_obj.width_bobbin_unit }}</td>
+                              <td class="d-flex flex-row gap-2">
+                                {{ form.w_a }}
+                                {{ form.w_c }}
+                                {{ form.w_b }}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">Repetición</td>
+                              <td class="text-center"><abbr title="Milímetros">mm</abbr></td>
+                              <td class="text-center fw-bold">{{ test_request_obj.repetition }}</td>
+                              <td class="d-flex flex-row gap-2">
+                                {{ form.r_a }}
+                                {{ form.r_c }}
+                                {{ form.r_b }}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">Apariencia</td>
+                              <td colspan="2">{{ form.apearence }}</td>
+                              <td>{{ form.apearence_observation }}</td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">Core</td>
+                              <td class="text-center"><abbr title="Pulgadas">in</abbr></td>
+                              <td class="text-center fw-bold">{{ test_request_obj.core_dia_bobbin }}"</td>
+                              <td>{{ form.core }}</td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">Diámetro Externo</td>
+                              <td class="text-center fw-bold" colspan="2">
+								<div class="d-flex flex-nowrap">
+									<div class=" d-flex flex-row-reverse flex-grow-1">
+									  <input type="text" value="{{ test_request_obj.exterior_dia_bobbin }}" class="form-control myform-focus flat-right" style="padding-right: 1.3em !important" readonly>
+									</div>                        
+									<div class=" flex-grow-1">
+									  <span class="select2-selection select2-selection--single form-control myform-focus flat-left">
+										  <span class="select2-selection__rendered">
+											  <span class="select2-selection__placeholder">{{ test_request_obj.exterior_dia_bobbin_unit }}</span>
+										  </span>
+									  </span>
+									</div>
+								  </div>
+								</td>
+                              <td>{{ form.exterior_dia }}</td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">Impresión</td>
+                              <td colspan="2">{{ form.print_spec }}</td>
+                              <td>{{ form.print }}</td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">Posición de Embobinado</td>
+                              <td class="text-center">N°</td>
+                              <td style="white-space: normal; text-align: center; max-width: 190px !important;" class="fw-bold text-xs">
+                                {% if test_request_obj.winding %}{{ test_request_obj.winding }}{% endif %}{% if test_request_obj.winding and test_request_obj.winding_description %},&thinsp;{% endif %}
+                                {% if test_request_obj.winding_description %}{{ test_request_obj.winding_description }}{% endif %}
+                              </td>
+                              <td>{{ form.winding_position }}</td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">Distancia Borde Material</td>
+                              <td class="text-center"><abbr title="Milímetros">mm</abbr></td>
+                              <td class="text-center">
+								<input type="text" class="form-control myform-focus text-center" readonly value="{{ test_request_obj.dist_boder_cell_material }}">
+								</td>
+                              <td>{{ form.dist_boder_material }}</td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">Color Empate</td>
+                              <td class="text-center"><abbr title="Milímetros">mm</abbr></td>
+                              <td>{{ form.joint_color }}</td>
+                              <td>{{ form.joint_color_observation }}</td>
+                            </tr>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">Estática</td>
+                              <td class="text-center">Kvolt</abbr></td>
+                              <td>{{ form.n_litters_spec }}</td>
+                              <td>{{ form.n_litters }}</td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">Embalaje</td>
+                              <td colspan="2">{{ form.packaging_spec }}</td>
+                              <td>{{ form.packaging }}</td>
+                            </tr>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">Paleta (Dimensiones)</td>
+                              <td class="text-center"><abbr title="Metros">m</abbr></td>
+                              <td>{{ form.pallet_spec }} </td>
+                              <td>{{ form.pallet }} </td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">N° Camadas</td>
+                              <td class="text-center">N°</td>
+                              <td>{{ form.static_spec }}</td>
+                              <td>{{ form.static }}</td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">Identificación</td>
+                              <td colspan="2">{{ form.identification }}</td>
+                              <td class="d-flex flex-row flex-nowrap justify-content-center align-items-baseline">
+                                <div class="d-flex align-items-baseline flex-row pt-2">
+                                  <label class="fw-bold cursor-pointer" for="ex_tag">Etiqueta Externa</label>
+                                  <div class="px-1 p-0 form-check">{{ form.ex_tag }}</div>
+                                </div>&emsp13;
+                                <div class="d-flex align-items-baseline flex-row pt-2">
+                                  <label class="fw-bold cursor-pointer" for="in_tag">Etiqueta Interna</label>
+                                  <div class="px-1 p-0 form-check">{{ form.in_tag }}</div>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+									<h6 class="fw-bold text-primary m-0">Observaciones</h6>
+									<br>
+									<div class="col-12 pb-2">{{ form.observation }}</div>
+
+									<div class="col-sm-6 col-12 pb-3"><label class="fw-bold text-primary" for="quality_analist">Por Aseguramiento de la Calidad</label>{{ form.quality_analist }}</div>
+									<div class="col-sm-6 col-12 pb-3"><label class="fw-bold text-primary" for="production_operator">Por Producción</label>{{ form.production_operator }}</div>
+								</div>
+								<div class="d-flex justify-content-center gap-2">
+									<button class="btn btn-primary" type="submit">Guardar</button>
+									<button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#cancelModal">
+										Cancelar
+									  </button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel"
+aria-labelledby="TrueDelete" aria-hidden="true" style="user-select: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: var(--mc-color) !important;">
+        <h5 class="modal-title fw-bold text-white" id="cancelModalLabel">Confirmación de Cancelación</h5>
+      </div>
+      <div class="modal-body">
+        ¿Estás seguro de que quieres cancelar?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="mb-1 btn btn-secondary" data-bs-dismiss="modal">No</button>
+        <button type="button" class="mb-1 btn btn-primary" onClick="window.history.back();">Sí, cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+$(document).ready(function () {
+	
+	$('#format').select2({
+		minimumResultsForSearch: Infinity,
+		placeholder: 'Seleccionar...',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+
+	$('#machine').select2({
+		minimumResultsForSearch: Infinity,
+		placeholder: 'Seleccionar...',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+	
+	$('#rewinder').select2({
+		minimumResultsForSearch: Infinity,
+		placeholder: 'Seleccionar...',
+		allowClear: true,
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+
+	$('#turn').select2({
+		minimumResultsForSearch: Infinity,
+		allowClear: true,
+		placeholder: '...',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+	
+	$('#apearence').select2({
+		minimumResultsForSearch: Infinity,
+		placeholder: 'Seleccionar...',
+		allowClear: true,
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+	
+	$('#core').select2({
+		minimumResultsForSearch: Infinity,
+		placeholder: 'Seleccionar...',
+		allowClear: true,
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+	
+	$('#joint_color').select2({
+		minimumResultsForSearch: Infinity,
+		placeholder: 'Seleccionar...',
+		allowClear: true,
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+	
+	$('#production_operator').select2({
+		placeholder: 'Operador de Producción',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+
+	$('#quality_analist').select2({
+		placeholder: 'Analista de Calidad',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+})
+</script>
+{% endblock content %}
+{% block javascripts %}
+<script src="{{ ASSETS_ROOT }}/js/datetime-picker/popper.js"></script>
+<script src="{{ ASSETS_ROOT }}/js/datetime-picker/bootstrap.min.js"></script>
+<script src="{{ ASSETS_ROOT }}/js/datetime-picker/moment-with-locales.min.js"></script>
+<script src="{{ ASSETS_ROOT }}/js/datetime-picker/bootstrap-datetimepicker.min.js"></script>
+<script src="{{ ASSETS_ROOT }}/js/datetime-picker/main.js"></script>
+{% endblock javascripts %}

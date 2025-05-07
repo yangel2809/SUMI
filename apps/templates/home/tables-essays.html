@@ -1,0 +1,20 @@
+{% extends 'layouts/base_table.html' %}
+
+{% block table_header %}
+<h5 class="text-white font-weight-bolder text-nowrap pe-3">
+  Ensayos | <a class="faded-title" href="{% url 'units' %}">Unidades de Medida</a>
+</h5>
+<div class="ms-auto my-auto text-nowrap">
+  {% if perms.home.add_essay %}                
+  <a title="Crear ensayo" href="{% url 'add_essay' %}">
+    <i class="material-icons text-white ">data_saver_on</i>
+  </a>
+  {% endif %}
+</div>
+{% endblock table_header %}
+
+{% block table_scripts %}
+<script>
+    var address = "{% url 'essays' %}";
+</script>
+{% endblock table_scripts %}

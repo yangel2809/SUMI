@@ -1,0 +1,28 @@
+<h5 class="text-white font-weight-bolder current-tab-url text-nowrap pe-3">
+    <a class="title-tab text-white {% if tab != 'plans' %}faded-title cursor-pointer{% endif %}" value='plans'>Planes Públicos</a>
+    {% if perms.home.add_plan %} | <a class="title-tab text-white {% if tab != 'plans-0' %}faded-title cursor-pointer{% endif %}" value="plans-0">Planes 0</a>{% endif %}
+    {% if perms.home.disincorporate_plan %} | <a class="title-tab text-white {% if tab != 'disincorporated' %}faded-title cursor-pointer{% endif %}" value="disincorporated">Desincorporados</a>{% endif %}
+    {% if perms.home.view_archive_plan %} | <a class="title-tab text-white {% if tab != 'deleted' %}faded-title cursor-pointer{% endif %}" value="deleted">Papelera</a>{% endif %}
+  </h5>
+
+  <div class="ms-auto my-auto text-nowrap">
+    {% if perms.home.add_plan and not tab == 'plans-deleted' %}              
+    <a title="Crear Plan de Calidad" href="{% url 'add_plan' %}">
+      <i class="material-icons text-white ">note_add</i>
+    </a>
+    {% endif %}
+    {% if tab == 'plans-deleted' %}
+    <a title="Vaciar papelera" class="cursor-pointer" data-bs-toggle="modal" data-bs-target="#empty-trash">
+      <i class="material-icons text-white ">delete_sweep</i>
+    </a>
+    
+    {% else %}
+    <a title="Filtrar" id="toggle-s" class="cursor-pointer" >
+      <i class="material-icons text-white ">filter_list</i>
+    </a>
+    
+    {% endif %}
+    <a title="Limpiar filtros" class="cursor-pointer {% if not '?' in request.get_full_path %}search-bar-toggle{% endif %}" id="clear-s">
+      <i class="material-icons text-white ">clear</i>
+    </a>
+  </div>

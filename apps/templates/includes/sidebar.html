@@ -1,0 +1,261 @@
+<aside style="user-select: none"
+  class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3   bg-gradient-dark"
+  id="sidenav-main">
+  <div class="sidenav-header">
+    <i class="fas fa-times p-3 cursor-pointer text-white opacity-5 position-absolute end-0 top-0 d-none d-xl-none"
+      aria-hidden="true" id="iconSidenav"></i>
+    <a href="/" class="navbar-brand m-0">
+      <div class="col">
+        {% comment %}
+        {% if plan_details.gp_code|slice:':2' == 'TM' %}
+        <img src="{{ ASSETS_ROOT }}/img/mcl-w.svg" class="navbar-brand-img" alt="Logo">
+        {% else %}
+        {% endif %}
+        {% endcomment %}
+        <img src="{{ ASSETS_ROOT }}/img/cx-w.svg" class="navbar-brand-img" alt="Logo">
+        <span class="ms-2 font-weight-bold text-white" style="font-size: 1.125rem">sumi</span>
+      </div>
+    </a>
+  </div>
+  <hr class="mt-0 mb-1">
+  <div class="collapse navbar-collapse  w-auto  max-height-vh-100" id="sidenav-collapse-main">
+    <ul class="navbar-nav">
+      
+      {% if perms.home.view_client %}
+      <li class="nav-item">
+        <a class="nav-link text-white {% if 'clients' in request.get_full_path %} bg-primary {% endif %}" href="/clients/">
+          <div class="text-white text-center me-2 d-flex">
+            <i class="material-symbols-rounded opacity-10">group</i>
+          </div>
+          <span class="nav-link-text ms-1">Clientes</span>
+        </a>
+      </li>     
+      {% endif %}
+      
+      {% if perms.home.view_provider %}
+      <li class="nav-item">
+        <a class="nav-link text-white {% if 'providers' in request.get_full_path %}  bg-primary {% endif %}" href="/providers/">
+          <div class="text-white text-center me-2 d-flex">
+            <i class="material-symbols-rounded opacity-10">store</i>
+          </div>
+          <span class="nav-link-text ms-1">Proveedores</span>
+        </a>
+      </li>
+      {% endif %}
+     
+      {% if perms.home.view_plan %}
+      <li class="nav-item">
+        <a class="nav-link text-white {% if 'plan' in segment %} bg-primary {% endif %}" href="/plans/">
+          <div class="text-white text-center me-2 d-flex">
+            <i class="material-symbols-rounded opacity-10">description</i>
+          </div>
+          <span class="nav-link-text ms-1">Planes de Calidad</span>
+        </a>
+      </li>
+      {% endif %}
+
+      {% if perms.essays.view_testrequest %}
+      <li class="nav-item">
+        <hr class="my-1">
+      </li>
+      {% endif %}
+            
+      {% if perms.essays.view_testrequest and perms.essays.view_working_testrequest %}
+      <li class="nav-item">
+        <a class="nav-link text-white {% if segment == 'requests' %} bg-primary {% endif %}" href="{% url 'test_request' %}?touched=False">
+          <div class="text-white text-center me-2 d-flex">
+            <i class="material-symbols-rounded opacity-10">plagiarism</i>
+          </div>
+          <span class="nav-link-text ms-1">Solicitudes de Prueba</span>
+        </a>
+      </li>
+      {% endif %}
+      {% if perms.essays.view_testrequest and perms.essays.view_working_testrequest %}
+      <li class="nav-item">
+        <a id="art_requests_link" class="nav-link text-white {% if segment == 'requests' %} bg-primary {% endif %}" href="{% url 'test_request' %}?touched=False">
+          <div class="text-white text-center me-2 d-flex">
+            <i class="material-symbols-rounded opacity-10">palette</i> 
+          </div>
+          <span class="nav-link-text ms-1">Solicitudes de Arte</span>
+        </a>
+      </li>
+      {% endif %}
+
+      {% if perms.essays.view_testrequest and perms.essays.view_working_testrequest %}
+      <li class="nav-item">
+        <a class="nav-link text-white {% if segment == 'test_request' %} bg-primary {% endif %}" href="{% url 'test_request' %}?touched=True">
+          <div class="text-white text-center me-2 d-flex">
+            <i class="material-symbols-rounded opacity-10">edit_document</i>
+          </div>
+          <span class="nav-link-text ms-1">Expedientes de Prueba</span>
+        </a>
+      </li>
+      {% endif %}
+
+      {% if perms.essays.view_testrequest %}
+      <li class="nav-item">
+        <a class="nav-link text-white {% if segment == 'closed_test_request' %} bg-primary {% endif %}" href="{% url 'test_request' %}?touched=closed">
+          <div class="text-white text-center me-2 d-flex">
+            <i class="material-symbols-rounded opacity-10">task</i>
+          </div>
+          <span class="nav-link-text ms-1">Expedientes de IDAT</span>
+        </a>
+      </li>
+      {% endif %}
+      
+      {% if perms.sales.view_saleorder or perms.production.view_order %}
+        <li class="nav-item">
+          <hr class="my-1">
+        </li>
+      {% endif %}
+      
+      {% if perms.sales.view_salestestrequest %}
+      <li class="nav-item">
+        <a class="nav-link text-white {% if segment == 'sales_test_request' %} bg-primary {% endif %}" href="{% url 'sales_test_requests' %}">
+          <div class="text-white text-center me-2 d-flex">
+            <i class="material-symbols-rounded opacity-10">request_quote</i>
+          </div>
+          <span class="nav-link-text ms-1">Solicitudes de Ventas</span>
+        </a>
+      </li>
+      {% endif %}
+
+      {% if perms.sales.view_saleorder %}
+      <li class="nav-item">
+        <a class="nav-link text-white {% if tab == 'treview' or segment == 'review_sale_orders' %} bg-primary {% endif %}" href="{% url 'sale_order_list' %}?treview=True">
+          <div class="text-white text-center me-2 d-flex">
+            <i class="material-symbols-rounded opacity-10">fact_check</i>
+          </div>
+          <span class="nav-link-text ms-1">Pedidos en Revisión</span>
+        </a>
+      </li>
+      {% endif %}
+      
+      {% if perms.sales.view_saleorder %}
+      <li class="nav-item">
+        <a class="nav-link text-white {% if segment == 'sale_orders' %}  bg-primary {% endif %}" href="{% url 'sale_order_list' %}">
+          <div class="text-white text-center me-2 d-flex">
+            <i class="material-symbols-rounded opacity-10">sell</i>
+          </div>
+          <span class="nav-link-text ms-1">Pedidos de Compra</span>
+        </a>
+      </li>
+      {% endif %}
+      
+      {% if perms.production.view_order %}
+      <li class="nav-item">
+        <a class="nav-link text-white  {% if segment == 'order' %}  bg-primary {% endif %}" href="{% url 'order_list' %}">
+          <div class="text-white text-center me-2 d-flex" style="padding-left: 1px;">
+            <i class="material-symbols-rounded opacity-10">quick_reference_all</i>
+          </div>
+          <span class="nav-link-text ms-1">Expedientes de Producción </span>
+        </a>
+      </li>
+      {% endif %}
+
+      {% if perms.home.view_essay or perms.home.view_material %}
+        <li class="nav-item">
+          <hr class="my-1">
+        </li>
+      {% endif %}
+      
+      {% if perms.home.view_material %}
+      <li class="nav-item">
+        <a class="nav-link text-white {% if 'materials' in request.get_full_path %}  bg-primary {% endif %}" href="/materials/">
+          <div class="text-white text-center me-2 d-flex">
+            <i class="material-symbols-rounded opacity-10">widgets</i>
+          </div>
+          <span class="nav-link-text ms-1">Materiales</span>
+        </a>
+      </li>
+      {% endif %}
+      
+      {% if perms.home.view_essay %}
+      <li class="nav-item">
+        <a class="nav-link text-white  {% if 'essays' in request.get_full_path %}  bg-primary {% endif %}" href="/essays/">
+          <div class="text-white text-center me-2 d-flex">
+            <i class="material-symbols-rounded opacity-10">science</i>
+          </div>
+          <span class="nav-link-text ms-1">Ensayos</span>
+        </a>
+      </li>
+      {% endif %}
+      
+      {% if perms.essays.view_qualityanalyst or perms.essays.view_productionoperator %}
+        <li class="nav-item">
+          <hr class="my-1">
+        </li>
+      {% endif %}
+      
+      {% if perms.essays.view_qualityanalyst %}
+      <li class="nav-item">
+        <a class="nav-link text-white {% if 'analysts' in segment %} bg-primary {% endif %}" href="{% url 'personal' 'a' %}">
+          <div class="text-white text-center me-2 d-flex">
+            <i class="material-symbols-rounded opacity-10">person_search</i>
+          </div>
+          <span class="nav-link-text ms-1">Analistas de Calidad</span>
+        </a>
+      </li>
+      {% endif %}
+      
+      {% if perms.essays.view_productionoperator %}
+      <li class="nav-item">
+        <a class="nav-link text-white {% if 'operators' in segment %} bg-primary {% endif %}" href="{% url 'personal' 'o' %}">
+          <div class="text-white text-center me-2 d-flex">
+            <i class="material-symbols-rounded opacity-10">engineering</i>
+          </div>
+          <span class="nav-link-text ms-1">Operadores de Producción</span>
+        </a>
+      </li>
+      {% endif %}
+      
+      <li class="nav-item mt-3">
+        <h6 class="ps-4 ms-2 mb-0 text-uppercase text-xs text-white font-weight-bolder opacity-8">Usuario</h6>
+      </li>
+      
+      <li class="nav-item">
+        <a class="nav-link text-white " href="{% url 'logout' %}">
+          <div class="text-white text-center me-2 d-flex">
+            <i class="material-symbols-rounded opacity-10">logout</i>
+          </div>
+          <span class="nav-link-text ms-1">Cerrar sesion</span>
+        </a>
+      </li>
+
+      {% if request.user.is_superuser %}
+      <li class="nav-item mt-3">
+        <h6 class="ps-4 ms-2 mb-0 text-uppercase text-xs text-white font-weight-bolder opacity-8">administracion</h6>
+      </li>
+      
+      <li class="nav-item">
+        <a class="nav-link text-white " href="/admin/" target="_blank">
+          <div class="text-white text-center me-2 d-flex">
+            <i class="material-symbols-rounded opacity-10">admin_panel_settings</i>
+          </div>
+          <span class="nav-link-text ms-1">Inicio</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link text-white " href="/admin/auth/user/" target="_blank">
+          <div class="text-white text-center me-2 d-flex">
+            <i class="material-symbols-rounded opacity-10">manage_accounts</i>
+          </div>
+          <span class="nav-link-text ms-1">Usuarios</span>
+        </a>
+      </li>
+      
+      <li class="nav-item">
+        <a class="nav-link text-white" href="https://docs.djangoproject.com/es/4.2/" target="_blank">
+          <div class="text-white text-center me-2 d-flex">
+            <i class="material-symbols-rounded opacity-10">help</i>
+          </div>
+          <span class="nav-link-text ms-1">Ayuda</span>
+        </a>
+      </li>
+      
+      {% endif %}
+
+    </ul>
+  </div>
+</aside>

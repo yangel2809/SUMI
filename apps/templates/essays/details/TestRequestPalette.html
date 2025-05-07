@@ -1,0 +1,27 @@
+% load home_tags %}
+
+{% if objects %}
+  <i class="hidden" id="tab" value="{{ tab }}"></i>
+  <table class="table table-hover align-items-center mb-0">
+    <thead>
+      <tr>
+        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">N° Solicitud</th>
+        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Cliente</th>
+        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Producto</th>
+        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">Fecha</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for test_request_palette in objects %}
+      <tr>
+        <td class="text-center">{{ test_request_palette.number }}</td>
+        <td>{{ test_request_palette.client }}</td>
+        <td>{{ test_request_palette.product }}</td>
+        <td class="text-center">{{ test_request_palette.date|date:"d/m/Y" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>No hay solicitudes de prueba palette.</p>
+{% endif %}

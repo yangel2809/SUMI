@@ -1,0 +1,206 @@
+<div class="mx-md-3 mx-1 action-pill">
+  <p class="pill pill-active" tab="#parent-content">Arranque de {{ title }}</p>
+  <p class="pill-child pill-child-active">
+    &thinsp;
+    {% if edit_boot %}
+    <a class="d-flex" title="Editar" href="/production/{{ order_obj.id }}/{{ machine_obj }}/{{ obj_id }}/edit">
+      <i class="pill-child-action fas fa-pen"></i>
+    </a>
+    &ensp;
+    {% endif %}
+
+    {% if delete_boot %}
+      <i class="pill-child-action fas fa-trash" title="Eliminar" data-bs-toggle="modal" data-bs-target="#id-{{ obj_id }}"></i>
+      &ensp;
+    {% endif %}
+
+    <a class="d-flex" title="Guardar cómo PDF/Imprimir" href="javascript:window.print()">
+      <i class="pill-child-action fas fa-print"></i>
+    </a>
+
+    {% if export_boot %}
+    &ensp;
+    <a class="d-flex" title="Exportar" href="#">
+      <i class="pill-child-action fas fa-external-link-alt" aria-hidden="true"  data-bs-toggle="modal" data-bs-target="#boot-export"></i>
+    </a>
+    {% endif %}
+  </p>
+  {% for report in test_files %}
+  <p class="pill" tab="#child-content-{{ forloop.counter0 }}">Reporte de Control de Calidad: {{ title }}</p>
+  <p class="pill-child" >
+    {% if perms.essays.change_testfile %}
+    &thinsp;
+    <a class="d-flex" title="Editar" href="/production/{{ order_obj.id }}/{{ machine_obj }}/{{ obj_id }}/report/{{ report.id }}/edit">
+      <i class="pill-child-action fas fa-pen"></i>
+    </a>
+    {% endif %}
+    {% if perms.essays.delete_testfile %}
+    &ensp;<i class="pill-child-action fas fa-trash" title="Eliminar" data-bs-toggle="modal" data-bs-target="#id-report-{{ forloop.counter0 }}"></i>
+    {% endif %}
+    &ensp;
+    <a class="d-flex" title="Guardar cómo PDF/Imprimir" href="javascript:window.print()">
+      <i class="pill-child-action fas fa-print"></i>
+    </a>
+  </p>
+  <!--Delete Modal Child-->
+  <div class="modal fade" id="id-report-{{ forloop.counter0 }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="user-select: none;">
+    <div class="modal-dialog">
+      <div class="modal-content px-3">
+        <div class="bg-primary modal-header px-4 mx-n3">
+          <h4 class="modal-title font-weight-bolder text-white">¡Advertencia!</h4>
+        </div>
+        <form method="POST" action="{% url 'delete_report_pr' pr=order_obj.id machine=machine_obj ck=obj_id rp=report.id %}">
+          {% csrf_token %}
+          <div class="modal-body text-start px-1">
+            <p class="mb-1 font-weight-bold" style="line-height: 1.25;">
+              ¿Seguro que desea eliminar el Reporte #{{ forloop.counter }}?</p>
+            <p class="mb-n1 text-xs">Esta acción esta acción es irreversible</p>
+          </div>
+          <div class="modal-footer text-center justify-content-center py-2">
+            <button type="button" class="m-0 mx-1 btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="m-0 mx-1 btn btn-danger">Confirmar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+  {% if not test_files and perms.essays.add_testfile %}
+    <p class="pill" href="{% url 'report_boot_pr' pr=order_obj.id machine=machine_obj ck=obj_id %}" redirect="true"><i class="material-icons inline-icon" aria-hidden="true">note_add</i>&thinsp;Agregar Reporte</p>
+  {% endif %}
+</div>
+
+<!------------------------------------------------Delete Modal Parent------------------------------------------------>
+{% if delete_boot %}
+<link href="{{ ASSETS_ROOT }}/css/plan-form.css" rel="stylesheet" />
+<div class="modal fade" id="id-{{ obj_id }}" tabindex="-1" aria-hidden="true" style="user-select: none;">
+  <div class="modal-dialog">
+    <div class="modal-content px-3">
+      <div class="bg-primary modal-header px-4 mx-n3">
+        <h4 class="modal-title font-weight-bolder text-white">¡Advertencia!</h4>
+      </div>
+      <form method="POST" action="/production_{{ machine_obj }}/{{ obj_id }}/delete/">
+        {% csrf_token %}
+        <div class="modal-body text-start px-1">
+          <p class="mb-1 font-weight-bold" style="line-height: 1.25;">
+            ¿Seguro que desea eliminar el control de Arranque de {{ title }} junto con todos sus reportes?</p>
+          <p class="mb-n1 text-xs">Esta acción esta acción es irreversible</p>
+        </div>
+        <div class="modal-footer text-center justify-content-center py-2">
+          <button type="button" class="m-0 mx-1 btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="m-0 mx-1 btn btn-danger">Confirmar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% if export_boot %}
+<!------------------------------------------------Export Machine Boot------------------------------------------------>
+<div class="modal fade user-select-none" id="boot-export" role="dialog" aria-labelledby="boot-exportLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form id="export_boot_form" method="POST" action="/production/{{ order_obj.id }}/{{ machine_obj }}/{{ obj_id }}/export">
+        {% csrf_token %}
+        <div class="modal-header" style="background-color: var(--mc-color) !important;">
+          <h5 class="modal-title fw-bold text-white" id="cancelModalLabel">Exportar Arranque y Ensayos</h5>
+        </div>
+        <div class="modal-body pb-0">
+          <div class="form-group">
+            <label for="destiny_document" class="fw-bold">Seleccione una Solicitud de Prueba de destino</label>
+            <select class="form-control myform-focus text-center" name="destiny_document" required id="destiny_document">
+              <option value=""></option>
+            </select>
+          </div>
+          <p id="error-message" class="fw-bold text-danger"></p>
+          <p id="success-message" class="fw-bold text-success"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary mb-1">Confirmar</button>
+          <button type="button" type="reset" id="mtDismiss" class="mb-1 btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<p class="mx-md-3 mb-n2 mt-2 px-1 fst-italic fw-bold text-xs d-flex flex-row flex-wrap justify-content-left gap-3">
+  <x><x class="text-primary">AC:</x> ACEPTADO</x>
+  <x><x class="text-primary">AD:</x> ACEPTADO CON DESVIACIÓN</x>
+  <x><x class="text-primary">DE:</x> DEFICIENTE</x>
+  <x><x class="text-primary">NA:</x> NO APLICA</x>
+</p>
+<script>
+  $(document).ready(function() {
+    var pill = $(".pill");
+    var pillChild = $(".pill-child");
+    var pillChildAction = $(".pill-child-action");
+    var tabbedContent = $(".tabbed-content");
+    
+    $('#boot-export').on('hidden.bs.modal', function () {
+      $(this).find('form')[0].reset();
+      $(this).find('select').val(null).trigger('change');
+    });
+    $('#mtDismiss').click(function () {
+      // Find the closest modal and hide it
+      $(this).closest('.modal').modal('hide');
+    });
+    $('#destiny_document').select2({
+      placeholder: 'Seleccionar...',
+      width: '100%',
+      selectionCssClass: ':all:',
+      dropdownCssClass: ':all:',
+      ajax: {
+        url: '/test_or_order/',
+        data: function (params) {
+          return{
+            current_tr: 0,
+            current_op: '{{ order_obj.id }}',
+            search_text: params.term,
+          };
+        },
+        processResults: function (data) {
+            return {
+                results: data,
+            };
+        },
+      },
+      language: {
+        noResults: function () {
+          return "No hay resultados";
+        },
+        searching: function () {
+          return "Buscando...";
+        }
+      }
+    });
+    
+    pillChildAction.on("click", function() {
+      if ($(this).attr("href")){
+        window.location.href = $(this).attr("href");
+      }
+    });
+
+    pill.on("click", function() {
+      if ($(this).hasClass("pill-active")) {
+        return;
+      }
+  
+      if ($(this).attr("redirect")) {
+        window.location.href = $(this).attr("href");
+      } else {
+        tabbedContent.hide();
+        $($(this).attr("tab")).show();
+  
+        $('main').animate({ scrollTop: 0 }, "fast");
+  
+        pill.removeClass("pill-active");
+        pillChild.removeClass("pill-child-active");
+        $(this).addClass("pill-active");
+        $(this).next(".pill-child").addClass("pill-child-active");
+      }
+    });
+  });
+</script>

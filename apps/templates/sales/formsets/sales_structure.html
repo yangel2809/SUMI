@@ -1,0 +1,206 @@
+
+<div class="card mx-md-0 mx-n2 mt-3 mb-2">
+    <div class="card-header p-0 mt-n2 position-relative mx-2 mx-md-3 z-index-2" style="user-select: none">
+        <div class="bg-primary shadow-primary border-radius-lg px-3 pt-3 pb-2">
+            <div class="mt-0 d-flex ">
+                <h5 class="text-white font-weight-bolder">Estructura</h5>
+                <div class="ps-3 ms-auto my-auto">
+                    <a class="cursor-pointer" title="Agregar Esructura" value="Add More" id="add_mores">
+                        <i class="material-icons text-white">library_add</i>
+                    </a>
+                    <a class="cursor-pointer" title="Quitar Estructura" type="hidden" value="Add More" id="remove_s">
+                        <i class="material-icons text-white">remove_circle</i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-body shadow mt-n4 border-radius-lg px-1  px-md-3 pb-2">
+        <div class="table-responsive p-0" style="overflow-y: hidden;">
+            {{ formset.management_form }}
+            <table class="table align-items-center justify-content-center mb-0">
+                <thead class="align-items-center text-xs mb-n1">
+                    <tr>
+                        <th class="text-center px-1 pb-2">
+                            Tipo de Material 
+                            
+                            {% comment %}
+                                {% if perms.home.add_materialtype %}
+                                <a class="a-deaf text-middle" id="add_material_type" data-bs-toggle="modal" data-bs-target="#materialTypeModal">
+                                    <i class="material-icons" style="vertical-align: text-top; font-size: 15px !important;">add_circle</i>
+                                </a>
+                                {% endif %}
+                            {% endcomment %}
+                                
+                        </th>
+                        <th class="text-center px-1 pb-2 col-1">Peso (<abbr title="Gramaje / Gramos por metro cuadrado">g/m²</abbr>)</th>
+                        <th class="text-center px-1 pb-2 col-1">Espesor (<abbr title="Micra">μ</abbr>)</th>
+                        {% if formset.instance.pk %}
+                        <th class="text-center px-1 pb-2">
+                            <i class="material-icons">delete</i>
+                        </th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody id="sform_set" class="p-0 m-0" style="user-select: none;">
+
+                    <!--Structure form goes here-->
+
+                    {% if formset %}
+                    {% for ss in formset %}
+                    <tr id="strow-{{ forloop.counter0 }}">
+
+                        {% for hidden in ss.hidden_fields %}
+                        {{ hidden }}
+                        {% endfor %}
+
+                        <td class="px-1">
+                            <div class="{% if ss.errors.material_type %}border-error{% endif %}" id="{{ forloop.counter0 }}-material_type-container">
+                                {{ ss.material_type }}
+                            </div>
+                        </td>
+                       
+                        <td class="px-1">
+                            <div class="position-relative {% if ss.errors.weight %}border-error{% endif %}">
+                                
+                                {% comment %}
+                                <i class="material-symbols-rounded c-selector c-selector-selected" id="{{ forloop.counter0 }}-w_counts">add</i>
+                                    {{ ss.w_counts }}
+                                {% endcomment %}
+                                    
+                                <ul class="position-absolute p-0 ms-1 mt-1" style="list-style-type: none; line-height: 69%;">
+                                    <li class="text-xxs a-deaf font-weight-bold cursor-pointer" id="op1-{{ forloop.counter0 }}" style="user-select: none;" title="Multiplicar Espesor x Densidad (0.69)">⬤</li>                            
+                                    <li class="text-xxs a-deaf font-weight-bold cursor-pointer" id="op2-{{ forloop.counter0 }}" style="user-select: none;" title="Multiplicar Espesor x Densidad (0.9)">⬤</li> 
+                                    <li class="text-xxs a-deaf font-weight-bold cursor-pointer" id="op3-{{ forloop.counter0 }}" style="user-select: none;" title="Multiplicar Espesor x Densidad (2.7)">⬤</li>                            
+                                </ul>
+                                {{ ss.weight }}
+                                <script>
+                                    $("#op1-{{ forloop.counter0 }}").click(function() {
+                                      var thic = $( "#id_structures-{{ forloop.counter0 }}-thickness" ).val();                                      
+                                      if (thic.length != 0) {                                        
+                                           var wei = 0.69 * thic;
+                                           $( "#id_structures-{{ forloop.counter0 }}-weight" ).val( wei.toFixed(1) );
+                                        }
+                                    });
+                                    $("#op2-{{ forloop.counter0 }}").click(function() {
+                                      var thic = $( "#id_structures-{{ forloop.counter0 }}-thickness" ).val();                                      
+                                      if (thic.length != 0) {                                        
+                                           var wei = 0.9 * thic;
+                                           $( "#id_structures-{{ forloop.counter0 }}-weight" ).val( wei.toFixed(1) );
+                                        }
+                                    });
+                                    $("#op3-{{ forloop.counter0 }}").click(function() {
+                                      var thic = $( "#id_structures-{{ forloop.counter0 }}-thickness" ).val();                                      
+                                      if (thic.length != 0) {                                        
+                                           var wei = 2.7 * thic;
+                                           $( "#id_structures-{{ forloop.counter0 }}-weight" ).val( wei.toFixed(1) );
+                                        }
+                                    });
+                                </script>
+                            </div>
+                        </td>
+                        <td class="px-1">
+                            <div class="position-relative {% if ss.errors.thickness %}border-error{% endif %}">
+                                
+                                {% comment %}
+                                <i class="material-symbols-rounded c-selector c-selector-selected" id="{{ forloop.counter0 }}-t_counts">add</i>
+                                    {{ ss.t_counts }}
+                                {% endcomment %}
+                                    
+                                {{ ss.thickness }}
+                            </div>
+                        </td>
+                        {% if ss.instance.pk %}
+                        <td class="text-center">
+                            <div class="p-0 form-check">
+                                {{ ss.DELETE }}
+                            </div>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                    {% endif %}
+
+                </tbody>
+
+                <tbody id="sempty_form" style="display:none !important;">
+
+                    <tr id="strow-__prefix__">
+
+                        <td class="px-1">
+                            <div class="{% if formset.errors.material_type %}border-error{% endif %}" id="__prefix__-material_type-container">
+                                {{ formset.empty_form.material_type }}
+                            </div>
+                        </td>
+
+                        <td class="px-1">
+                            <div class="position-relative {% if formset.errors.weight %}border-error{% endif %}">
+                                
+                                {% comment %}
+                                    <i class="material-symbols-rounded c-selector c-selector-selected" id="__prefix__-w_counts">add</i>
+                                    {{ formset.empty_form.w_counts }}
+                                {% endcomment %}
+                                    
+                                <ul class="position-absolute p-0 ms-1 mt-1" style="list-style-type: none; line-height: 69%;">
+                                    <li class="text-xxs a-deaf font-weight-bold cursor-pointer" id="op1-__prefix__" style="user-select: none;" title="Multiplicar Espesor x Densidad (0.69)">⬤</li>                            
+                                    <li class="text-xxs a-deaf font-weight-bold cursor-pointer" id="op2-__prefix__" style="user-select: none;" title="Multiplicar Espesor x Densidad (0.9)">⬤</li> 
+                                    <li class="text-xxs a-deaf font-weight-bold cursor-pointer" id="op3-__prefix__" style="user-select: none;" title="Multiplicar Espesor x Densidad (2.7)">⬤</li>                            
+                                </ul>
+                                {{ formset.empty_form.weight }}
+                                <script>
+                                    $( "#op1-__prefix__" ).click(function() {
+                                      var thic = $( "#id_structures-__prefix__-thickness" ).val();                                      
+                                      if (thic.length != 0) {                                        
+                                           var wei = 0.69 * thic;
+                                           $( "#id_structures-__prefix__-weight" ).val( wei.toFixed(1) );
+                                        }
+                                    });
+                                    $( "#op2-__prefix__" ).click(function() {
+                                      var thic = $( "#id_structures-__prefix__-thickness" ).val();                                      
+                                      if (thic.length != 0) {                                        
+                                           var wei = 0.9 * thic;
+                                           $( "#id_structures-__prefix__-weight" ).val( wei.toFixed(1) );
+                                        }
+                                    });
+                                    $( "#op3-__prefix__" ).click(function() {
+                                      var thic = $( "#id_structures-__prefix__-thickness" ).val();                                      
+                                      if (thic.length != 0) {                                        
+                                           var wei = 2.7 * thic;
+                                           $( "#id_structures-__prefix__-weight" ).val( wei.toFixed(1) );
+                                        }
+                                    });
+                                </script>
+                            </div>
+                        </td>
+                        <td class="px-1">
+                            <div class="position-relative {% if formset.errors.thickness %}border-error{% endif %}">
+                                
+                                {% comment %}
+                                    <i class="material-symbols-rounded c-selector c-selector-selected" id="__prefix__-t_counts">add</i>
+                                    {{ formset.empty_form.t_counts }}
+                                {% endcomment %}
+                                    
+                                {{ formset.empty_form.thickness }}
+                            </div>
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+           
+        </div>
+        <div class="p-0" style="user-select:none">
+            <hr class="p-0 m-0">
+            <div class="d-flex justify-content-center text-sm align-content-middle font-weight-bolder p-0 mt-2 mb-0">
+                <a class="a-deaf text-middle" id="add_moresb" style="cursor: pointer !important">
+                    <div>
+                    <i class="material-icons"
+                        style="vertical-align: text-top; font-size: 18px !important;">add_circle</i><b
+                        style="vertical-align: text-top;"> Agregar Estructura</b>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

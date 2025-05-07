@@ -1,0 +1,326 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<!-- form_view.html -->
+{% if test_request_obj.company == 'mcl' %}
+<style>
+	:root {
+		--mc-color: #946037;
+		--mc-selection: #ad7e5a;
+		--mc-shadow-color: #94603780;
+		--mc-calendar-today: #94603780;
+		--critical-color: #94603769;
+		--mc-hover-color: #94603759;
+	}
+</style>
+<script>$('meta[name="theme-color"]').attr('content', '#946037')</script>
+{% endif %}
+<link href="{{ ASSETS_ROOT }}/css/essay-material-form.css" rel="stylesheet" />
+<div class="container-fluid pt-1 px-sm-4 px-3 pb-3">
+	<div class="row min-vh-80 h-100 justify-content-center">
+		<div class="col-xl-10 col-12 px-0 px-md-2">
+			<form method="POST">
+				{% csrf_token %}
+				<!-----------------------------------------------------TEST FORMSET----------------------------------------------------->
+				<div class="card my-3">
+					<div class="card-header p-0 mt-n4 position-relative mx-3 z-index-2" style="user-select: none">
+						<div class="bg-primary shadow-primary border-radius-lg px-3 pt-3 pb-2">
+							<div class="mt-0 d-flex justify-content-between">
+             				  <h5 class="text-white ext-center font-weight-bolder">Agregar Bobina</h5>
+             				  <h5 class="text-white ext-center font-weight-bolder">Bobina: #{{ curr_bobbin }}</h5>
+             				</div>
+						</div>
+					</div>
+					<div class="card-body mt-n4 border-radius-lg px-0 pb-2">
+						<div class="d-flex flex-wrap">
+							<div class="col-12 col-sm-6 pt-2 px-3">
+								<label class="text-primary fw-bold">Turno</label>
+								<select name="turn" class="form-control myform-focus text-center" id="turn" required>
+									<option value="" selected>---------</option>
+									<option value="I">I</option>
+									<option value="II">II</option>
+									<option value="III">III</option>
+								  </select>
+							</div>
+						
+							<div class="col-12 col-sm-6 pt-2 px-3"><label class="text-primary fw-bold">Fecha</label>
+							  <input type="text" name="date" class="form-control align-items-center myform-focus text-center" autocomplete="off" placeholder="DD/MM/AAAA" id="date" required>
+							</div>
+						
+							<div class="col-12 col-sm-6 pt-2 px-3"><label class="text-primary fw-bold">Analista de Calidad</label>
+								<select name="quality_analist" class="form-control myform-focus text-center" id="quality_analist" required>
+									<option value="" selected>---------</option>
+									<{% for a in analyst %}
+									<option value="{{ a.id }}">{{ a }}</option>
+									{% endfor %}
+								  </select>
+							</div>
+						
+							<div class="col-12 col-sm-6 pt-2 px-3"><label class="text-primary fw-bold">Operador de Producción</label>
+								<select name="production_operator" class="form-control myform-focus text-center" id="production_operator" required>
+									<option value="" selected>---------</option>
+									{% for o in operator %}
+									<option value="{{ o.id }}">{{ o }}</option>
+									{% endfor %}
+								  </select>
+							</div>
+						</div>
+						<div class="table-responsive p-0" style="overflow-y: hidden;">
+
+							{{ formset.management_form }}
+							<table class="table table-hover align-items-center text-align-center mb-0">
+								<thead class="align-items-center text-xs mb-n1">
+									<tr>
+										<th class="ps-3 col-3 pb-2">Ensayo</th>
+										<th class="text-center px-1 col-1 pb-2">Unidad</th>
+										<th class="text-center px-1 col-8 pb-2">Resultado</th>
+									</tr>
+								</thead>
+								<tbody id="form_set" class=" p-0 m-0" style="user-select: none;">
+
+									<!--Test form goes here-->
+
+									{% for essay in essays %}
+									<tr id="form-row-{{ forloop.counter0 }}">
+										<input type="hidden" name="results-{{ forloop.counter0 }}-essay"
+											id="id_results-{{ forloop.counter0 }}-essay" value="{{ essay.id }}">
+										<td class="ps-3 text-dark fw-bold">
+											<div>
+												{{ essay.essay.name }}
+											</div>
+										</td>
+										<td class="px-1 text-center text-xs">
+											<div>
+												{{ essay.essay.unit|default_if_none:'' }}
+											</div>
+										</td>
+										<td class="mx-0 ps-0 col-6">
+											<div class="d-flex flex-row p-0 m-0">
+												<a class="mx-2 pt-2  a-deaf font-weight-black cursor-pointer"
+													id="swap-{{ forloop.counter0 }}">
+													<i id="swap-fw-{{ forloop.counter0 }}" class="material-symbols-rounded" aria-hidden="true">expand_content</i>
+													<i id="swap-bk-{{ forloop.counter0 }}" class="material-symbols-rounded" aria-hidden="true" style="display: none;">collapse_content</i>
+												</a>
+												<div class="px-1 {% if results.errors.result_t %}border-error{% endif %} flex-row-reverse w-100"
+													id="text-{{ forloop.counter0 }}-container" style="display: flex;">
+													<a class="position-absolute m-2 a-deaf font-weight-black cursor-pointer"
+														id="symbol-{{ forloop.counter0 }}"
+														style="user-select: none;">±</a>
+													<input type="text" name="results-{{ forloop.counter0 }}-result_t"
+														class="ps-3 form-control myform-focus" maxlength="100"
+														id="id_results-{{ forloop.counter0 }}-result_t">
+												</div>
+												<div class="flex-row p-0 m-0 w-100"
+													id="results-{{ forloop.counter0 }}-container"
+													style="display: none;">
+													<div
+														class="px-1 col-4 {% if results.errors.result_a %}border-error{% endif %}">
+														<input type="number"
+															name="results-{{ forloop.counter0 }}-result_a"
+															class="ps-3 form-control myform-focus text-center" min="0"
+															max="9999"
+															placeholder="A" step="any"
+															id="id_results-{{ forloop.counter0 }}-result_a">
+														<input type="checkbox" name="results-{{ forloop.counter0 }}-check_a" id="id_results-{{ forloop.counter0 }}-check_a">
+                            							<label class="cursor-pointer mb-0 text-xs fw-bold" style="position: relative; bottom: 2px;" for="id_results-{{ forloop.counter0 }}-check_a">y rompe</label>
+													</div>
+													<div
+														class="px-1 col-4 {% if results.errors.result_c %}border-error{% endif %}">
+														<input type="number"
+															name="results-{{ forloop.counter0 }}-result_c"
+															class="ps-3 form-control myform-focus text-center" min="0" 
+															max="9999"
+															placeholder="C" step="any"
+															id="id_results-{{ forloop.counter0 }}-result_c">
+														<input type="checkbox" name="results-{{ forloop.counter0 }}-check_c" id="id_results-{{ forloop.counter0 }}-check_c">
+                            							<label class="cursor-pointer mb-0 text-xs fw-bold" style="position: relative; bottom: 2px;" for="id_results-{{ forloop.counter0 }}-check_c">y rompe</label>
+													</div>
+													<div
+														class="px-1 col-4 {% if results.errors.result_b %}border-error{% endif %}">
+														<input type="number"
+															name="results-{{ forloop.counter0 }}-result_b"
+															class="ps-3 form-control myform-focus text-center" min="0"
+															max="9999"
+															placeholder="B" step="any"
+															id="id_results-{{ forloop.counter0 }}-result_b">
+														<input type="checkbox" name="results-{{ forloop.counter0 }}-check_b" id="id_results-{{ forloop.counter0 }}-check_b">
+                            							<label class="cursor-pointer mb-0 text-xs fw-bold" style="position: relative; bottom: 2px;" for="id_results-{{ forloop.counter0 }}-check_b">y rompe</label>
+													</div>
+												</div>
+												<script>
+													$(document).ready(function () {
+														if ($("#id_results-{{ forloop.counter0 }}-result_a").val() || $("#id_results-{{ forloop.counter0 }}-result_b").val() || $("#id_results-{{ forloop.counter0 }}-result_c").val()) {
+															$("#text-{{ forloop.counter0 }}-container").hide();
+															$("#swap-fw-{{ forloop.counter0 }}").hide();
+															$("#results-{{ forloop.counter0 }}-container").css("display", "flex");
+															$("#swap-bk-{{ forloop.counter0 }}").show();
+														}
+													});
+												</script>
+											</div>
+										</td>
+
+										<script>
+											$("#symbol-{{ forloop.counter0 }}").click(function () {
+												var text = $("#id_results-{{ forloop.counter0 }}-result_t").val();
+												$("#id_results-{{ forloop.counter0 }}-result_t").val(text + "±");
+												$("#id_results-{{ forloop.counter0 }}-result_t").focus();
+											});
+
+											$('#swap-{{ forloop.counter0 }}').on('click', function () {
+												if ($('#results-{{ forloop.counter0 }}-container').is(":hidden")) {
+													$('#results-{{ forloop.counter0 }}-container').css('display', 'flex');
+													$('#text-{{ forloop.counter0 }}-container').hide();
+													$('#swap-fw-{{ forloop.counter0 }}').hide();
+													$('#swap-bk-{{ forloop.counter0 }}').show();
+
+													$('#id_results-{{ forloop.counter0 }}-result_t').val(null);
+												} else {
+													$('#results-{{ forloop.counter0 }}-container').hide();
+													$('#text-{{ forloop.counter0 }}-container').show();
+													$('#swap-fw-{{ forloop.counter0 }}').show();
+													$('#swap-bk-{{ forloop.counter0 }}').hide();
+
+													$('#id_results-{{ forloop.counter0 }}-result_a').val(null);
+													$('#id_results-{{ forloop.counter0 }}-result_b').val(null);
+													$('#id_results-{{ forloop.counter0 }}-result_c').val(null);
+												}
+											});
+										</script>
+
+										{% if essay.instance.pk %}
+										<td class="text-center">
+											<div class="p-0 form-check">
+												{{ essay.DELETE }}
+											</div>
+										</td>
+										{% endif %}
+									</tr>
+									{% endfor %}
+
+								<tbody id="empty_form" style="display:none !important;">
+
+									<tr id="form-row-__prefix__">
+
+										<td class="ps-2 pe-1 col-5">
+											<div
+												class="position-relative {% if formset_essay.errors.essay %}border-error{% endif %}">
+												essay
+											</div>
+										</td>
+
+										<td class="mx-0 ps-0 col-6">
+											<div class="d-flex flex-row p-0 m-0">
+												<a class="mx-2 pt-2  a-deaf font-weight-black cursor-pointer"
+													id="swap-__prefix__">
+													<i id="swap-fw-__prefix__" class="material-symbols-rounded" aria-hidden="true">expand_content</i>
+													<i id="swap-bk-__prefix__" class="material-symbols-rounded" aria-hidden="true" style="display: none;">collapse_content</i>
+												</a>
+												<div class="px-1 {% if formset.errors.result_t %}border-error{% endif %} flex-row-reverse w-100"
+													id="text-__prefix__-container" style="display: flex;">
+													<a class="position-absolute m-2 a-deaf font-weight-black cursor-pointer"
+														id="symbol-__prefix__" style="user-select: none;">±</a>
+													{{ formset.empty_form.result_t }}
+												</div>
+												<div class="flex-row p-0 m-0 w-100" id="results-__prefix__-container"
+													style="display: none;">
+													<div
+														class="px-1 col-4 {% if formset.errors.result_a %}border-error{% endif %}">
+														{{ formset.empty_form.result_a }}
+													</div>
+													<div
+														class="px-1 col-4 {% if formset.errors.result_c %}border-error{% endif %}">
+														{{ formset.empty_form.result_c }}
+													</div>
+													<div
+														class="px-1 col-4 {% if formset.errors.result_b %}border-error{% endif %}">
+														{{ formset.empty_form.result_b }}
+													</div>
+												</div>
+											</div>
+										</td>
+
+										<script>
+											$("#symbol-__prefix__").click(function () {
+												var text = $("#id_results-__prefix__-result_t").val();
+												$("#id_results-__prefix__-result_t").val(text + "±");
+												$("#id_results-__prefix__-result_t").focus();
+											});
+
+											$('#swap-__prefix__').on('click', function () {
+												if ($('#results-__prefix__-container').is(":hidden")) {
+													$('#results-__prefix__-container').css('display', 'flex');
+													$('#text-__prefix__-container').hide();
+													$('#swap-fw-__prefix__').hide();
+													$('#swap-bk-__prefix__').show();
+
+													$('#id_results-__prefix__-result_t').val(null);
+												} else {
+													$('#results-__prefix__-container').hide();
+													$('#text-__prefix__-container').show();
+													$('#swap-fw-__prefix__').show();
+													$('#swap-bk-__prefix__').hide();
+
+													$('#id_results-__prefix__-result_a').val(null);
+													$('#id_results-__prefix__-result_b').val(null);
+													$('#id_results-__prefix__-result_c').val(null);
+												}
+											});
+										</script>
+									</tr>
+
+								</tbody>
+
+								</tbody>
+							</table>
+							<div class="p-0" style="user-select:none">
+								<hr class="p-0 m-0">
+								<div
+									class="d-flex justify-content-center text-sm align-content-middle font-weight-bolder p-0 mt-2 mb-0">
+									<a class="a-deaf text-middle" id="add_more_b" style="cursor: pointer !important">
+										<div>
+											<button class="mb-0 btn btn-primary" type="submit">Guardar</button>
+											<a onClick="window.history.back();return false;">
+												<button type="button" class="mb-0 btn btn-secondary">Cancelar</button>
+											</a>
+										</div>
+									</a>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+				<!--------------------------------------------------END TEST FORMSET-------------------------------------------------->
+			</form>
+		</div>
+	</div>
+</div>
+<script>
+	$('#turn').select2({
+		minimumResultsForSearch: Infinity,
+		placeholder: '...',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+	$( "#date" ).datepicker( {
+		showOtherMonths: "true",
+		selectOtherMonths: "true",
+	  },$.datepicker.regional[ "es" ] );
+	
+	$('#quality_analist').select2({
+		allowClear: true,
+		placeholder: 'Seleccione...',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});		
+	$('#production_operator').select2({
+		allowClear: true,
+		placeholder: 'Seleccione...',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+</script>
+{% endblock content %}

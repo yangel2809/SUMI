@@ -1,0 +1,10 @@
+@font-face {
+    font-family: "Benzin";
+    src: url("./benzin-extrabold.ttf") format("truetype");
+}
+
+.title-benzin {
+    font-family: "Benzin", ubuntu;
+    color: #fff !important; 
+} 
+

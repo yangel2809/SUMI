@@ -1,0 +1,214 @@
+<!-----------------------------------------------------TEST FORMSET----------------------------------------------------->
+<div class="card my-3">
+  <div class="card-header p-0 mt-n2 position-relative mx-1 z-index-2" style="user-select: none">
+    <div class="bg-primary shadow-primary border-radius-lg px-3 pt-3 pb-2">
+      <div class="mt-0 d-flex ">
+        <h5 class="text-white font-weight-bolder">Análisis de Muestra</h5>
+        <div class="ps-3 ms-auto my-auto">
+          <a class="mouse-point" title="Agregar Campo" type="hidden" id="add_more"
+            style="cursor: pointer !important">
+            <i class="material-icons text-white">addchart</i>
+          </a>
+          <a class="mouse-point" title="Quitar Campo" type="hidden" id="remove"
+            style="cursor: pointer !important">
+            <i class="material-icons text-white">remove_circle</i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card-body mt-n4 border-radius-lg px-0 pb-2">
+    <div class="table-responsive p-0" style="overflow-y: hidden;">
+
+      {{ formset_essay.management_form }}
+      <table class="table table-hover align-items-center text-align-center mb-0">
+        <thead class="align-items-center text-xs mb-n1">
+          <tr>
+            <th class="text-center px-1 col-5 pb-2">Ensayo</th>
+            <th class="text-center px-1 col-6 pb-2">Resultados</th>
+            {% if formset_essay.instance.pk %}
+            <th class="text-center px-1 col-1 pb-2">
+              <i class="material-icons">delete</i>
+            </th>
+            {% endif %}
+          </tr>
+        </thead>
+        <tbody id="form_set" class=" p-0 m-0" style="user-select: none;">
+
+          <!--Test form goes here-->
+
+          {% if formset_essay %}
+          {% for form in formset_essay %}
+          {% for hidden in form.hidden_fields %}
+          {{ hidden }}
+          {% endfor %}
+          <tr class="row-cols-3" id="form-row-{{ forloop.counter0 }}">
+            <td class="ps-2 pe-1 col-5">
+              <div class=" {% if form.errors.essay %}border-error{% endif %}">
+                {{ form.essay }}
+              </div>
+            </td>
+                        
+            <td class="mx-0 ps-0 col-6">
+              <div class="d-flex flex-row p-0 m-0">
+                <a class="mx-2 pt-2  a-deaf font-weight-black cursor-pointer" id="swap-{{ forloop.counter0 }}">
+                  <i id="swap-fw-{{ forloop.counter0 }}" class="material-symbols-rounded" aria-hidden="true">expand_content</i>
+                  <i id="swap-bk-{{ forloop.counter0 }}" class="material-symbols-rounded" aria-hidden="true" style="display: none;">collapse_content</i>
+                </a>
+                <div class="px-1 {% if form.errors.result_t %}border-error{% endif %} flex-row-reverse w-100" id="text-{{ forloop.counter0 }}-container" style="display: flex;">
+                  <a class="position-absolute m-2 a-deaf font-weight-black cursor-pointer" id="symbol-{{ forloop.counter0 }}" style="user-select: none;">±</a>{{ form.result_t }}
+                </div>
+                <div class="flex-row p-0 m-0 w-100" id="results-{{ forloop.counter0 }}-container" style="display: none;">
+                  <div class="px-1 col-4 {% if form.errors.result_a %}border-error{% endif %}">
+                    {{ form.result_a }}
+                    {{ form.check_a }} <label class="cursor-pointer text-xs fw-bold" style="position: relative; bottom: 2px;" for="id_essays-{{ forloop.counter0 }}-check_a">y rompe</label>
+                  </div>
+                  <div class="px-1 col-4 {% if form.errors.result_c %}border-error{% endif %}">
+                    {{ form.result_c }}
+                    {{ form.check_c }} <label class="cursor-pointer text-xs fw-bold" style="position: relative; bottom: 2px;" for="id_essays-{{ forloop.counter0 }}-check_c">y rompe</label>
+                  </div>
+                  <div class="px-1 col-4 {% if form.errors.result_b %}border-error{% endif %}">
+                    {{ form.result_b }}
+                    {{ form.check_b }} <label class="cursor-pointer text-xs fw-bold" style="position: relative; bottom: 2px;" for="id_essays-{{ forloop.counter0 }}-check_b">y rompe</label>
+                  </div>
+                </div>
+                <script>
+                  $(document).ready(function() {
+                    if ($("#id_essays-{{ forloop.counter0 }}-result_a").val()) {
+                      $("#text-{{ forloop.counter0 }}-container").hide();
+                      $("#swap-fw-{{ forloop.counter0 }}").hide();
+                      $("#results-{{ forloop.counter0 }}-container").css("display", "flex");
+                      $("#swap-bk-{{ forloop.counter0 }}").show();
+                    }
+                  });
+                </script>
+              </div>
+            </td>
+
+            <script>
+              $("#symbol-{{ forloop.counter0 }}").click(function () {
+                var text = $("#id_essays-{{ forloop.counter0 }}-result_t").val();
+                $("#id_essays-{{ forloop.counter0 }}-result_t").val(text + "±");
+                $("#id_essays-{{ forloop.counter0 }}-result_t").focus();
+              });
+
+              $('#swap-{{ forloop.counter0 }}').on('click', function(){
+                if( $('#results-{{ forloop.counter0 }}-container').is(":hidden")){
+                  $('#results-{{ forloop.counter0 }}-container').css('display', 'flex');
+                  $('#text-{{ forloop.counter0 }}-container').hide();
+                  $('#swap-fw-{{ forloop.counter0 }}').hide();
+                  $('#swap-bk-{{ forloop.counter0 }}').show();
+                  
+                  $('#id_essays-{{ forloop.counter0 }}-result_t').val(null);
+                }else{
+                  $('#results-{{ forloop.counter0 }}-container').hide();
+                  $('#text-{{ forloop.counter0 }}-container').show();
+                  $('#swap-fw-{{ forloop.counter0 }}').show();
+                  $('#swap-bk-{{ forloop.counter0 }}').hide();
+                  
+                  $('#id_essays-{{ forloop.counter0 }}-result_a').val(null);
+                  $('#id_essays-{{ forloop.counter0 }}-result_b').val(null);
+                  $('#id_essays-{{ forloop.counter0 }}-result_c').val(null);
+                }
+              });
+            </script>
+
+            {% if form.instance.pk %}
+            <td class="text-center">
+              <div class="p-0 form-check">
+                {{ form.DELETE }}
+              </div>
+            </td>
+            {% endif %}
+          </tr>
+          {% endfor %}
+          {% endif %}
+
+        <tbody id="empty_form" style="display:none !important;">
+          {% for hidden in formset_essay.hidden_fields %}
+          {{ hidden }}
+          {% endfor %}
+          <tr class="row-cols-3 " id="form-row-__prefix__">
+
+            <td class="ps-2 pe-1 col-5">
+              <div class="position-relative {% if formset_essay.errors.essay %}border-error{% endif %}">
+                {{ formset_essay.empty_form.essay }}
+              </div>
+            </td>
+
+            <td class="mx-0 ps-0 col-6">
+              <div class="d-flex flex-row p-0 m-0">
+                <a class="mx-2 pt-2  a-deaf font-weight-black cursor-pointer" id="swap-__prefix__">
+                  <i id="swap-fw-__prefix__" class="material-symbols-rounded" aria-hidden="true">expand_content</i>
+                  <i id="swap-bk-__prefix__" class="material-symbols-rounded" aria-hidden="true" style="display: none;">collapse_content</i>
+                </a>
+                <div class="px-1 {% if formset_essay.errors.result_t %}border-error{% endif %} flex-row-reverse w-100" id="text-__prefix__-container" style="display: flex;">
+                  <a class="position-absolute m-2 a-deaf font-weight-black cursor-pointer" id="symbol-__prefix__" style="user-select: none;">±</a>{{ formset_essay.empty_form.result_t }}
+                </div>
+                <div class="flex-row p-0 m-0 w-100" id="results-__prefix__-container" style="display: none;">
+                  <div class="px-1 col-4 {% if formset_essay.errors.result_a %}border-error{% endif %}">
+                    {{ formset_essay.empty_form.result_a }}
+                    {{ formset_essay.empty_form.check_a }} <label class="cursor-pointer text-xs fw-bold" style="position: relative; bottom: 2px;" for="id_essays-__prefix__-check_a">y rompe</label>
+                  </div>
+                  <div class="px-1 col-4 {% if formset_essay.errors.result_c %}border-error{% endif %}">
+                    {{ formset_essay.empty_form.result_c }}
+                    {{ formset_essay.empty_form.check_c }} <label class="cursor-pointer text-xs fw-bold" style="position: relative; bottom: 2px;" for="id_essays-__prefix__-check_c">y rompe</label>
+                  </div>
+                  <div class="px-1 col-4 {% if formset_essay.errors.result_b %}border-error{% endif %}">
+                    {{ formset_essay.empty_form.result_b }}
+                    {{ formset_essay.empty_form.check_b }} <label class="cursor-pointer text-xs fw-bold" style="position: relative; bottom: 2px;" for="id_essays-__prefix__-check_b">y rompe</label>
+                  </div>
+                </div>
+              </div>
+            </td>
+
+            <script>
+              $("#symbol-__prefix__").click(function () {
+                var text = $("#id_essays-__prefix__-result_t").val();
+                $("#id_essays-__prefix__-result_t").val(text + "±");
+                $("#id_essays-__prefix__-result_t").focus();
+              });
+
+              $('#swap-__prefix__').on('click', function(){
+                if( $('#results-__prefix__-container').is(":hidden")){
+                  $('#results-__prefix__-container').css('display', 'flex');
+                  $('#text-__prefix__-container').hide();
+                  $('#swap-fw-__prefix__').hide();
+                  $('#swap-bk-__prefix__').show();
+                  
+                  $('#id_essays-__prefix__-result_t').val(null);
+                }else{
+                  $('#results-__prefix__-container').hide();
+                  $('#text-__prefix__-container').show();
+                  $('#swap-fw-__prefix__').show();
+                  $('#swap-bk-__prefix__').hide();
+                  
+                  $('#id_essays-__prefix__-result_a').val(null);
+                  $('#id_essays-__prefix__-result_b').val(null);
+                  $('#id_essays-__prefix__-result_c').val(null);
+                }
+              });
+            </script>
+          </tr>
+
+        </tbody>
+
+        </tbody>
+      </table>
+
+    </div>
+    <div class="p-0" style="user-select:none">
+      <hr class="p-0 m-0">
+      <div class="d-flex justify-content-center text-sm align-content-middle font-weight-bolder p-0 mt-2 mb-0">
+        <a class="a-deaf text-middle" id="add_more_b" style="cursor: pointer !important">
+          <div>
+            <i class="material-icons" style="vertical-align: text-top; font-size: 18px !important;">add_circle</i><b
+              style="vertical-align: text-top;"> Agregar Ensayo</b>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--------------------------------------------------END TEST FORMSET-------------------------------------------------->

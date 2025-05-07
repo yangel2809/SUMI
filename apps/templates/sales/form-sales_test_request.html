@@ -1,0 +1,286 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<link href="{{ ASSETS_ROOT }}/css/plan-form.css" rel="stylesheet" />
+<style>
+  label{
+    margin-top: .6em;
+    margin-bottom: 0;
+    
+  }
+</style>
+
+<div class="container pt-1 pb-3 px-sm-3 px-1">
+  <div class="row min-vh-80 justify-content-center h-100">
+    <div class="container-sm col-lg-10 col-12">
+
+      <div class="card justify-content-center my-4">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2" style="user-select: none">
+          <div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2">
+            <div class="mt-2 justify-content-center">
+              <h5 class="text-white text-center font-weight-bolder me-3">{% if 'edit' in request.get_full_path %}Editar {% endif %}Solicitud de Prueba</h5>
+            </div>
+          </div>
+        </div>
+        <div class="card-body container justify-content-center px-0 py-2">
+          <div class="form-group justify-content-center d-flex input-group input-group-outline px-3">
+            <form class="form col-12" action="" method="POST"  id="main-form" enctype="multipart/form-data">
+
+              {% csrf_token %}
+              <div class="p-0">
+                <div class="d-flex flex-row flex-wrap">
+                  <div class="col-6 p-1">
+                    <label for="date">{{ form.date.label }}</label>
+                    {{ form.date }}
+                  </div>
+                  <div class="col-6 p-1">
+                    <label for="company">{{ form.company.label }}</label>
+                    {{ form.company }}
+                  </div>
+                </div>
+                <div class="d-flex flex-row flex-wrap">
+                  <div class="col-6 p-1">
+                    <label for="client">{{ form.client.label }}</label>
+                    {{ form.client }}
+                  </div>
+                  <div class="col-6 p-1">
+                    <label for="product">{{ form.product.label }}</label>
+                    {{ form.product }}
+                  </div>
+                </div>
+
+                <h6 class="text-primary mb-1 text-center fw-bold mt-3">Elementos Suministrados por el Cliente</h6>
+                <div class="d-flex flex-wrap flex-row gap-3 justify-content-center user-select-none mb-3 px-2">
+                  <div class="d-flex d-inline">
+                    <label class="cursor-pointer pe-1" for="printed_sample">{{ form.printed_sample.label }}</label>
+                    <div class="p-0 form-check">{{ form.printed_sample }}</div>
+                  </div>
+                  <div class="d-flex d-inline">
+                    <label class="cursor-pointer pe-1" for="mechanical_plan">{{ form.mechanical_plan.label }}</label>
+                    <div class="p-0 form-check">{{ form.mechanical_plan }}</div>
+                  </div>
+                  <div class="d-flex d-inline">
+                    <label class="cursor-pointer pe-1" for="technichal_specs">{{ form.technichal_specs.label }}</label>
+                    <div class="p-0 form-check">{{ form.technichal_specs }}</div>
+                  </div>
+                  <div class="d-flex d-inline">
+                    <label class="cursor-pointer pe-1" for="arts">{{ form.arts.label }}</label>
+                    <div class="p-0 form-check">{{ form.arts }}</div>
+                  </div>
+                </div>
+
+                <div class="d-flex flex-row flex-wrap">
+                  <div class="col-6 p-1">
+                    <label for="product_type">{{ form.product_type.label }}</label>
+                    {{ form.product_type }}
+                  </div>
+                  <div class="col-6 p-1">
+                    <label for="design">{{ form.design.label }}</label>
+                    {{ form.design }}
+                  </div>
+                </div>
+
+                {% include 'includes/document_dropper.html' with documents=form.documents existing=object.documents.all %}
+                
+                {% include 'sales/formsets/sales_structure.html' %} 
+                <h6 class="mb-1 fw-bold mt-3 ps-2">Observaciones</h6>
+
+                <div class="px-1">{{ form.observation }}</div>
+                <div class="pt-2 text-center user-select-none">
+                  <button type="submit" class="btn btn-primary mx-1 my-2">Guardar</button>
+                  <a onClick="window.history.back();return false;">
+                    <button type="button" class="btn btn-secondary mx-1 my-2">Cancelar</button>
+                  </a>
+                </div>
+
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function() {
+    $('#company').on('change', function() {
+        if ($(this).val() === 'mcl') {
+          $('meta[name="theme-color"]').attr('content', '#946037');
+          $(':root').css('--mc-color', '#946037');
+          $(':root').css('--mc-selection', '#ad7e5a');
+          $(':root').css('--mc-shadow-color', '#94603780');
+          $(':root').css('--mc-calendar-today', '#94603780');
+          $(':root').css('--critical-color', '#94603769');
+          $(':root').css('--mc-hover-color', '#94603759');
+        } else {
+          $('meta[name="theme-color"]').attr('content', '#fe5000');
+          $(':root').css('--mc-color', '#fe5000');
+          $(':root').css('--mc-selection', '#fe7a51');
+          $(':root').css('--mc-shadow-color', '#fe520080');
+          $(':root').css('--mc-calendar-today', '#fea67d');
+          $(':root').css('--critical-color', '#fedabf');
+          $(':root').css('--mc-hover-color', '#fed9b5');
+        };
+      });
+      $('#company').trigger('change')
+          
+      $('#client').select2({
+        allowClear: true,
+        placeholder: 'Seleccione...',
+        width: '100%',
+        selectionCssClass: ':all:',
+        dropdownCssClass: ':all:'
+      });
+      $('#company').select2({
+        allowClear: true,
+        placeholder: 'Seleccione...',
+        width: '100%',
+        selectionCssClass: ':all:',
+        dropdownCssClass: ':all:'
+      });
+      $('#product_type').select2({
+        allowClear: true,
+        placeholder: 'Seleccione...',
+        width: '100%',
+        selectionCssClass: ':all:',
+        dropdownCssClass: ':all:'
+      });
+      $('#design').select2({
+        allowClear: true,
+        placeholder: 'Seleccione...',
+        width: '100%',
+        selectionCssClass: ':all:',
+        dropdownCssClass: ':all:'
+      });
+      $( "#date" ).datepicker( {
+        showOtherMonths: "true",
+        selectOtherMonths: "true",
+      },$.datepicker.regional[ "es" ] );
+
+      let n = 0;
+  
+  $("select[name*='-material_type']").each(function () {
+
+    const w_counts = $('#id_structures-' + n + "-w_counts")
+
+    if (!w_counts.prop("checked")){
+      $('#' + n + "-w_counts").removeClass('c-selector-selected')
+    };
+    
+    const t_counts = $('#id_structures-' + n + "-t_counts")
+
+    if (!t_counts.prop("checked")){
+      $('#' + n + "-t_counts").removeClass('c-selector-selected')
+    };
+
+    $("select[name|='structures-" + n + "-material_type']").attr("id",'id_structures-' + n + '-material_type');
+    
+    $("select[name|='structures-" + n + "-material_type']").select2({
+      placeholder: 'Seleccione...',
+      width: '100%',
+      selectionCssClass: ':all:',
+      dropdownCssClass: ':all:',
+      ajax: {
+        url: '/x-material-types/',
+        dataType: 'json',
+        data: function (params) {
+          var queryParameters = {
+            f: params.term
+          }
+          return queryParameters;
+        },
+        processResults: function (data) {
+          return {
+            results: JSON.parse(data).map(function(item) {
+              return { id: item.pk, text: item.fields.name };
+            })
+          };
+        },
+      },
+      language: {
+        noResults: function () {
+          return "No hay resultados";
+        },
+        searching: function () {
+          return "Buscando...";
+        }
+      }
+    })
+      
+    n++
+  });
+  
+  $('#add_mores, #add_moresb').click(function () {
+    var sform_idx = parseInt($('#id_structures-TOTAL_FORMS').val());
+    $('#sform_set').append($('#sempty_form').html().replace(/__prefix__/g, sform_idx));
+    $('#id_structures-TOTAL_FORMS').val(parseInt(sform_idx) + 1);
+    max_sindex = parseInt(sform_idx)
+    if (max_sindex == 0){
+      $('#sindex').val('-1')
+      $('#print_selector').trigger('change');
+    }
+    
+    if(parseInt($('#sindex').val()) == -2){
+      $('#sindex').val('-1')
+    }
+
+    $('#id_structures-' + sform_idx + '-material_type').select2({
+      placeholder: 'Seleccione...',
+      width: '100%',
+      selectionCssClass: ':all:',
+      dropdownCssClass: ':all:',
+      ajax: {
+        url: '/x-material-types/',
+        dataType: 'json',
+        data: function (params) {
+          var queryParameters = {
+            f: params.term
+          }
+          return queryParameters;
+        },
+        processResults: function (data) {
+          return {
+            results: JSON.parse(data).map(function(item) {
+              return { id: item.pk, text: item.fields.name };
+            })
+          };
+        }
+      },
+      language: {
+        noResults: function () {
+          return "No hay resultados";
+        },
+        searching: function () {
+          return "Buscando...";
+        }
+      }
+    });
+
+  });
+
+  $('#remove_s').click(function () {
+    var sform_idz = parseInt($('#id_structures-TOTAL_FORMS').val());
+     
+    
+    if(sform_idz > sform_minlimit){
+      sform_idz = sform_idz - 1;
+      $('#strow-' + sform_idz).remove();
+      $('#id_structures-TOTAL_FORMS').val(parseInt(sform_idz));
+      max_sindex = parseInt(sform_idz) - 1;
+      if(sform_idz == 0){
+        $('#sindex').val('-2');
+        $('#print_selector').trigger('change');
+      }
+    }
+  });
+
+
+  let sform_minlimit = 0 
+  });
+
+</script>
+
+{% endblock content %}
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

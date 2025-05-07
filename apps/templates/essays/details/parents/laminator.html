@@ -1,0 +1,206 @@
+{% load tz %}
+{% load home_tags %}
+<div class="d-flex flex-row flex-wrap justify-content-between px-1 px-md-3">
+  <div class="d-flex flex-sm-row{% if test_request_obj.company == 'mcl' %}-reverse{% endif %} flex-column{% if not test_request_obj.company == 'crx' %}-reverse{% endif %} user-select-none">
+    <div class="p-1">
+      {% if test_request_obj.company == 'mcl' %}
+          <img alt="Morrocel c.a RIF:J-06000377-6" width="220em" src="{{ ASSETS_ROOT }}/img/logo_mcl.svg" />
+      {% else %}
+        <img alt="Curex c.a RIF:J-00074598-6" width="220em" src="{{ ASSETS_ROOT }}/img/logo_crx.svg" />
+      {% endif %}
+    </div>
+    </div>
+    <div class="d-flex flex-column align-items-end">
+      <p class="text-end m-0 mb-n1 fw-bolder text-xxs">
+        F-ASC-L15
+      </p>
+      <p class="text-end m-0 mb-n1 fw-bolder text-xxs">
+        REV-08
+      </p>
+      <p class="text-end m-0 mb-n1 fw-bolder text-xxs text-uppercase">
+        04/ABR/2016
+      </p>
+    </div>
+    <h3 class="col-12 text-center mb-1 mt-2 fw-bold text-primary" style="line-height: 1;">Control: Arranque de Producción Laminación</h3>
+  </div>
+
+<div class="row px-1 px-md-3">
+  <div class="d-flex flex-row flex-wrap justify-content-lg-between gap-3 py-2">
+    <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+      <x class="m-0">Máquina laminadora:&thinsp;</x><x class="text-dark fw-bold">{{ lamination_boot_obj.laminator }}</x>
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+      <x class="m-0">Fecha y hora:&thinsp;</x><x class="text-dark fw-bold"><abbr title="Formato 24 Horas">{{ lamination_boot_obj.date_time }}</abbr></x>
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+      <x class="m-0">Turno:&thinsp;</x><x class="text-dark fw-bold">{{ lamination_boot_obj.turn }}</x>
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+      <x class="m-0">Pedido N°:&thinsp;</x><x class="text-dark fw-bold">{{ test_request_obj.number }}</x>
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+      <x class="m-0">Orden de produción:&thinsp;</x><x class="text-dark fw-bold">
+        PR-{{ test_request_obj.production_order }}
+      </x>
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+      <x class="m-0">Cliente:&thinsp;</x><x class="text-dark fw-bold">{% if test_request_obj.check_test_client %}{{ test_request_obj.test_client }}{% else %}{{ test_request_obj.client }}{% endif %}</x>
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+      <x class="m-0">Producto:&thinsp;</x><x class="text-dark fw-bold">{{ test_request_obj.product }}</x>
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+      <x class="m-0">Código:&thinsp;</x><x class="text-dark fw-bold">PR</x>
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+      <x class="m-0">Velocidad de Máquina (m/min):&thinsp;</x><x class="text-dark fw-bold">{{ lamination_boot_obj.machine_speed|truncate|swap_comma }}</x>
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+      <x class="mb-0">Tratamiento corona:&thinsp;</x><x class="text-dark fw-bold">
+        {% with pri=lamination_boot_obj.crown_treatment_pri sec=lamination_boot_obj.crown_treatment_sec %}
+        {% if sec or pri %}
+        {% if pri %}Desbobinador Primario{% endif %}{% if sec and pri %} y {% endif %}{% if sec %}Desbobinador Secundario{% endif %}
+        {% else %}
+        NO
+        {% endif %}
+        {% endwith %}
+      </x>
+    </div>
+  </div>
+  <hr>
+    <!-- Structure -->
+
+    <h6 class="fw-bold text-primary m-0">Estructura <x class="fw-normal">(Orden en que los materiales se acoplan)</x> - Paso: {{ lamination_boot_obj.step }}</h6>
+    <div class="d-flex flex-row flex-wrap justify-content-lg-between gap-3">
+      <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+        <x class="mb-0 fw-bold">1:&thinsp;</x>{{ lamination_boot_obj.st_1|default_if_none:"-" }}
+      </div>
+      <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+        <x class="mb-0 fw-bold">2:&thinsp;</x>{{ lamination_boot_obj.st_2|default_if_none:"-" }}
+      </div>
+      <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+        <x class="mb-0 fw-bold">3:&thinsp;</x>{{ lamination_boot_obj.st_3|default_if_none:"-" }}
+      </div>
+      <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+        <x class="mb-0 fw-bold">4:&thinsp;</x>{{ lamination_boot_obj.st_4|default_if_none:"-" }}
+      </div>
+    </div>
+
+    <div class="d-flex flex-row flex-wrap justify-content-lg-between gap-3 pb-2">
+      <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+        <x class="mb-0 fw-bold">Adhesivo:&thinsp;</x>{{ lamination_boot_obj.adhesive }}
+      </div>
+      {% if lamination_boot_obj.batch %}
+      <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+        <x class="mb-0 fw-bold">Lote Almacen:&thinsp;</x>{{ lamination_boot_obj.batch }}
+      </div>
+      {% endif %}
+      {% if lamination_boot_obj.formula %}
+      <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+        <x class="mb-0 fw-bold">Fórmula:&thinsp;</x>{{ lamination_boot_obj.formula }}
+      </div>
+      {% endif %}
+    </div>
+    <!-- essays -->
+    {% if lamination_essay %}
+    <div class="card my-3 mt-4 px-0">
+      <div class="card-header p-0 mt-n4 position-relative mx-2 z-index-2">
+        <div class="bg-primary text-center shadow-primary border-radius-lg ps-3 pt-2 pb-2">
+          <h5 class="text-white font-weight-bolder m-0">Análisis de Muestra</h5>    
+        </div>
+      </div>
+      <div class="card-body mt-n4 border-radius-lg px-md-3 px-2 pb-2">
+        <div class="table-responsive p-0">
+          <table class="table align-items-center text-align-center mb-0">
+            <thead class="align-items-center">
+              <tr>
+                <th>Ensayos</th>
+                <th class="text-center">Unidad</th>
+                <th class="text-center">Resultados</th>
+                <th class="text-center col-1">Promedio</th>
+              </tr>
+            </thead>
+            <tbody>    
+              {% for essay in lamination_essay %}
+              <tr>
+                <td>
+                  <div class="d-flex flex-row justify-content-between">
+                      <h6 class="m-0">{{ essay.essay.name }}</h6>
+                  </div>
+                </td>
+                <td class="text-center">
+                  {{ essay.essay.unit.symbol }}
+                </td>
+                {% if essay.result_p or essay.result_p == 0 %}
+                <td>
+                  <div class="d-flex justify-content-center ">
+                    <div class="flex-shrink-1 font-monospace">
+                      A: {% if essay.result_a == 0 %}{% if essay.check_a %}-R{% else %}-{% endif %}{% else %}
+                      {{ essay.result_a|truncate|default_if_none:"-"|swap_comma }}{% if essay.check_a %}-R{% endif %}{% endif %}
+                      <br>
+                      C: {% if essay.result_c == 0 %}{% if essay.check_c %}-R{% else %}-{% endif %}{% else %}
+                      {{ essay.result_c|truncate|default_if_none:"-"|swap_comma }}{% if essay.check_c %}-R{% endif %}{% endif %}
+                      <br>
+                      B: {% if essay.result_b == 0 %}{% if essay.check_b %}-R{% else %}-{% endif %}{% else %}
+                      {{ essay.result_b|truncate|default_if_none:"-"|swap_comma }}{% if essay.check_b %}-R{% endif %}{% endif %}
+                    </div>
+                    </div>
+                </td>
+                <td class="text-center fw-bold text-dark col-1">
+                  {% if essay.result_p == 0 %}{% if essay.check_p %}-R{% else %}-{% endif %}{% else %}
+                  {{ essay.result_p|truncate|swap_comma }}{% if essay.check_p %}-R{% endif %}{% endif %}
+                </td>
+                {% else %}
+                <td class="text-center">
+                  {{ essay.result_t }}
+                </td>
+                <td class="text-center">
+                  -
+                </td>
+                {% endif %}
+              </tr>
+              {% endfor %}
+            </tbody>
+            <script>
+              $(document).ready(function(){
+                var weight_count = 0
+                $('.st-weight-row').each(function(){
+                  weight_count += parseFloat($(this).attr('value'))
+                })
+                $('#weight-total').text(weight_count)
+                var thickn_count = 0
+                $('.st-thickn-row').each(function(){
+                  thickn_count += parseFloat($(this).attr('value'))
+                })
+                $('#thickn-total').text(thickn_count)
+              })
+            </script>
+          </table>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    {% if lamination_boot_obj.observation.html %}
+      {% if lamination_boot_obj.observation.html != '<p><br></p>' %}
+        <h6 class="fw-bold text-primary m-0">Observaciones</h6>
+        <br>
+        <div class="col-12 pb-2">{{ lamination_boot_obj.observation.html|safe }}</div>
+      {% endif %}
+    {% endif %}
+    {% if lamination_boot_obj.time and lamination_boot_obj.temp %}
+    <h6 class="fw-bold text-primary m-0">Se somete muestra a envejecimiento</h6>
+    <div class="col-6 pb-2"><x class="mb-0 fw-bold">Tiempo (min.):&thinsp;</x>{{ lamination_boot_obj.time }}</div>
+    <div class="col-6 pb-2"><x class="mb-0 fw-bold">Temperatura (°C):&thinsp;</x>{{ lamination_boot_obj.temp }}</div>
+    {% endif %}
+
+    <div class="d-flex flex-row flex-wrap justify-content-between gap-3 pb-3">
+      <div>
+        <h5 class="fw-bold text-primary m-0">Por Aseguramiento de la Calidad</h5>
+        <p class="text-lg fw-normal p-0 m-0">{{ lamination_boot_obj.quality_analist }}</p>
+      </div>
+      <div>
+        <h5 class="fw-bold text-primary m-0">Por Producción</h5>
+        <p class="text-lg fw-normal text-sm-end p-0 m-0">{{ lamination_boot_obj.production_operator }}</p>
+      </div>
+    </div>
+  </div>

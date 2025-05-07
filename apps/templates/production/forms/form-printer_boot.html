@@ -1,0 +1,587 @@
+{% extends "layouts/base.html" %}
+{% load home_tags %}
+{% block content %}
+<!-- form_view.html -->
+{% if order_obj.sale_order.plan.company == 'mcl' %}
+<style>:root {--mc-color: #946037;--mc-selection: #ad7e5a;--mc-shadow-color: #94603780;--mc-calendar-today: #94603780;--critical-color: #94603769;--mc-hover-color: #94603759;}</style>
+<script>$('meta[name="theme-color"]').attr('content', '#946037')</script>
+{% endif %}
+<style>label{margin-bottom: 0 !important;}</style>
+<link href="{{ ASSETS_ROOT }}/css/essay-material-form.css" rel="stylesheet" />
+<div class="container-fluid pt-1 px-sm-4 px-3 pb-3">
+	<div class="row min-vh-80 h-100">
+		<div class="col-12 px-0 px-md-2">
+			<div class="card my-4">
+				<div class="card-header p-0 position-relative mt-n4 mx-2 mx-md-3 z-index-2" style="user-select: none">
+					<div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2">
+						<div class="mt-2 text-center">
+							<h4 class="text-white text-center font-weight-bolder me-3">{% if 'edit' in request.get_full_path %}Editar
+								{% endif %}Control de Arranque de Impresora</h5>
+						</div>
+					</div>
+					<div class="card-body px-md-0 px-2 py-2">
+						<div class="form-group d-flex input-group input-group-outline">
+							<input type="hidden" id="company" value="{{ order_obj.sale_order.plan.company }}">
+							<form class="form col-12" method="POST" style="user-select: none">
+								{% csrf_token %}
+								<div class="row pt-2 px-1 px-md-3">
+									<div class="d-flex flex-wrap justify-content-between pb-1">
+										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Pedido N°</label>
+											<p class="ps-1 mb-0 fw-bold">{{ order_obj.sale_order.number }}</p>
+										</div>
+										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Cliente</label>
+											<p class="ps-1 mb-0 fw-bold">
+												{{ order_obj.sale_order.plan.client }}
+											</p>
+										</div>
+										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Producto</label>
+											<p class="ps-1 mb-0 fw-bold">{{ order_obj.sale_order.plan.product }}</p>
+										</div>
+										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Máquina impresora</label>
+											{{ form.printer }}
+										</div>
+									</div>
+
+									<div class="d-flex flex-wrap justify-content-center gap-3 pb-3">
+										{% comment %}
+										<div class="d-flex flex-column flex-grow-1"><label for="format">Formato</label>{{ form.format }}</div>
+										{% endcomment %}
+										<div class="d-flex flex-column flex-grow-1"><label for="production_order">Orden de produción</label>
+											<input type="text" class="form-control myform-focus" readonly value="OP-{{ order_obj.number }}">
+										</div>
+										<div class="d-flex flex-column flex-grow-1">
+											<label for="gp_code">Código GP</label>
+											<input type="text" class="form-control myform-focus" readonly value="{{ order_obj.sale_order.plan.gp_code }}">
+										</div>
+										<div class="d-flex flex-column flex-grow-1" id="datetime_container"><label for="date_time">Fecha y hora</label>{{ form.date_time }}</div>
+										<div class="d-flex flex-column flex-grow-1"><label for="turn">Turno</label>{{ form.turn }}</div>
+										<div class="d-flex flex-column flex-grow-1"><label for="machine_speed">Velocidad de Máquina (m/min)</label>{{ form.machine_speed }}</div>
+									</div>
+
+									<div class="col-12 d-flex align-items-baseline flex-row pb-2 ">
+										<label class="fw-bold" for="check_crown_treatment">Tratamiento corona</label>
+										<div class="px-1 p-0 form-check">{{ form.check_crown_treatment }}</div>
+									</div>
+
+									<h6 class="text-primary m-0 fw-bold">Sustrato</h6>
+									<div class="d-flex flex-wrap justify-content-center gap-3 pb-3">
+										<div class="d-flex flex-column flex-grow-1"><label class="text-primary fw-bold ms-0" for="id-s_index">Material</label>
+											<select class="form-control myform-focus text-center" name="s_index" id="id-s_index">
+												<option value="-1">-</option>
+												{% for opt in order_obj.sale_order.plan.structure_set.all %}
+												<option {% if printer_boot_obj.s_index == forloop.counter0 %}selected{% endif %} value="{{ forloop.counter0 }}" p_set_id="p-{{ forloop.counter0 }}" weight="{{ opt.weight|truncate|swap_comma }}g/m²" thickness="{{ opt.thickness|truncate|swap_comma }}µ">{{ opt.material_type }}</option>
+												{% endfor %}
+											</select>
+										</div>
+										<div class="d-flex flex-column flex-grow-1"><label class="text-primary fw-bold ms-0" for="id-provider">Proveedor</label>
+											<select class="form-control myform-focus text-center" name="provider" id="id-provider">
+												<option value="-1">-</option>
+												{% for opt in order_obj.sale_order.plan.structure_set.all %}
+												{% for prov in opt.material.all %}
+												<option {% if printer_boot_obj.provider == prov.provider.name %}selected{% endif %} value="{{ prov.provider.name }}" p_set_id="p-{{ forloop.parentloop.counter0 }}">{{ prov.provider.name }}</option>
+												{% endfor %}
+												{% endfor %}
+											</select>
+										</div>
+										<div class="d-flex flex-column flex-grow-0"><label class="text-primary fw-bold ms-0">Gramaje</label><div class="pt-2 font-weight-bold" id="id-weight">-</div></div>
+										<div class="d-flex flex-column flex-grow-0"><label class="text-primary fw-bold ms-0">Espesor</label><div class="pt-2 font-weight-bold" id="id-thickness">-</div></div>
+										<div class="d-flex flex-column flex-grow-0"><label class="text-primary fw-bold ms-0" for="sustrate_width">Ancho (mm)</label>{{ form.sustrate_width }}</div>
+										<div class="d-flex flex-column flex-grow-0"><label for="crown_treatment_side">Cara Tratmiento Corona</label>{{ form.crown_treatment_side }}</div>
+										<div class="d-flex flex-column flex-grow-0"><label for="surface_tension">Tensión Superficial (din/cm)</label>{{ form.surface_tension }}</div>
+									</div>
+
+									<h6 class="fw-bold text-primary m-0">Colores por Estación de Trabajo</h6>
+									<div class="d-flex flex-wrap justify-content-center gap-3 pb-3">
+										<div class="d-flex flex-column flex-grow-1"><label for="sta_01">1</label>{{ form.sta_01 }}</div>
+										<div class="d-flex flex-column flex-grow-1"><label for="sta_02">2</label>{{ form.sta_02 }}</div>
+										<div class="d-flex flex-column flex-grow-1"><label for="sta_03">3</label>{{ form.sta_03 }}</div>
+										<div class="d-flex flex-column flex-grow-1"><label for="sta_04">4</label>{{ form.sta_04 }}</div>
+										<div class="d-flex flex-column flex-grow-1"><label for="sta_05">5</label>{{ form.sta_05 }}</div>
+										<div class="d-flex flex-column flex-grow-1"><label for="sta_06">6</label>{{ form.sta_06 }}</div>
+										<div class="d-flex flex-column flex-grow-1"><label for="sta_07">7</label>{{ form.sta_07 }}</div>
+										<div class="d-flex flex-column flex-grow-1"><label for="sta_08">8</label>{{ form.sta_08 }}</div>
+										<div class="d-flex flex-column flex-grow-1"><label for="sta_09">9</label>{{ form.sta_09 }}</div>
+										<div class="d-flex flex-column flex-grow-1"><label for="sta_10">10</label>{{ form.sta_10 }}</div>
+									</div>
+
+									<h6 class="fw-bold text-primary m-0">Analisis de muestra</h6>
+									<p class="mb-0 fst-italic text-danger">¡IMPORTANTE! PARA VERIFICAR LA IMPRESIÓN ES OBLIGATORIO TENER:</p>
+
+									<div class="col-lg-6 col-12 pb-2">
+										<label for="standar">
+											Estandar de color o Muestra aprobada y firmada por el cliente
+										</label>
+										{{ form.standar }}
+									</div>
+									<div class="col-lg-6 col-12 pb-2">
+										<label for="art">
+											Arte aprobado y firmdo por le cliente
+										</label>
+										{{ form.art }}
+									</div>
+									<div class="col-lg-6 col-12 pb-2">
+										<label for="pre_print">
+											Pre impresión del Trabajo aprobada por Gestión de Calidad
+										</label>
+										{{ form.pre_print }}
+									</div>
+									<div class="col-lg-6 col-12 pb-2">
+										<label for="develop_folder">
+											Carpeta de desarrollo de Colores Flexo-Proof (Sólo para trabajos nuevos)
+										</label>
+										{{ form.develop_folder }}
+									</div>
+
+
+									<h6 class="fw-bold text-primary m-0">Control de Impresión</h6>
+									<div class="d-flex flex-wrap justify-content-center gap-3 pb-3">
+										<div class="d-flex flex-column flex-grow-1"><label for="register">Registro</label>{{ form.register }}</div>
+										<div class="d-flex flex-column flex-grow-1"><label for="text">Textos</label>{{ form.text }}</div>
+										<div class="d-flex flex-column flex-grow-1"><label for="dimensions">Dimensiones</label>{{ form.dimensions }}</div>
+										<div class="d-flex flex-column flex-grow-1"><label for="cutting_guide">Guia de corte</label>{{ form.cutting_guide }}</div>
+										<div class="d-flex flex-column flex-grow-1"><label for="photocell">Fotocelda</label>{{ form.photocell }}</div>
+										<div class="d-flex flex-column flex-grow-1"><label for="barcode">Código de barra</label>{{ form.barcode }}</div>
+									</div>
+
+									<div class="d-flex flex-wrap justify-content-center gap-3 pb-3">
+										<div class="d-flex flex-column flex-grow-1"><label for="cut_width_result">Ancho de Corte (mm) - <x class="fw-bold">Especificación: {{ order_obj.sale_order.plan.width_bobbin|default_if_none:"" }}</x></label>
+											{{ form.cut_width_result }}
+										</div>
+										<div class="d-flex flex-column flex-grow-1"><label for="develop">Especificación de Desarrollo</label>
+											<div class="d-flex flex-nowrap">
+											  <div class="{% if form.develop.errors %}border-error{% endif %} d-flex flex-row-reverse flex-grow-1">
+												<a class="position-absolute m-2 a-deaf font-weight-black cursor-pointer" id="dbo_char" style="user-select: none;">±</a>{{ form.develop }}
+											  </div>                        
+											  <div class="{% if form.develop_unit.errors %}border-error{% endif %} flex-grow-1">
+												{{ form.develop_unit }}
+											  </div>
+											</div>
+										  </div>								
+										<div class="d-flex flex-column flex-grow-1"><label for="develop_result">Resultado de Desarrollo</label>
+											{{ form.develop_result }}
+										</div>
+										<div class="d-flex flex-column flex-grow-1"><label for="design">Diseño</label>{{ form.design }}</div>
+									</div>
+
+									<h6 class="text-primary fw-bold">Embobinado</h6>									
+										<div class="col-md-5 col-12 pb-3">
+											<label  class="fw-bold text-xl" style="font-size: large;" for="machine_winding">En Máquina</label>
+											{{ form.machine_winding }}
+											<label class="mt-2" for="winding_description">Descripción</label>
+											{{ form.winding_description }}
+										</div>
+										<div class="col-md-7 col-12 ps-3 pb-3">
+											<label class="fw-bold text-xl" style="font-size: large;">Al Cliente:&thinsp;{% if order_obj.sale_order.plan.winding %}Posición&thinsp;N°{{ order_obj.sale_order.plan.winding }}{% endif %}{% if order_obj.sale_order.plan.winding and order_obj.sale_order.plan.winding_description %},&thinsp;{% endif %}
+												{% if order_obj.sale_order.plan.winding_description %}{{ order_obj.sale_order.plan.winding_description }}{% endif %}</label>
+											{% include 'essays/icons/render.html' with winding=order_obj.sale_order.plan.winding set=order_obj.sale_order.plan.company %}
+										</div>
+									<hr class="mb-3">
+									
+									<div class="col-md-3 col-12">
+										<h6 class="fw-bold text-primary mb-0">Repetición</h6>
+										<p class="mb-0 fw-bold">Especificación: {{ order_obj.sale_order.plan.repetition|default_if_none:"" }}</p>
+									</div>
+									<div class="col-md-3 col-12 pb-2"><label for="r_left">A: Izquierda</label>{{ form.r_left }}</div>
+									<div class="col-md-3 col-12 pb-2"><label for="r_center">C: Centro</label>{{ form.r_center }}</div>
+									<div class="col-md-3 col-12 pb-3"><label for="r_right">B: Derecha</label>{{ form.r_right }}</div>
+									
+									<h6 class="fw-bold text-primary m-0">Control de Tintas</h6>
+									<div class="d-flex flex-wrap justify-content-center gap-3 pb-3">
+										<div class="d-flex flex-column flex-grow-1"><label for="color_standar">Tonos Según Estándar de Color</label>{{ form.color_standar }}</div>
+										<div class="d-flex flex-column flex-grow-1"><label for="anchorage">Anclaje</label>{{ form.anchorage }}</div>
+										<div class="d-flex flex-column flex-grow-1"><label for="rub">Frote</label>{{ form.rub }}</div>
+										<div class="d-flex flex-column flex-grow-1"><label for="ther_resistance">Resistencia Térmica</label>{{ form.ther_resistance }}</div>
+										<div class="d-flex flex-column flex-grow-1"><label for="anchorage_resistance">Resistencia al Alcali</label>{{ form.anchorage_resistance }}</div>
+									</div>
+
+									<h6 class="fw-bold text-primary m-0">Observaciones</h6>
+									<br>
+									<div class="col-12 pb-2">{{ form.observation }}</div>
+
+									{% comment %}
+									<div class="col-3 d-flex flex-row pb-2 pt-4">
+										<label class="text-lg" for="cut_diagram">Diagrama de corte</label>
+										<div class="px-1 p-0 form-check">{{ form.cut_diagram }}</div>
+									</div>
+									{% endcomment %}
+
+									<div class="col-sm-6 col-12 pb-3"><label class="fw-bold text-primary" for="quality_analist">Por Aseguramiento de la Calidad</label>{{ form.quality_analist }}</div>
+									<div class="col-sm-6 col-12 pb-3"><label class="fw-bold text-primary" for="production_operator">Por Producción</label>{{ form.production_operator }}</div>
+								</div>
+								<div class="d-flex justify-content-center gap-2">
+									<button class="btn btn-primary" type="submit">Guardar</button>
+									<button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#cancelModal">
+										Cancelar
+									  </button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel"
+aria-labelledby="TrueDelete" aria-hidden="true" style="user-select: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: var(--mc-color) !important;">
+        <h5 class="modal-title fw-bold text-white" id="cancelModalLabel">Confirmación de Cancelación</h5>
+      </div>
+      <div class="modal-body">
+        ¿Estás seguro de que quieres cancelar?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="mb-1 btn btn-secondary" data-bs-dismiss="modal">No</button>
+        <button type="button" class="mb-1 btn btn-primary" onClick="window.history.back();">Sí, cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+$(document).ready(function () {
+	
+	$( "#dev_char" ).click(function() {
+		var text = $( "#develop" ).val();
+		$( "#develop" ).val( text + "±" );
+		$( "#develop" ).focus();
+	});
+	$( "#dbo_char" ).click(function() {
+		var text = $( "#develop" ).val();
+		$( "#develop" ).val( text + "±" );
+		$( "#develop" ).focus();
+	  });
+
+	  // Store a copy of all provider options
+	  var allProviderOptions = $('#id-provider option').clone();
+
+	  // Store the initially selected provider
+	  var initialProvider = $('#id-provider').val();
+  
+	  $('#id-s_index').select2({
+		  placeholder: '-',
+		  width: '100%',
+		  selectionCssClass: ':all:',
+		  dropdownCssClass: ':all:'
+	  }).on('change', function() {
+		  // When the s_index select changes, update the weight and thickness divs
+		  var selectedOption = $(this).find('option:selected');
+		  if (selectedOption.val() == '-1') {
+			$('#id-weight').text('-');
+			$('#id-thickness').text('-');
+		  }else{
+		   	$('#id-weight').text(selectedOption.attr('weight'));
+		   	$('#id-thickness').text(selectedOption.attr('thickness'));
+		  }
+  
+		  // Show only the provider options that match the p_set_id of the selected s_index option
+		  var pSetId = selectedOption.attr('p_set_id');
+		  $('#id-provider').empty().append(allProviderOptions.filter(function() {
+			  return $(this).attr('p_set_id') === pSetId;
+		  }));
+  
+		  // If there was an initially selected provider, select it again
+		  if (initialProvider) {
+			  $('#id-provider').val(initialProvider);
+		  }
+  
+		  // Update the provider select2
+		  $('#id-provider').trigger('change.select2');
+	  });
+  
+	  $('#id-provider').select2({
+		  minimumResultsForSearch: Infinity,
+		  placeholder: '-',
+		  width: '100%',
+		  selectionCssClass: ':all:',
+		  dropdownCssClass: ':all:'
+	  }).on('select2:opening', function(e) {
+		  // Prevent opening the dropdown if the s_index select is not selected
+		  if ($('#id-s_index').val() == null || $('#id-s_index').val() == '-1') {
+			  e.preventDefault();
+		  }
+	  });
+  
+	  // Initialize the provider select2 before triggering the change event on the s_index select
+	  $('#id-s_index').trigger('change');
+
+	$('#develop_unit').select2({
+		minimumResultsForSearch: Infinity,
+		allowClear: true,
+		placeholder: '-',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+
+	$('#printer').select2({
+		minimumResultsForSearch: Infinity,
+		placeholder: 'Seleccionar...',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+
+	$('#turn').select2({
+		minimumResultsForSearch: Infinity,
+		allowClear: true,
+		placeholder: '...',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+	
+	$('#crown_treatment_side').select2({
+		minimumResultsForSearch: Infinity,
+		placeholder: 'Seleccionar...',
+		allowClear: true,
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+
+	$('#surface_tension').select2({
+		minimumResultsForSearch: Infinity,
+		placeholder: 'Seleccionar...',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+	
+	$('#register').select2({
+		minimumResultsForSearch: Infinity,
+		placeholder: 'Seleccionar...',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+	
+	$('#text').select2({
+		minimumResultsForSearch: Infinity,
+		placeholder: 'Seleccionar...',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+	
+	$('#dimensions').select2({
+		minimumResultsForSearch: Infinity,
+		placeholder: 'Seleccionar...',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+	
+	$('#cutting_guide').select2({
+		minimumResultsForSearch: Infinity,
+		placeholder: 'Seleccionar...',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+	
+	$('#photocell').select2({
+		minimumResultsForSearch: Infinity,
+		placeholder: 'Seleccionar...',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+	
+	$('#barcode').select2({
+		minimumResultsForSearch: Infinity,
+		placeholder: 'Seleccionar...',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+
+	function formatWinding (winding) {
+		if (!winding.id) {
+		  return winding.text;
+		}
+		// Get the value for the company
+		var comp = $("#company").val()
+		if (!comp) {
+		  comp = 'crx'
+		}
+		// Import icon index
+		var htmlString = '{% include "essays/icons/index.html" %}';
+		// Format to JQuery
+		var $index = $("<div>" + htmlString + "</div>");
+		// Select icon group by company
+		var $iconGroup = $index.find("#icons-" + comp);                  
+		// Select the icon
+		var $icon = $iconGroup.find("#wd-"+ winding.element.value);
+
+		return $icon;
+	};
+	
+	$('#machine_winding').select2({
+		templateResult: formatWinding,
+		minimumResultsForSearch: Infinity,
+		allowClear: true,
+		placeholder: 'N°',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+	
+	
+	$('#color_standar').select2({
+		minimumResultsForSearch: Infinity,
+		placeholder: 'Seleccionar...',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+	
+	$('#standar').select2({
+		minimumResultsForSearch: Infinity,
+		placeholder: 'Seleccionar...',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+	
+	$('#art').select2({
+		minimumResultsForSearch: Infinity,
+		placeholder: 'Seleccionar...',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+	$('#pre_print').select2({
+		minimumResultsForSearch: Infinity,
+		placeholder: 'Seleccionar...',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+	$('#develop_folder').select2({
+		minimumResultsForSearch: Infinity,
+		placeholder: 'Seleccionar...',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+	  
+	$('#format').select2({
+		placeholder: 'Seleccionar...',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+	  
+	$('#provider').select2({
+		placeholder: 'Seleccionar...',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+
+	$('#provider').on('change', function() {      
+		$('#material').val(null).trigger('change');
+		if($(this).val() != null){
+		  $('#material').prop('disabled', false);
+		}
+	});
+	
+	$('#material').select2({
+		placeholder: 'Seleccione...',
+		width: '100%',
+		allowClear: true,
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:',
+		ajax: {
+			url: "{% url 'x-materials' %}",
+			type: "GET",
+			dataType: 'json',
+			data: function (params) {
+				  var queryParameters = {					  
+					  p: $('#provider').val()
+				  }
+				  return queryParameters;
+			  },
+			  processResults: function (data) {
+				  return {
+					  results: $.map(data, function (item) {
+						
+						var name = item.name;
+						
+						return {
+							text: name,
+							id: item.pk
+						  }
+					  })
+				  };
+			  }
+		  },
+		  language: {
+			noResults: function () {
+			  return "No hay resultados";
+			},
+			searching: function () {
+			  return "Buscando...";
+			}
+		  }
+	});
+	
+	$('#anchorage').select2({
+		minimumResultsForSearch: Infinity,
+		placeholder: 'Seleccione...',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+	
+	$('#rub').select2({
+		minimumResultsForSearch: Infinity,
+		placeholder: 'Seleccione...',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+	
+	$('#ther_resistance').select2({
+		minimumResultsForSearch: Infinity,
+		placeholder: 'Seleccione...',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+	
+	$('#anchorage_resistance').select2({
+		minimumResultsForSearch: Infinity,
+		placeholder: 'Seleccione...',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+
+	$('#production_operator').select2({
+		allowClear: true,
+		placeholder: 'Operador de Producción',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+
+	$('#quality_analist').select2({
+		allowClear: true,
+		placeholder: 'Analista de Calidad',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+})
+</script>
+{% endblock content %}
+{% block javascripts %}
+<script src="{{ ASSETS_ROOT }}/js/datetime-picker/popper.js"></script>
+<script src="{{ ASSETS_ROOT }}/js/datetime-picker/bootstrap.min.js"></script>
+<script src="{{ ASSETS_ROOT }}/js/datetime-picker/moment-with-locales.min.js"></script>
+<script src="{{ ASSETS_ROOT }}/js/datetime-picker/bootstrap-datetimepicker.min.js"></script>
+<script src="{{ ASSETS_ROOT }}/js/datetime-picker/main.js"></script>
+{% endblock javascripts %}

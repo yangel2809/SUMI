@@ -1,0 +1,75 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<!-- form_view.html -->
+{% if test_request_obj.company == 'mcl' %}
+<style>:root {--mc-color: #946037;--mc-selection: #ad7e5a;--mc-shadow-color: #94603780;--mc-calendar-today: #94603780;--critical-color: #94603769;--mc-hover-color: #94603759;}</style>
+<script>$('meta[name="theme-color"]').attr('content', '#946037')</script>
+{% endif %}
+<link href="{{ ASSETS_ROOT }}/css/essay-material-form.css" rel="stylesheet" />
+<div class="container-fluid pt-1 px-sm-4 px-3 pb-3">
+	<div class="row min-vh-80 h-100 justify-content-center">
+		<div class="col-6 px-0 px-md-2">
+			<div class="card my-4">
+				<div class="card-header p-0 position-relative mt-n4 mx-2 mx-md-3 z-index-2" style="user-select: none">
+					<div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2">
+						<div class="mt-2 text-center">
+							<h4 class="text-white text-center font-weight-bolder me-3">Agergar Anexo</h5>
+						</div>
+					</div>
+					<div class="card-body px-md-0 px-2 py-2">
+						<div class="form-group d-flex input-group input-group-outline">
+							<input type="hidden" id="company" value="{{ test_request_obj.company }}">
+							<form class="form col-12" method="POST" style="user-select: none" enctype="multipart/form-data">
+								{% csrf_token %}
+								<div class="row pt-2 px-1 px-md-3">
+									<h6 class="fw-bold text-primary m-0">Identificación</h6>
+									<br>
+									<div class="col-12 pb-3">
+										<textarea name="identification" cols="40" rows="2" class="form-control align-items-center myform-focus" style="transition: none !important;" required="" id="id_identification"></textarea>
+									</div>
+									
+									<div class="d-flex flex-column align-items-center">
+										<img class="col-7 d-none" id="miniatura">
+										{% if message %}<h6 class="text-danger fw-bold text-center">*{{ message }}</h6>{% endif %}
+										<div class="fake-upload" style="cursor: pointer;">
+											<h6>Subir imagen</h6>
+											<input required name="image" type="file" class="hide_file" accept="image/png, image/gif, image/jpeg, image/tiff, image/webp">
+										</div>
+
+									</div>
+									</div>
+									
+									
+								</div>
+								<div class="d-flex justify-content-center gap-2">
+									<button class="btn btn-primary" type="submit">Guardar</button>
+									<a href="{% url 'view_annexes' test_request_obj.id %}">
+										<button type="button" class="btn btn-secondary">Cancelar</button>
+									</a>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+$(document).ready(function () {
+	$(document).ready(function() {
+		// Selecciona el input de tipo archivo y agrega un evento change
+		$('input[type="file"]').change(function(e) {
+		  // Obtiene la imagen seleccionada
+		  var file = e.target.files[0];
+		  // Crea un objeto URL para la imagen
+		  var url = URL.createObjectURL(file);
+		  // Muestra la miniatura de la imagen
+		  $('#miniatura').removeClass('d-none');
+		  $('#miniatura').attr('src', url);
+		});
+	  });
+	  
+});
+</script>
+{% endblock content %}

@@ -1,0 +1,566 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+{% load home_tags %}
+{% load tz %}
+<link href="{{ ASSETS_ROOT }}/css/essay-material-form.css" rel="stylesheet" />
+<style>
+  label {
+    font-weight: bold !important;
+  }
+  input{
+    height: 40px;
+  }
+</style>
+<div class="container-fluid pt-1 px-sm-4 px-3 pb-3">
+  <div class="row justify-content-center min-vh-80 h-100">
+    <div class="col-lg-10 col-12 px-0 px-md-2">
+      <div class="card my-4 user-select-none">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+          <div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2">
+            <div class="mt-2 justify-content-center">
+              <h5 class="text-white text-center font-weight-bolder me-3">{% if 'edit' in request.get_full_path %}Editar
+                {% else %}Crear {% endif %}{{ title }}</h5>
+            </div>
+          </div>
+        </div>
+        <form class="form justify-content-center col-12" action="" method="POST">
+          {% csrf_token %}
+
+          <div class="card-body justify-content-center px-md-2 px-0  pb-2">
+            <div class="row mx-3">
+              <div class="d-flex col-8 p-0" style="user-select: none;">
+                {% if plan.company == 'mcl' %}
+                <style>
+                  :root {
+                    --mc-color: #946037;
+                    --mc-selection: #ad7e5a;
+                    --mc-shadow-color: #94603780;
+                    --mc-calendar-today: #94603780;
+                    --critical-color: #94603769;
+                    --mc-hover-color: #94603759;
+                  }
+                </style>
+                <div class="pe-1 col-md-6">
+                  <img alt="Morrocel c.a RIF:J-06000377-6" class="img-fluid" src="{{ ASSETS_ROOT }}/img/logo_mcl.svg" />
+                </div>
+                {% else %}
+                <div class="ps-1 col-md-6">
+                  <img alt="Curex c.a RIF:J-00074598-6" class="img-fluid" src="{{ ASSETS_ROOT }}/img/logo_crx.svg" />
+                </div>
+                {% endif %}
+
+                {% comment %}
+                <div class="pe-1 col-md-6" id="logo_mcl" style="display: none;">
+                  <img alt="Morrocel c.a RIF:J-06000377-6" class="img-fluid" src="{{ ASSETS_ROOT }}/img/logo_mcl.svg" />
+                </div>
+                <div class="ps-1 col-md-6" id="logo_crx" style="display: block;">
+                  <img alt="Curex c.a RIF:J-00074598-6" class="img-fluid" src="{{ ASSETS_ROOT }}/img/logo_crx.svg" />
+                </div>
+                {% endcomment %}
+              </div>
+              <!-- <div class="d-md-block d-none col-5 col-md-6 col-xxl-7 px-3 px-xxl-4 text-align-center text-center text-wrap-balance">
+                <h4 class="font-weight-bolder mb-0 text-primary">{{ plan.product }}</h4>
+              </div> -->
+              <div class="col-md col-4">
+                <div class="row justify-content-end font-weight-bolder  text-end lh-1 text-xxs pe-1">
+                  F-VTAS-01
+                </div>
+                <div class="row justify-content-end font-weight-bolder text-end lh-1 text-xxs pe-1">
+                  REV-05
+                </div>
+                <div class="row justify-content-end font-weight-bolder text-end lh-1 text-xxs text-uppercase pe-1">
+                  01/MAY/2024
+                </div>
+              </div>
+            </div>
+            <div class="d-flex m-0 flex-row gap-2 px-3 pt-md-0 pt-2 form-group input-group input-group-outline">
+              {% comment %}
+              <div class="col-lg-2 col-sm-6 col-12">
+                <label class="mb-1" for="name">Empresa</label>
+                <div class="{% if form.company.errors %}border-error{% endif %}">{{ form.company }}</div>
+              </div>
+              {% endcomment %}
+              <div class="flex-grow-1 d-flex flex-column flex-wrap">
+                <label class="mb-1" for="name">Pedido N°</label>
+                <div class="d-flex flex-nowrap">
+                  <div class="{% if form.representative.errors %}border-error{% endif %}">
+                    <select name="representative" class="form-control align-items-center myform-focus text-center flat-right" id="representative" required>
+                      <option value="" selected="">-</option>
+                      {% for rep in representatives %}
+                        <option value="{{ rep.id }}" name="{{ rep.name }}" {% if rep.id == sale_order.representative.id %}selected{% endif %}>{{ rep.number|stringformat:'02d' }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="{% if form.request.errors %}border-error{% endif %} flex-grow-1">{{ form.request }}</div>
+                </div>
+                <label class="my-1" for="request_date">Fecha de Pedido</label>
+                <div class="{% if form.number.errors %}border-error{% endif %}">{{ form.request_date }}</div>
+              </div>
+              <div class="flex-grow-1 d-flex flex-column flex-wrap">
+                <label class="mb-1" for="name">Órden de compra N°</label>
+                <div class="{% if form.number.errors %}border-error{% endif %}">{{ form.number }}</div>
+                <label class="my-1" for="number_date">Fecha de Órden de compra</label>
+                <div class="{% if form.number.errors %}border-error{% endif %}">{{ form.number_date }}</div>
+              </div>
+              <div class="d-flex flex-md-column flex-row flex-wrap col-md-auto col-12 mt-md-0 mt-n2">
+                <div class="d-flex flex-column flex-grow-1 pe-md-0 pe-2">
+                  <label class="mb-1" for="name">Origen</label>
+                  <div class="{% if form.origin.errors %}border-error{% endif %}">{{ form.origin }}</div>
+                </div>
+                {% if ur_check %}
+                <div class="d-flex flex-column">
+                  <div style="height: 22.39px;" class="my-md-1 mb-1"></div>
+                  <button class="btn btn-secondary mb-0" id="reference_button">Actualizar Plan</button>
+                  <input type="checkbox" name="update_reference" class="d-none" id="update_check">
+                </div>
+                {% endif %}
+              </div>
+            </div>
+
+            <hr class="mx-3">
+            <div class="row mx-3 mt-1 pb-1 font-weight-bolder align-items-middle">
+              <div class="col-8 ps-0 pb-0">
+                <h6 class="p-0 mb-2" style="line-height: 1;">
+                  Producto: <x class="text-primary fw-bold">{{ plan.product }}</x>
+                </h6>
+                <h6 class="font-weight-normal m-0" style="line-height: 1;">Cliente:
+                  <a class="text-dark font-weight-bolder">
+                    {{ plan.client }}</a>
+                </h6>
+                <h6 class="font-weight-normal text-xs m-0" style="line-height: 1;">RIF:
+                  <a class="text-dark font-weight-bolder">
+                    {{ plan.client.rif_type }}-{{ plan.client.rif_num }}
+                  </a>
+                </h6>
+              </div>
+              <div class="col-4 p-0 text-xs font-weight-bold text-end text-xs">
+                <div>Código GP: <x class="text-monospace">{{ plan.gp_code }}</x></div>
+                <div>Código: <x class="text-monospace">{{ plan.code }}</x></div>
+                <div>Plan: <x class="text-monospace">PC-ASC-{{ plan.pc }}</x></div>
+              </div>
+            </div>
+            <div class="card mx-md-2 mx-1 mt-4 pt-2">
+              <div class="card-header p-0 mt-n4 position-relative mx-2 z-index-2">
+                <div class="bg-primary text-center shadow-primary border-radius-lg ps-3 pt-2 pb-2">
+                  <h5 class="text-white font-weight-bolder m-0">Estructura</h5>
+                </div>
+              </div>
+              <div class="card-body shadow mt-n4 border-radius-lg px-md-3 px-2 pb-2">
+                <div class="table-responsive p-0">
+                  <table class="table align-items-center text-align-center mb-0">
+                    <thead class="align-items-center">
+                      <tr>
+                        <th>Material</th>
+                        <th class="text-center px-2">Peso <abbr class="d-none d-md-inline"
+                            title="Gramaje / Gramos por metro cuadrado">(g/m²)</abbr>
+                        </th>
+                        <th class="text-center px-2">Espesor <abbr class="d-none d-md-inline" title="Micra">(μ)</abbr>
+                        </th>
+
+                      </tr>
+                    </thead>
+                    <tbody style="overflow: hidden;">
+
+                      {% for structure in structure_list.all %}
+                      <tr>
+                        <td>
+                          <div class="col">
+                            <div class="row ">
+                              <h6 class="mt-n1 mb-n1 lh-1">{{ structure.material_type.name }}</h6>
+                            </div>
+                            {% comment %}
+                            <div class="row mb-n1 text-wrap-pretty">
+                              <p class="text-xs font-weight-bolder m-0 ">
+                                {% for material in structure.material.all %}
+                                {% if not structure.material_type.name == material.name %}
+                                <abbr class="text-nowrap"
+                                  title="{{ material.material_type }} de {{ material.provider }}" style="cursor: help">
+                                  {{ material.name }}.&emsp13;
+                                </abbr>
+                                {% if not forloop.last %}
+                                <wbr>
+                                    {% endif %}
+                                    {% endif %}
+                                    {% endfor %}
+                              </p>
+                            </div>
+                          </div>
+                          {% endcomment %}
+                        </td>
+                        <td class="st-weight-row text-center" value="{{ structure.weight|swap_comma }}">
+                          {{ structure.weight|truncate }}
+                        </td>
+                        <td class="st-thickn-row text-center" value="{{ structure.thickness|swap_comma }}">
+                          {{ structure.thickness|truncate }}
+                        </td>
+
+                      </tr>
+                      {% endfor %}
+                      <tr>
+                        <td colspan="1">
+                          <h5 class="font-weight-bold mb-0">Total</h5>
+                        </td>
+                        <td class="text-center">
+                          <h5 class="font-weight-bold mb-0">
+                            <abbr class="text-dark-hover" title="Peso total" id="weight-total">
+                              {{ plan.weight|truncate }}
+                            </abbr>
+                          </h5>
+                        </td>
+                        <td class="text-center">
+                          <h5 class="font-weight-bold mb-0">
+                            <abbr class="text-dark-hover" title="Espesor total" id="thickn-total">
+                              {{ plan.thickness|truncate }}
+                            </abbr>
+                          </h5>
+                        </td>
+                      </tr>
+                    </tbody>
+                    
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex m-0 flex-row form-group gap-2 px-3 pt-3 input-group input-group-outline">
+              
+              {% if plan.repetition %}
+              <div class="flex-grow-1">
+                <label class="mb-1" for="name">Repetición</label>
+                <p class="py-0 ms-1 mb-0 text-dark font-weight-bold">{{ plan.repetition }}</p>
+              </div>
+              {% endif %}
+              {% if plan.winding_literal %}
+              <div class="flex-grow-1">
+                <label class="mb-1" for="name">Embobinado</label>
+                <p class="py-0 ms-1 mb-0 text-dark font-weight-bold">{{ plan.winding_literal }}</p>
+              </div>
+              {% endif %}
+              {% if plan.width_bobbin %}
+              <div class="flex-grow-1">
+                <label class="mb-1" for="name">Ancho</label>
+                <p class="py-0 ms-1 mb-0 text-dark font-weight-bold">{{ plan.width_bobbin }}</p>
+              </div>
+              {% endif %}
+              <div class="flex-grow-1">
+                <label class="mb-1" for="name">Despacho</label>
+                <div class="{% if form.printer.errors %}border-error{% endif %}">{{ form.bob_or_ream }}</div>
+              </div>
+            </div>
+            <h6 class="text-primary text-center font-weight-bold mb-0 mt-3">Cantidades a Producir</h6>
+            <div class="d-flex m-0 g-2 flex-row form-group gap-2 px-3 input-group input-group-outline">
+              <div class="d-flex flex-nowrap align-items-end flex-grow-1">
+                <div class="flex-grow-1">
+                  <label class="mb-0" for="name">Precio</label>
+                  <div class="{% if form.price.errors %}border-error{% endif %}">{{ form.price }}</div>
+                </div>
+                <div class="col-2">
+                  {{ form.currency }}
+                </div>
+              </div>
+              <div class="flex-grow-1">
+                <label class="mb-0" for="name">Cantidad</label>
+                <div class="{% if form.quantity.errors %}border-error{% endif %}">{{ form.quantity }}</div>
+              </div>
+              <div class="flex-grow-1">
+                <label class="mb-0" for="name">Unidad</label>
+                <div class="{% if form.unit.errors %}border-error{% endif %}">{{ form.unit }}</div>
+              </div>
+              <div class="flex-grow-1">
+                <label class="mb-0" for="name">Tolerancia (%)</label>
+                <div class="{% if form.tolerance.errors %}border-error{% endif %}">{{ form.tolerance }}</div>
+              </div>
+            </div>
+            <!---------------------------------------------------INLINE FORMSET-------------------------------------------------->
+            {% include 'sales/formsets/delivery_date.html' %}
+            <!------------------------------------------------------------------------------------------------------------------->
+
+            <div class="px-3">
+              <label class="mb-0" for="name">Dirección de Entrega</label>
+              <div class="{% if form.delivery_address.errors %}border-error{% endif %}">{{ form.delivery_address }}
+              </div>
+            </div>
+
+            <p class="text-bold text-primary text-center pt-2 m-0">Obsevación</p>
+            <div class="px-3 mx-0 {% if form.observation.errors %}quill-error-outline{% endif %}">{{ form.observation }}
+            </div>
+
+            <div class="d-flex m-0 g-2 flex-row 2 form-group input-group input-group-outline gap-2 px-3 pt-2">
+              <div class="flex-grow-1">
+                <label class="mb-1" for="name">Representante</label>
+                <p class="py-2 ms-1 mb-0 text-dark font-weight-bold" id="name_representative">Seleccione en nro. de pedido...</p>
+              </div>
+              <div class="flex-grow-1">
+                <label class="mb-1" for="name">Elaborado por</label>
+                <div class="{% if form.reviewer.errors %}border-error{% endif %}">{{ form.elaborator }}</div>
+              </div>
+              <div class="flex-grow-1">
+                <label class="mb-1" for="name">Aprobado por</label>
+                <div class="{% if form.approver.errors %}border-error{% endif %}">{{ form.approver }}</div>
+              </div>
+            </div>
+            
+      
+          <script>
+            const currencyInput = document.getElementById('price');
+        const formatter = new Intl.NumberFormat('es-VE', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+            useGrouping: true
+        });
+
+        currencyInput.addEventListener('input', (event) => {
+            const cursorPosition = event.target.selectionStart;
+            const oldLength = event.target.value.length;
+
+            let value = event.target.value.replace(/\D/g, '');
+            if (value === '') {
+                event.target.value = '0,00';
+                return;
+            }
+            value = (parseInt(value, 10) / 100).toFixed(2);
+            event.target.value = formatter.format(value);
+
+            const newLength = event.target.value.length;
+            const diff = newLength - oldLength;
+
+            // Adjust cursor position
+            setTimeout(() => {
+                event.target.setSelectionRange(cursorPosition + diff, cursorPosition + diff);
+            }, 0);
+        });
+
+        currencyInput.addEventListener('focus', (event) => {
+            if (event.target.value === '') {
+                event.target.value = '0,00';
+            }
+            if (event.target.value === '0,00') {
+                setTimeout(() => {
+                    event.target.setSelectionRange(event.target.value.length, event.target.value.length);
+                }, 0);
+            }
+        });
+
+        currencyInput.addEventListener('blur', (event) => {
+            if (event.target.value === '0,00') {
+                event.target.value = '';
+            }
+        });
+
+          </script>
+    
+            <div class="pt-2 text-center user-select-none">
+              <button type="submit" class="btn btn-primary mx-1 my-2">Guardar</button>
+              <a onClick="window.history.back();return false;">
+                <button type="button" class="btn btn-secondary mx-1 my-2">Cancelar</button>
+              </a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  
+  function initializeDatepicker(selector) {
+    $(document).on('focus', selector, function(){
+        var id_num = parseInt(this.id.match(/\d+/)[0]);  // Extract the number from the id
+        var min_date;
+
+        // If the datepicker is already initialized, get its minDate
+        if ($(this).hasClass('hasDatepicker')) {
+            min_date = $(this).datepicker('option', 'minDate');
+        } else {
+            // If the previous date input exists, get its date. Otherwise, use today's date.
+            min_date = id_num > 0 ? $('#id_dates-' + (id_num - 1) + '-delivery_date').datepicker('getDate') : 0;
+        }
+
+        $(this).datepicker({
+            showOtherMonths: "true",
+            selectOtherMonths: "true",
+            minDate: min_date,  // Set the minimum selectable date to the date of the previous input or the initial date.
+            onSelect: function(selectedDate) {
+                // When a date is selected, update the minDate of all subsequent datepickers
+                for (var i = id_num + 1; i < $('.date-field-selector').length; i++) {
+                    $('#id_dates-' + i + '-delivery_date').datepicker('option', 'minDate', selectedDate);
+                }
+            }
+        }, $.datepicker.regional["es"]);
+    });
+  }
+
+
+  $(document).ready(function () {
+
+
+    // Set the color theme
+    $('#company').on('change', function () {
+      if ($(this).val() === 'mcl') {
+        $('#logo_mcl').show()
+        $('#logo_crx').hide()
+        $('meta[name="theme-color"]').attr('content', '#946037');
+        $(':root').css('--mc-color', '#946037');
+        $(':root').css('--mc-selection', '#ad7e5a');
+        $(':root').css('--mc-shadow-color', '#94603780');
+        $(':root').css('--mc-calendar-today', '#94603780');
+        $(':root').css('--critical-color', '#94603769');
+        $(':root').css('--mc-hover-color', '#94603759');
+      } else {
+        $('#logo_mcl').hide()
+        $('#logo_crx').show()
+        $('meta[name="theme-color"]').attr('content', '#fe5000');
+        $(':root').css('--mc-color', '#fe5000');
+        $(':root').css('--mc-selection', '#fe7a51');
+        $(':root').css('--mc-shadow-color', '#fe520080');
+        $(':root').css('--mc-calendar-today', '#fea67d');
+        $(':root').css('--critical-color', '#fedabf');
+        $(':root').css('--mc-hover-color', '#fed9b5');
+      };
+    });
+    $('#company').trigger('change')
+
+    initializeDatepicker('.date-field-selector');
+
+    $( "#request_date" ).datepicker( {
+      showOtherMonths: "true",
+      selectOtherMonths: "true",
+    },$.datepicker.regional[ "es" ] );
+
+    $( "#number_date" ).datepicker( {
+      showOtherMonths: "true",
+      selectOtherMonths: "true",
+    },$.datepicker.regional[ "es" ] );
+
+    $('#currency').select2({
+      minimumResultsForSearch: Infinity,
+      placeholder: '-',
+      width: '100%',
+      selectionCssClass: ':all:',
+      dropdownCssClass: ':all:'
+    });
+
+    $('#unit').select2({
+      minimumResultsForSearch: Infinity,
+      placeholder: '-',
+      width: '100%',
+      selectionCssClass: ':all:',
+      dropdownCssClass: ':all:'
+    });
+    $('#representative').select2({
+      placeholder: '-',
+      width: '100%',
+      selectionCssClass: ':all:',
+      dropdownCssClass: ':all:'
+    }).on('change', function() {
+      var selectedOptionName = $(this).find('option:selected').attr('name');
+      $('#name_representative').text(selectedOptionName);
+    });
+    $('#representative').trigger('change')
+
+    $('#company').select2({
+      minimumResultsForSearch: Infinity,
+      placeholder: 'Seleccionar...',
+      width: '100%',
+      selectionCssClass: ':all:',
+      dropdownCssClass: ':all:'
+    });
+    $('#bob_or_ream').select2({
+      minimumResultsForSearch: Infinity,
+      allowClear: true,
+      placeholder: 'Seleccionar...',
+      width: '100%',
+      selectionCssClass: ':all:',
+      dropdownCssClass: ':all:'
+    });
+    
+    $('#delivery_address').select2({
+      placeholder: 'Seleccionar...',
+      width: '100%',
+      selectionCssClass: ':all:',
+      dropdownCssClass: ':all:',
+      allowClear: true,
+      ajax: {
+        url: '/x_delivery_addresses/',
+        data: function (params) {
+            var query = {
+                client: '{{ plan.client.id }}',  // Get the client_id from the selected plan.client
+                search: params.term
+            }
+            return query;
+        },
+        processResults: function (data) {
+            return {
+                results: $.map(data, function (item) {
+                    return {
+                        text: item.address,
+                        id: item.id
+                    }
+                })
+            };
+        }
+      }
+    });
+
+    $('#origin').select2({
+      minimumResultsForSearch: Infinity,
+      placeholder: 'Seleccionar...',
+      width: '100%',
+      selectionCssClass: ':all:',
+      dropdownCssClass: ':all:'
+    });
+    $('#unit_photo').select2({
+      minimumResultsForSearch: Infinity,
+      placeholder: '-',
+      width: '100%',
+      selectionCssClass: ':all:',
+      dropdownCssClass: ':all:'
+    });
+    $('#printer').select2({
+      minimumResultsForSearch: Infinity,
+      placeholder: 'Seleccionar...',
+      width: '100%',
+      selectionCssClass: ':all:',
+      dropdownCssClass: ':all:'
+    });
+
+    $('#add_form').click(function () {
+      var dform_idx = parseInt($('#id_dates-TOTAL_FORMS').val());
+      $('#dd_formset').append($('#empty_form').html().replace(/__prefix__/g, dform_idx));
+      $('#id_dates-TOTAL_FORMS').val(parseInt(dform_idx) + 1);
+
+      initializeDatepicker('#id_dates-' + dform_idx + '-delivery_date');
+    });
+
+    $('#remove_form').click(function () {
+      var dform_idz = parseInt($('#id_dates-TOTAL_FORMS').val());
+
+      if (dform_idz > dform_minlimit) {
+        dform_idz = dform_idz - 1;
+        $('#d_row-' + dform_idz).remove();
+        $('#id_dates-TOTAL_FORMS').val(parseInt(dform_idz));
+        max_sindex = parseInt(dform_idz) - 1;
+        
+      }
+    });
+
+    $('#reference_button').click(function(event) {
+      event.preventDefault();
+
+      var $this = $(this);
+      var $checkbox = $('#update_check');
+
+      $checkbox.prop('checked', !$checkbox.prop('checked'));
+
+      if ($checkbox.prop('checked')) {
+        $this.removeClass('btn-secondary').addClass('btn-primary');
+      } else {
+        $this.removeClass('btn-primary').addClass('btn-secondary');
+      }
+
+    });
+    let dform_minlimit = parseInt($('#id_dates-TOTAL_FORMS').val());
+  });
+</script>
+{% endblock content %}

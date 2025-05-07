@@ -1,0 +1,229 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<link href="{{ ASSETS_ROOT }}/css/plan-form.css" rel="stylesheet" />
+<style>
+  label{
+    margin-top: .6em;
+    margin-bottom: 0;
+  }
+</style>
+{% if test_request_obj.company == 'mcl' %}
+<style>:root {--mc-color: #946037;--mc-selection: #ad7e5a;--mc-shadow-color: #94603780;--mc-calendar-today: #94603780;--critical-color: #94603769;--mc-hover-color: #94603759;}</style>
+<script>$('meta[name="theme-color"]').attr('content', '#946037')</script>
+{% endif %}
+
+<div class="container pt-1 pb-3 px-sm-3 px-1">
+  <div class="row min-vh-80 justify-content-center h-100">
+    <div class="container-sm col-lg-10 col-12">
+
+      <div class="card justify-content-center my-4">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2" style="user-select: none">
+          <div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2">
+            <div class="mt-2 justify-content-center">
+              <h5 class="text-white text-center font-weight-bolder me-3">{% if 'edit' in request.get_full_path %}Editar {% endif %}Elementos de Salida del Diseño y Desarrollo</h5>
+            </div>
+          </div>
+        </div>
+        <div class="card-body container justify-content-center px-0 py-2">
+          <div class="form-group justify-content-center d-flex input-group input-group-outline px-3">
+            <form class="form col-12" action="" method="POST"  id="main-form" enctype="multipart/form-data">
+
+              {% csrf_token %}
+              <i class="d-none">{{ form.test_request}}</i>
+              <div class="p-0">
+                
+                <div class="d-flex flex-wrap px-1 user-select-none">
+                  
+                  <div class="p-1 col-sm-5 col-md-7 col-12 {% if form.client.errors %}border-error{% endif %}" id="normal-client">
+                      <div class="d-flex flex-column">
+                        <label class="mb-n1 normal-client" for="client">Cliente</label>
+                        <x class="fw-bold text-dark ps-1">{{ test_request_obj.client|default_if_none:test_request_obj.test_client }}</x>
+                      </div>
+                    </div>
+                    
+                    <div class="p-1 col">
+                      <div class="d-flex flex-column">
+                        <label class="mb-n1 normal-client" for="client">Orden de Producción</label>
+                        <x class="fw-bold text-dark ps-1">
+                        PR-{{ test_request_obj.production_order }}</x>
+                      </div>
+
+                      
+                    </div>
+                    <div class="d-flex flex-column col-6">
+                      <label class="mb-n1 normal-client" for="client">Producto</label>
+                      <x class="fw-bold text-dark ps-1">
+                      {{ test_request_obj.product }}</x>
+                    </div>
+                    
+                    {% if test_request_obj.design %}
+                      <div class="d-flex flex-column col-6">
+                        <label class="mb-n1 normal-client" for="client">Diseño</label>
+                        <x class="fw-bold text-dark ps-1">
+                        {{ test_request_obj.design }}</x>
+                      </div>
+                    {% endif %}
+                      
+
+                  </div>
+
+                  <h6 class="mb-n2 mt-2 fw-bold ps-2 text-primary">Requisitos de entrada cumplidos</h6>
+                  <hr class="mx-2 my-2">
+                  
+                  <div class="d-flex flex-wrap px-1 gap-2 user-select-none">
+                    <div class="p-0 m-0"><label class="cursor-pointer mx-1" for="dimensions">{{ form.dimensions.label }}</label>{{ form.dimensions }}</div>
+                    <div class="p-0 m-0"><label class="cursor-pointer mx-1" for="technical_specs">{{ form.technical_specs.label }}</label>{{ form.technical_specs }}</div>
+                    <div class="p-0 m-0"><label class="cursor-pointer mx-1" for="delivery_time">{{ form.delivery_time.label }}</label>{{ form.delivery_time }}</div>
+                    <div class="p-0 m-0"><label class="cursor-pointer mx-1" for="ae_other">{{ form.ae_other.label }}</label>{{ form.ae_other }}</div>
+                    <div class="col-12">{{ form.ae_other_description }}</div>
+                  </div>
+                  
+                  <h6 class="mb-n1 mt-2 fw-bold text-dark ps-2">{{ form.functionallity_and_performance.label }}</h6>
+                  <div class="px-1 pt-2">
+                    {{ form.functionallity_and_performance }}
+                  </div>
+
+                  <div class="px-1 user-select-none pt-3">
+                    <div class="d-flex flex-wrap col-12">
+                      <label for="replicavility" class="cursor-pointer fs-6 mx-1 mt-1 fw-bold text-dark pe-2">{{ form.replicavility.label }}</label>
+                      <div class="labeled-switch"><p class="no-label text-primary">no&ensp;</p><div class="form-switch">{{ form.replicavility }}</div><p class="yes-label">&thinsp;si</p></div>
+                      <div class="col-12 mt-n3 mb-2">{{ form.replicavility_description }}</div>
+                    </div>
+                  </div>
+
+                  <h6 class="mb-n1 mt-2 fw-bold text-dark ps-2">Requisitos de seguimiento, medición y criterios de aceptación</h6>
+                  <div class="mx-n1 user-select-none">
+                    <div class="d-flex flex-wrap justify-content-center col-12">
+                      <div class="px-2 py-1 col-6 col-md-4 col-xl-3"><label for="lab_analysis">{{ form.lab_analysis.label }}</label>{{ form.lab_analysis }}</div>
+                      <div class="px-2 py-1 col-6 col-md-4 col-xl-3"><label for="machinability">{{ form.machinability.label }}</label>{{ form.machinability }}</div>
+                      <div class="px-2 py-1 col-6 col-md-4 col-xl-3"><label for="handling">{{ form.handling.label }}</label>{{ form.handling }}</div>
+                      <div class="px-2 py-1 col-6 col-md-4 col-xl-3"><label for="shelf_life">{{ form.shelf_life.label }}</label>{{ form.shelf_life }}</div>
+                      <div class="px-2 py-1 col-6 col-md-4 col-xl-3"><label for="delivery">{{ form.delivery.label }}</label>{{ form.delivery }}</div>
+                      <div class="px-2 py-1 col-6 col-md-4 col-xl-3"><label for="storage">{{ form.storage.label }}</label>{{ form.storage }}</div>
+                      <div class="px-2 py-1 col-6 col-md-4 col-xl-3"><label for="technical_assistance">{{ form.technical_assistance.label }}</label>{{ form.technical_assistance }}</div>
+                      <div class="px-2 py-1 col-6 col-md-4 col-xl-3"><label for="after_sales_service">{{ form.after_sales_service.label }}</label>{{ form.after_sales_service }}</div>
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-wrap gap-1 user-select-none pt-3">
+                    <label for="failure" class="cursor-pointer fs-6 mx-1 ps-1 mt-1 mb-0 fw-bold text-dark">{{ form.failure.label }}</label>
+                    <div class="labeled-switch"><p class="no-label text-primary">no&ensp;</p><div class="form-switch">{{ form.failure }}</div><p class="yes-label">&thinsp;si</p></div>
+                    <div class="col-12 mt-n4 mb-2 p-0 d-none d-flex flex-row flex-wrap" id="failure_description">
+                      <div class="col-md-6 px-1 col-12">
+                        <label for="failure_description_l">{{ form.failure_description.label }}</label>
+                        {{ form.failure_description }}
+                      </div>
+                      <div class="col-md-6 px-1 col-12">
+                        <label for="failure_consequence">{{ form.failure_consequence.label }}</label>
+                        {{ form.failure_consequence }}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="px-1 user-select-none pt-3">
+                    <div class="d-flex flex-wrap col-12">
+                      <label for="guarantee" class="cursor-pointer fs-6 mx-1 mt-1 fw-bold text-dark pe-2">{{ form.guarantee.label }}</label>
+                      <div class="labeled-switch"><p class="no-label text-primary">no&ensp;</p><div class="form-switch">{{ form.guarantee }}</div><p class="yes-label">&thinsp;si</p></div>
+                      <div class="col-12 mt-n3 mb-2">{{ form.guarantee_description }}</div>
+                    </div>
+                  </div>
+                  
+                </div>
+
+                <hr class="mx-2 my-3">
+
+                {% include 'includes/document_dropper.html' with documents=form.documents existing=object.documents.all %}
+                
+                <label class="ps-1 mb-0" for="observation">{{ form.observation.label }}</label>
+                <div class="px-1">
+                  {{ form.observation }}
+                </div>
+
+                <div class="col-12 mb-2 p-0 d-flex flex-row flex-wrap">
+                  <div class="col-md-6 px-1 col-12">
+                    <label for="elaborator">{{ form.elaborator.label }}</label>
+                    {{ form.elaborator }}
+                  </div>
+                  <div class="col-md-6 px-1 col-12">
+                    <label for="reviewer">{{ form.reviewer.label }}</label>
+                    {{ form.reviewer }}
+                  </div>
+                </div>
+                
+                <div style="user-select: none;" class="text-center">
+                  <button type="submit" class="btn btn-primary mx-1 my-2">Guardar</button>
+                  <a onClick="window.history.back();return false;">
+                    <button type="button" class="btn btn-secondary mx-1 my-2">Cancelar</button>
+                  </a>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  $(document).ready(function() {
+      // Find all input checkboxes
+      $('input[type="checkbox"]').each(function() {
+          // Add the "form-check" class to the parent <td>
+          $(this).closest('td').addClass('form-check');
+          $(this).closest('div').addClass('form-check');
+      });
+      
+      $('.description-selector').each(function(){
+        if($(this).is(':checked')) {
+          $('#'+ $(this).attr('name') + '_description').removeClass('d-none')
+          $(this).closest('.labeled-switch').find('.no-label, .yes-label').toggleClass('text-primary');
+        };
+      })
+
+      $('.na-check').on('change', function(){
+        $('.'+ $(this).attr('childs')).each(function(){
+          if($(this).is(':checked')) {
+            $(this).trigger('change').prop('checked', false)
+          }
+          $(this).prop('disabled', !$(this).prop('disabled'));
+        })
+      });
+      
+      $('.description-selector').on('change', function() {
+        // Determine the target description div based on the checkbox ID
+        var target = $('#' + $(this).attr('id') + '_description');
+        target.toggleClass('d-none');
+        console.log(target);
+    
+        // Toggle the label colors
+        $(this).closest('.labeled-switch').find('.no-label, .yes-label').toggleClass('text-primary');
+    
+        if (target.hasClass('d-none')) {
+          target.parent().find('input, select').each(function() {
+            $(this).val('');
+            $(this).prop('checked', false);
+    
+            var sub = $('#' + $(this).attr('id') + '_other_description');
+            if (!sub.hasClass('d-none')) {
+              sub.addClass('d-none');
+            }
+            if ($(this).is('select')) {
+              $(this).trigger('change');
+            }
+          });
+        }
+      });
+             
+      $( "#date" ).datepicker( {
+        showOtherMonths: "true",
+        selectOtherMonths: "true",
+      },$.datepicker.regional[ "es" ] );
+
+      
+  });
+
+</script>
+{% endblock content %}
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

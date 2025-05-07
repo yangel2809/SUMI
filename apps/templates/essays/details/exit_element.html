@@ -1,0 +1,191 @@
+{% load tz %}
+{% load home_tags %}
+
+<!---------------------------------[Content Start]--------------------------------->
+<div class="tabbed-content" id="exit-element" {% if not exit_first %}style="display: none;"{% endif %}>
+  
+  <!------------------------------------[Head]------------------------------------>
+  <div class="d-flex flex-row flex-wrap justify-content-between">
+    <div class="d-flex flex-sm-row flex-column user-select-none">
+      
+       <div class="p-1">
+         {% if test_request_obj.company == 'mcl' %}
+           <img alt="Morrocel c.a RIF:J-06000377-6" width="220rem" src="{{ ASSETS_ROOT }}/img/logo_mcl.svg" />
+         {% else %}
+           <img alt="Curex c.a RIF:J-00074598-6" width="220rem" src="{{ ASSETS_ROOT }}/img/logo_crx.svg" />
+         {% endif %}
+       </div>
+      
+    </div>
+    <div class="d-flex flex-column align-items-end">
+      <p class="text-end m-0 mb-n1 fw-bolder text-xxs">
+        F-IDAT-08
+      </p>
+      <p class="text-end m-0 mb-n1 fw-bolder text-xxs">
+        REV-02
+      </p>
+      <p class="text-end m-0 mb-n1 fw-bolder text-xxs text-uppercase">
+        01/ABR/2025
+      </p>
+    </div>
+    <h3 class="col-12 text-center mb-1 mt-2 fw-bold text-primary" style="line-height: 1;">Elemento de Salida</h3>
+  </div>
+  <!------------------------------------[Body]------------------------------------>
+  <div class="p-0">
+                
+    <div class="d-flex flex-wrap px-2 pt-2 justify-content-between">
+      <div class="d-flex">Cliente:&thinsp;<p class="fw-bold text-dark">{% if test_request_obj.check_test_client %}<abbr title="Cliente de Prueba">{{ test_request_obj.test_client }}</abbr>{% else %}{{ test_request_obj.client }}{% endif %}</p></div>
+      
+      <div class="d-flex"><p class="fw-bold text-dark">PR-{{ test_request_obj.production_order }}</p></div>
+      <div class="d-flex">Producto:&thinsp;<p class="fw-bold text-dark">{{ test_request_obj.product }}</p></div>
+      <div class="d-flex">Fecha de creación:&thinsp;<p class="fw-bold text-dark">{{ test_request_obj.exit_element.created|date:"d/m/Y" }}</p></div>
+      <div class="d-flex">Fecha de modificación:&thinsp;<p class="fw-bold text-dark">{{ test_request_obj.exit_element.modified|date:"d/m/Y" }}</p></div>
+    </div>
+    <hr class="mx-2 my-2">
+    <h5 class="text-start text-md-center text-primary fw-bold mb-0 mt-3 ms-2">Requisitos de entrada cumplidos</h5>
+      
+      <div class="d-flex flex-row flex-wrap justify-content-center gap-5 p-2 user-select-none">
+        <div class="d-flex flex-row cursor-help" 
+          title="{% if test_request_obj.exit_element.dimensions %}Cumplido{% else %}No cumplido{% endif %}">
+            <x class="fw-bold text-dark">Dimensiones&emsp13;
+              {% if test_request_obj.exit_element.dimensions %}
+              <i class="fa-solid fa-check fa-lg"></i>
+              {% else %}
+              <i class="fa-solid fa-xmark fa-lg"></i>
+              {% endif %}
+            </x>
+          </div>
+        <div class="d-flex flex-row cursor-help" 
+          title="{% if test_request_obj.exit_element.technical_specs %}Cumplido{% else %}No cumplido{% endif %}">
+            <x class="fw-bold text-dark">Especificaciones técnicas&emsp13;
+              {% if test_request_obj.exit_element.technical_specs %}
+              <i class="fa-solid fa-check fa-lg"></i>
+              {% else %}
+              <i class="fa-solid fa-xmark fa-lg"></i>              
+              {% endif %}
+            </x>
+          </div>
+        <div class="d-flex flex-row cursor-help" 
+          title="{% if test_request_obj.exit_element.delivery_time %}Cumplido{% else %}No cumplido{% endif %}">
+            <x class="fw-bold text-dark">Tiempo de entrega&emsp13;
+              {% if test_request_obj.exit_element.delivery_time %}
+              <i class="fa-solid fa-check fa-lg"></i>
+              {% else %}
+              <i class="fa-solid fa-xmark fa-lg"></i>
+              {% endif %}
+            </x>
+          </div>
+
+        {% if test_request_obj.exit_element.ae_other %}
+        <div class="d-flex flex-row">
+          <x class="fw-bold text-dark">Otros:</x>&thinsp;{{ test_request_obj.exit_element.ae_other_description }}
+        </div>
+        {% endif %}
+      </div>
+        
+
+      {% if test_request_obj.exit_element.functionallity_and_performance or test_request_obj.exit_element.replicavility %}
+    <hr class="mx-2 my-2">
+    {% endif %}
+
+    {% if test_request_obj.exit_element.functionallity_and_performance %}
+      <h5 class="text-start text-md-center text-primary fw-bold mb-0 mt-3 ms-2">Funcionabilidad y desempeño del producto y/o servicios:</h5>
+      <div class="col-12 p-2 text-center">{{ test_request_obj.exit_element.functionallity_and_performance }} </div>
+    {% endif %}
+  
+    {% if test_request_obj.exit_element.replicavility %}
+    <div class="col-12 p-2 text-center"><x class="fw-bold">El producto o servicio es reproducible para garantizar su provisión</x>:&thinsp;{{ test_request_obj.exit_element.replicavility_description }}</div>
+    {% endif %}
+
+    <hr class="mx-2 my-2">
+
+    <h5 class="text-start text-md-center text-primary fw-bold mb-0 mt-3 ms-2">Requisitos de seguimiento, medición y criterios de aceptación</h5>
+    <div class="d-flex flex-row flex-wrap justify-content-between gap-3 p-2">
+      
+              
+      <div class="d-flex flex-row">
+        Analisis de Laboratorio:&thinsp;<x class="fw-bold text-dark">{{ test_request_obj.exit_element.get_lab_analysis_display }}</x>
+      </div>
+      
+      <div class="d-flex flex-row">
+        Mecanabilidad:&thinsp;<x class="fw-bold text-dark">{{ test_request_obj.exit_element.get_machinability_display }}</x>
+      </div>
+      
+      <div class="d-flex flex-row">
+        Manejo:&thinsp;<x class="fw-bold text-dark">{{ test_request_obj.exit_element.get_handling_display }}</x>
+      </div>
+      
+      <div class="d-flex flex-row">
+        Vida Util:&thinsp;
+        {% if test_request_obj.exit_element.shelf_life == 'eva' %}
+        <x title="Desde: {{ test_request_obj.exit_element.shelf_life_date }}" class="fw-bold text-dark fst-underline cursor-help">{{ test_request_obj.exit_element.get_shelf_life_display }}</x>
+        {% else %}
+        <x class="fw-bold text-dark">{{ test_request_obj.exit_element.get_shelf_life_display }}</x>
+        {% endif %}
+      </div>
+
+      <div class="d-flex flex-row">
+        Entrega:&thinsp;<x class="fw-bold text-dark">{{ test_request_obj.exit_element.get_delivery_display }}</x>
+      </div>
+      
+      <div class="d-flex flex-row">
+        Almacenamiento:&thinsp;<x class="fw-bold text-dark">{{ test_request_obj.exit_element.get_storage_display }}</x>
+      </div>
+      
+      <div class="d-flex flex-row">
+        Asistencia Técnica:&thinsp;<x class="fw-bold text-dark">{{ test_request_obj.exit_element.get_technical_assistance_display }}</x>
+      </div>
+
+      <div class="d-flex flex-row">
+        Servicio Post-Venta:&thinsp;<x class="fw-bold text-dark">{{ test_request_obj.exit_element.get_after_sales_service_display }}</x>
+      </div>
+      
+      
+    </div>
+    
+    {% if test_request_obj.exit_element.failure %}
+    <hr class="mx-2 my-2">
+    <div class="d-flex flex-wrap flex-column col-12 mt-3 text-center fs-5">
+      <div class="fw-bold text-primary">Existieron fallas sobre el diseño y desarrollo</div>
+      <div class="col-12 ">{{ test_request_obj.exit_element.failure_description|default_if_none:"" }}</div>
+      <div class="fw-bold text-primary mt-2">Consecuencias de esas fallas</div>
+      <div class="col-12 ">{{ test_request_obj.exit_element.failure_consequence|default_if_none:"" }}</div>
+    </div>
+    {% endif %}
+    
+    {% if test_request_obj.exit_element.guarantee %}
+    <hr class="mx-2 my-2">
+    <div class="d-flex flex-wrap flex-column col-12 mt-3 text-center fs-5">
+      <div class="fw-bold text-primary">Se garantiza que los productos y servicios cumplan con su propósito y su provisión sea segura y correcta</div>
+      <div class="col-12 ">{{ test_request_obj.exit_element.guarantee_description|default_if_none:"" }}</div>
+    </div>
+    {% endif %}
+      
+    {% if test_request_obj.exit_element.observation.html %}
+    {% if test_request_obj.exit_element.observation.html != '<p><br></p>' %}
+    <hr class="mx-2 my-2">
+    <div class="px-2 pt-2">
+      <h5 class="text-start text-md-center text-primary fw-bold mb-0">Observaciones</h5>
+      <div>{{ test_request_obj.exit_element.observation.html|safe }}</div>
+    </div>
+    <hr class="mx-2 mt-2">
+    {% endif %}
+    {% endif %}
+
+    {% if test_request_obj.exit_element.documents.all %}
+      {% include 'includes/document_preview.html' with existing=test_request_obj.exit_element.documents.all %}
+	  {% endif %}
+
+    <div class="d-flex flex-row flex-wrap justify-content-between px-2 gap-3">
+      <div class="d-flex flex-column">
+        <h6 class="m-0 text-primary fw-bold">Realizado por:</h6>
+        <p class="m-0 fw-bold">{{ test_request_obj.exit_element.elaborator }}</p>
+      </div>
+      <div class="d-flex flex-column">
+        <h6 class="m-0 text-primary fw-bold">Revisado por:</h6>
+        <p class="m-0 fw-bold {% if test_request_obj.exit_element.reviewer %}">{{ test_request_obj.exit_element.reviewer }}{% else %}fst-italic">Pendiente por Revisión{% endif %}</p>
+      </div>
+    </div>
+
+  </div>
+</div>

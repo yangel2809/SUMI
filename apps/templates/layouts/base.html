@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="es">
+  
+<head>
+  <meta charset="utf-8" />
+  <meta name="theme-color" content="{% if plan_details.gp_code|slice:':2' == 'TM' %}#946037{% else %}#fe5000{% endif %}">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="apple-touch-icon" sizes="76x76" href="{{ ASSETS_ROOT }}/img/cx.svg">
+  <link rel="icon" type="image/png" href="{{ ASSETS_ROOT }}/img/cx.svg">
+  <!--     Bootstrap     -->
+  <script src="{{ ASSETS_ROOT }}/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- JQuery -->
+  <script src="{{ ASSETS_ROOT }}/lib/jquery-3.6.2/jquery-3.6.2.min.js"></script>
+  <link rel="stylesheet" href="{{ ASSETS_ROOT }}/js/JQUI/jquery-ui-main.css">
+  <script src="{{ ASSETS_ROOT }}/js/JQUI/jquery-ui.js">$datepicker.setDefaults({showOn: "both", buttonText: "Calendar"})</script>
+  <script src="{{ ASSETS_ROOT }}/js/JQUI/ui/datepicker-es.js"></script>
+  
+  <title>
+    Curex SUMI
+  </title>
+  <!--     Fonts and icons     -->
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+  <!-- SF Mono -->
+  <link rel="stylesheet" href="{{ ASSETS_ROOT }}/css/sf-mono-fonts.css"/>
+  <!-- Fira Code -->
+  <link rel="stylesheet" href="{{ ASSETS_ROOT }}/css/fira-code-fonts.css"/>
+  <!-- Nucleo Icons -->
+  <link href="{{ ASSETS_ROOT }}/css/nucleo-icons.css" rel="stylesheet" />
+  <link href="{{ ASSETS_ROOT }}/css/nucleo-svg.css" rel="stylesheet" />
+  <!-- Font Awesome Icons -->
+  <script defer src="{{ ASSETS_ROOT }}/lib/fontawesome-free-6.5.2-web/js/solid.js"></script>
+  <script defer src="{{ ASSETS_ROOT }}/lib/fontawesome-free-6.5.2-web/js/brands.js"></script>
+  <script defer src="{{ ASSETS_ROOT }}/lib/fontawesome-free-6.5.2-web/js/fontawesome.js"></script>
+  <!-- Material Icons -->
+  <link rel="stylesheet" href="{{ ASSETS_ROOT }}/css/material-icons/outlined.css" />
+  <link rel="stylesheet" href="{{ ASSETS_ROOT }}/css/material-icons/round.css" >
+  <link rel="stylesheet" href="{{ ASSETS_ROOT }}/css/material-icons/rounded.css" />
+  <!-- Quill Files -->
+  {% include 'django_quill/media.html' %}
+  {% include 'includes/quill-styles.html' %}
+  <script src="{{ ASSETS_ROOT }}/lib/django-quill/image-resize.min.js"></script>
+  <!-- CSS Files -->
+  <link id="pagestyle" href="{{ ASSETS_ROOT }}/css/material-dashboard.css" rel="stylesheet" />
+  <link id="datepickerstyles" href="{{ ASSETS_ROOT }}/css/bootstrap-datetimepicker.css" rel="stylesheet" />
+  <link id="basepagestyle" href="{{ ASSETS_ROOT }}/css/base.css" rel="stylesheet" />
+  
+  <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-zoom/1.6.1/jquery.zoom.min.js" integrity="sha512-xhvWWTTHpLC+d+TEOSX2N0V4Se1989D03qp9ByRsiQsYcdKmQhQ8fsSTX3KLlzs0jF4dPmq0nIzvEc3jdYqKkw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>-->
+  {% block stylesheets %}
+  {% endblock stylesheets %}
+  
+</head> 
+<body class="g-sidenav-show print-no-bg" style="background-color: #191919">
+  
+  {% load i18n %}
+  
+  {% language 'es' %}
+  
+  {% include 'includes/sidebar.html' %}
+  
+  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+    
+    {% include 'includes/navigation.html' %}    
+    
+    <!--     Select2     -->
+    <link href="{{ ASSETS_ROOT }}/lib/select2-4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="{{ ASSETS_ROOT }}/lib/select2-4.1.0-rc.0/dist/js/select2.min.js"></script>
+    
+    {% block content %}
+    
+
+    {% endblock content %}
+    
+  {% include 'includes/scripts.html' %}
+
+  {% endlanguage %}
+
+  <!-- Specific Page JS goes HERE  -->
+  {% block javascripts %}{% endblock javascripts %}
+
+  <script>
+    
+    
+      $(document).ready(function() {
+        function adjustHeight(textarea) {
+          if ($(textarea).hasClass('select2-search__field')) {
+            return;
+          }
+          $(textarea).css("height", "72px"); 
+          $(textarea).css("height", textarea.scrollHeight + 8 + "px"); 
+        }
+      
+        $("textarea").each(function () {
+          adjustHeight(this);
+        });
+        
+        $(document).on("input", "textarea", function () {
+          adjustHeight(this);
+        });
+        const $bellIcons = $('.bell-icon');
+      
+        $(document).on('click', function(event) {
+          $bellIcons.each(function() {
+            if (!$(this).is(event.target) && $(this).has(event.target).length === 0) {
+              $(this).removeClass('stop');
+            }
+          });
+        });
+      
+        $bellIcons.on('click', function(event) {
+          event.stopPropagation(); // Prevent the document click event from firing
+          $(this).toggleClass('stop');
+        });
+
+        $('.select-2').each(function() {
+          $(this).select2({
+            placeholder: $(this).attr('placeholder'),
+            allowClear: $(this).attr('allowClear') === 'true',
+            width: '100%',
+		        selectionCssClass: ':all:',
+		        dropdownCssClass: ':all:'
+          });
+        })
+
+        $(".date-widget").each(function() { 
+          $(this).datepicker( {
+            showOtherMonths: "true",
+            selectOtherMonths: "true",
+          },$.datepicker.regional[ "es" ] );
+        });
+      });
+    
+      var win = navigator.platform.indexOf('Win') > -1;
+      if (win && document.querySelector('#sidenav-scrollbar')) {
+        var options = {
+          damping: '0.5'
+        }
+        Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+      }
+  </script>
+  
+  <script src="{{ ASSETS_ROOT }}/js/material-dashboard.min.js?v=3.0.0"></script>
+  
+</body> 
+</html>

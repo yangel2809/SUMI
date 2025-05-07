@@ -1,0 +1,69 @@
+
+<div class="table-responsive p-0" style="overflow-y: hidden;">
+    
+    {{ lformset.management_form }}
+   
+    <table class="table align-items-center justify-content-center mb-0">
+        <thead class="align-items-center text-sm mb-n1">
+            <tr>
+                <th class="text-center col-5 px-1 pb-1">
+                        Máquina laminadora
+                </th>
+                <th class="text-center col-6 px-1 pb-1">Especificación</th>                
+                {% if lformset.instance.pk %}
+                <th class="text-center col-1 px-1 pb-1">
+                    <i class="material-icons">delete</i>
+                </th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody id="lform_set" class="no_error p-0 m-0" style="user-select: none;">
+            <!--Lamination form goes here-->
+            {% if lformset %}
+            {% for ll in lformset %}
+            <tr class="no_error" id="larow-{{ forloop.counter0 }}">
+                {% for hidden in ll.hidden_fields %}
+                {{ hidden }}
+                {% endfor %}
+                <td class="p-1 col-3">
+                    <div class="{% if lformset.errors.machine %}border-error{% endif %}">
+                        {{ ll.machine }}
+                    </div>
+                </td>
+                <td class="p-1 col-9">
+                    <div class="{% if lformset.errors.detail %}border-error{% endif %}">
+                        {{ ll.detail }}
+                    </div>
+                </td>
+                {% if ll.instance.pk %}
+                <td class="text-center">
+                    <div class="p-0 form-check">
+                        {{ ll.DELETE }}
+                    </div>
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+            {% endif %}
+        </tbody>
+        <!-------------------------Empty form----------------------------->
+        <tbody id="lempty_form" style="display:none !important;">
+            <tr class="no_error" id="larow-__prefix__">
+                
+                <td class="p-1 col-3">
+                    <div class="{% if lformset.errors.machine %}border-error{% endif %}">
+                        {{ lformset.empty_form.machine }}
+                    </div>
+                </td>
+                <td class="p-1 col-9">
+                    <div class="{% if lformset.errors.detail %}border-error{% endif %}">
+                        {{ lformset.empty_form.detail }}
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+   
+</div>
+
+    

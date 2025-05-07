@@ -1,0 +1,36 @@
+{% load home_tags %}
+
+<div class="d-inline ps-0 " id="si-{{ sale_order.id }}">
+  {% include 'includes/status-icon.html' with stat=sale_order.status %}
+</div>
+{% check_permission user 'graphics' sale_order.status.code as has_permission %}
+{% if has_permission %}
+<div class="ps-0 form-check" name="sc-{{ sale_order.id }}" style="display: none" >
+
+  <input 
+  name="pre_print_aprove"
+  class="form-check-input pre-print-check"
+  style="margin-top: 0.18rem;"
+  id="pp-{{ sale_order.id }}"
+  autocomplete="off"
+  type="checkbox"
+  title="Marcar cómo completado"
+  sost="{{ sale_order.status.code }}"
+  soid="{{ sale_order.id }}"
+  nature="check">
+  {% if "approval" in sale_order.status.code %}
+  <input 
+  name="pre_print_reject" 
+  class="form-check-input pre-print-check"
+  style="margin-top: 0.18rem; background: #ff9a9a"
+  id="re-{{ sale_order.id }}"
+  autocomplete="off"
+  type="checkbox"
+  title="Marcar cómo rechazado"
+  sost="{{ sale_order.status.code }}"
+  soid="{{ sale_order.id }}"
+  nature="reject">
+</div>
+{% endif %}
+<div id="countdown-{{ sale_order.id }}" class="fw-bold text-dark d-inline"></div>
+{% endif %}

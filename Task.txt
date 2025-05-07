@@ -1,0 +1,8 @@
+change nginx.conf workers
+collectstatic
+
+env\Scripts\activate.bat
+python manage.py makemigrations
+python manage.py migrate
+
+attrib -h -r -s /s /d "D":\*.*

@@ -1,0 +1,102 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} Tables {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+<link id="basepagestyle" href="{{ ASSETS_ROOT }}/css/index.css" rel="stylesheet" />
+
+    <div class="container-fluid pt-1 px-sm-4 px-3 pb-3">
+
+      <div class="row">
+        <div class="col-12 px-0 px-md-2">
+          <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-md-3 mx-2 z-index-2" style="user-select: none">
+              <div class="bg-primary shadow-primary border-radius-lg px-3 pt-2 pb-2">
+                <div class="mt-2 d-flex flex-nowrap flex-row overflow-x-scroll hide-bar">
+                  
+                  <h5 class="text-white font-weight-bolder text-nowrap pe-3">
+                    {{ title }}          
+                  </h5>
+                  
+                </div>
+              </div>
+            </div>
+            <div class="card-body p-0 pt-1">
+              <div class="table-responsive" id="my-table-container">
+                {% include 'production/tables/orders.html' %}
+              </div>
+            </div>   
+            <div id="my-paginator-container">   
+              {% include 'production/paginators/obj.html' %}
+            </div> 
+          </div>
+        </div>
+      </div>      
+    </div>
+    
+{% endblock content %}
+
+<!-- Specific JS goes HERE --> 
+{% block javascripts %}
+<style>
+  .ui-datepicker{
+    z-index: 99999 !important;
+  }
+</style>
+<script>
+
+</script>
+<script>
+  $(document).ready(function () {
+    $( ".date-input" ).datepicker( {
+      showOtherMonths: "true",
+      selectOtherMonths: "true",
+      },$.datepicker.regional[ "es" ] );
+  });
+  $('#buscador').keyup(function() {
+    var params = new URLSearchParams(window.location.search);
+    var data = {};
+    for (var pair of params.entries()) {
+      data[pair[0]] = pair[1];
+    }
+    data['search_text'] = $('#buscador').val();
+    $.ajax({
+        url: "{% url 'order_list' %}",
+        data: data,
+        dataType: 'json',
+        success: function(data) {
+            $('#my-table-container').html(data.table_html);
+            $('#my-paginator-container').html(data.paginator_html);
+            $( ".date-input" ).datepicker( {
+              showOtherMonths: "true",
+              selectOtherMonths: "true",
+              },$.datepicker.regional[ "es" ] );
+        }
+    });
+  });
+  $(document).on('click', '.paginationer', function(e) {
+    e.preventDefault();
+    var page = $(this).attr('href').split('page=')[1];
+    var params = new URLSearchParams(window.location.search);
+    var data = {};
+    data['page'] = page;
+    data['search_text'] = $('#buscador').val();
+    $.ajax({
+        url: "{% url 'order_list' %}",
+        data: data,
+        dataType: 'json',
+        success: function(data) {
+            $('#my-table-container').html(data.table_html);
+            $('#my-paginator-container').html(data.paginator_html);
+            $( ".date-input" ).datepicker( {
+              showOtherMonths: "true",
+              selectOtherMonths: "true",
+              },$.datepicker.regional[ "es" ] );
+        }
+    });
+  });
+</script>
+{% endblock javascripts %}

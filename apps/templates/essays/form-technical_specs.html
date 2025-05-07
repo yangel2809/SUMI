@@ -1,0 +1,66 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<!-- form_view.html -->
+{% if test_request_obj.company == 'mcl' %}
+<style>:root {--mc-color: #946037;--mc-selection: #ad7e5a;--mc-shadow-color: #94603780;--mc-calendar-today: #94603780;--critical-color: #94603769;--mc-hover-color: #94603759;}</style>
+<script>$('meta[name="theme-color"]').attr('content', '#946037')</script>
+{% endif %}
+<style>label{margin-bottom: 0 !important;}</style>
+<link href="{{ ASSETS_ROOT }}/css/essay-material-form.css" rel="stylesheet" />
+<div class="container-fluid pt-1 px-sm-4 px-3 pb-3">
+	<div class="row min-vh-80 h-100">
+		<div class="col-12 px-0 px-md-2">
+			<div class="card my-4">
+				<div class="card-header p-0 position-relative mt-n4 mx-2 mx-md-3 z-index-2" style="user-select: none">
+					<div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2">
+						<div class="mt-2 text-center">
+							<h4 class="text-white text-center font-weight-bolder me-3">{% if 'edit' in request.get_full_path %}Editar
+								{% endif %}Revisión de Especificaciones Técnicas</h5>
+						</div>
+					</div>
+					<div class="card-body px-md-0 px-2 py-2">
+						<div class="form-group d-flex input-group input-group-outline">
+							<input type="hidden" id="company" value="{{ test_request_obj.company }}">
+							<form class="form col-12" method="POST" style="user-select: none">
+								{% csrf_token %}
+								<div class="row pt-2 px-1 px-md-3">
+									<h6 class="fw-bold text-primary m-0">Observaciones</h6>
+									<br>
+									<div class="col-12 pb-2">{{ form.observation }}</div>
+									<div class="col-{% if perms.essays.boss_sign_testfile %}sm-4 col-{% endif %}6 col-12 pb-3"><label class="fw-bold text-primary" for="date">Fecha</label>{{ form.date }}</div>
+									<div class="col-{% if perms.essays.boss_sign_testfile %}sm-4 col-{% endif %}6 col-12 pb-3"><label class="fw-bold text-primary" for="quality_analist">Analista Inspector</label>{{ form.quality_analist }}</div>
+									{% if perms.essays.boss_sign_testfile %}
+									<div class="col-sm-4 col-12 pb-3"><label class="fw-bold text-primary" for="production_operator">Gerente Aseguramiento de la Calidad</label>{{ form.boss }}</div>
+									{% endif %}
+								</div>
+								<div class="d-flex justify-content-center gap-2">
+									<button class="btn btn-primary" type="submit">Guardar</button>
+									<a href="{% url 'view_tech_specs' test_request_obj.id %}">
+										<button type="button" class="btn btn-secondary">Cancelar</button>
+									</a>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+$(document).ready(function () {
+	$( "#date" ).datepicker( {
+		showOtherMonths: "true",
+		selectOtherMonths: "true",
+	},$.datepicker.regional[ "es" ] );
+
+	$('#quality_analist').select2({
+		placeholder: 'Seleccione...',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+
+});
+</script>
+{% endblock content %}

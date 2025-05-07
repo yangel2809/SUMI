@@ -1,0 +1,113 @@
+{% load home_tags %}
+  {% if perms.home.archive_plan %}
+    {% if plan_details.archived and perms.home.delete_archive_plan %}
+    <li class="nav-item mt-3 ms-1 mb-2">
+      <!-- Button trigger modal -->
+      <a class="a-deaf" title="Restaurar" data-bs-toggle="modal" data-bs-target="#id-{{ plan_details.id }}"
+        style="user-select: none; cursor: pointer !important;" title="Eliminar">
+        <i class="material-symbols-rounded detail-action-icon">settings_backup_restore</i>
+      </a>
+    </li>
+    <li class="nav-item mt-3 ms-1 mb-2">
+      <!-- Button trigger modal -->
+      <a class="a-deaf" title="Eliminar" data-bs-toggle="modal" data-bs-target="#id-{{ plan_details.id }}-del"
+        style="user-select: none; cursor: pointer !important;" title="Eliminar">
+        <i class="material-symbols-rounded detail-action-icon">delete</i>
+      </a>
+    </li>
+      <div class="modal fade" id="id-{{ plan_details.id }}-del" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true" style="user-select: none;">
+        <div class="modal-dialog">
+          <div class="modal-content px-3">
+            <div class="modal-header px-4 mx-n3" style="background-color: var(--mc-color) !important;">
+              <h4 class="modal-title font-weight-bolder text-white" id="exampleModalLabel">¡Advertencia!</h4>
+            </div>
+            <div class="modal-body text-start px-1">
+              <p class="mb-1 font-weight-bold" style="line-height: 1.25; font-weight: 500 !important;">
+                ¿Seguro que desea eliminar <b class="text-danger">permanentmente</b> el Plan de Calidad <b style="color: var(--mc-color)">{{ plan_details.product }}</b>?</p>
+              <p class="mb-0 text-xs">Los datos de estructura y ensayos se perderán, esta acción es irreversible</p>
+            </div>
+            <div class="modal-footer text-center justify-content-center py-2">
+              <form method="POST" action="{% url 'delete_true_plan' plan_details.id %}{% if '?' in request.get_full_path %}?next=/plans/{{ request.GET | query_encode }}{% endif %}">
+                {% csrf_token %}
+                <button type="button" class="m-0 btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="m-0 btn btn-danger">Confirmar</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+      <!-- Modal -->
+      <div class="modal fade" id="id-{{ plan_details.id }}" tabindex="-1"
+        aria-labelledby="exampleModalLabel" aria-hidden="true" style="user-select: none;">
+        <div class="modal-dialog">
+          <div class="modal-content px-3">
+            <div class="modal-header px-4 mx-n3" style="background-color: var(--mc-color) !important;">
+              <h4 class="modal-title font-weight-bolder text-white" id="exampleModalLabel">¡Alerta!</h4>  
+            </div>
+            <div class="modal-body text-start px-1">
+              <p class="mb-1 font-weight-bold" style="line-height: 1.25; font-weight: 500 !important;">
+                ¿Seguro que desea <b class="text-success">resturar</b> el Plan de Calidad <b style="color: var(--mc-color)">{{ plan_details.product }}</b>?</p>
+            </div>
+            <div class="modal-footer text-center justify-content-center py-2">
+              <form method="POST" action="{% url 'restore_plan' plan_details.id %}{% if '?' in request.get_full_path %}?next=/plans/{{ request.GET | query_encode }}{% endif %}">
+                {% csrf_token %}
+                <button type="button" class="m-0 btn btn-secondary"
+                  data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="m-0 btn btn-success">Confirmar</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>                   
+    </li>
+    {% endif %}
+  {% endif %}
+  {% if not plan_details.archived == True %}
+           
+    {% if perms.home.change_plan %}
+      {% if not request.user.username == 'Pasante' %}
+        <li class="nav-item mt-3 ms-1 mb-2">
+          <a class="a-deaf" title="Editrar Plan de Calidad" href=" {% url 'edit_plan' plan_details.id %}{% if '?' in request.get_full_path %}?next=/plans/{{ request.GET | query_encode }}{% endif %}">
+            <i class="material-symbols-rounded detail-action-icon">drive_file_rename_outline</i>
+          </a>
+        </li>
+      {% elif plan_details.new_p %}
+      <li class="nav-item mt-3 ms-1 mb-2">
+        <a class="a-deaf" title="Editrar Plan de Calidad" href=" {% url 'edit_plan' plan_details.id %}{% if '?' in request.get_full_path %}?next=/plans/{{ request.GET | query_encode }}{% endif %}">
+          <i class="material-symbols-rounded detail-action-icon">drive_file_rename_outline</i>
+        </a>
+      </li>
+      {% endif %}                
+    {% elif plan_details.pc == "00000000" %}
+      {% if perms.home.add_plan %}
+        <li class="nav-item mt-3 ms-1 mb-2">
+          <a class="a-deaf" title="Editrar Plan de Calidad" href=" {% url 'edit_plan' plan_details.id %}{% if '?' in request.get_full_path %}?next=/plans/{{ request.GET | query_encode }}{% endif %}">
+            <i class="material-symbols-rounded detail-action-icon">drive_file_rename_outline</i>
+          </a>
+        </li>
+      {% endif %}
+    {% endif %}
+    {% if perms.home.add_plan %}
+    <li class="nav-item mt-3 ms-1 mb-2">
+      <a class="a-deaf" title="Duplicar plan de Calidad" href="{% url 'clone_plan' plan_details.id %}{% if '?' in request.get_full_path %}?next=/plans/{{ request.GET | query_encode }}{% endif %}">
+        <i class="material-symbols-rounded detail-action-icon">difference</i>
+      </a>
+      <span class="loader" title="Si la carga no concluye, comoníquese con soporte" id="clone-{{ test_request.id }}-l" style="display: none;"></span>
+    </li>
+    {% endif %}
+    {% if perms.sales.add_saleorder %}
+    <li class="nav-item mt-3 ms-1 mb-2">
+      <a class="a-deaf" title="Crear Pedido" href="{% url 'sale_order_qp' plan_details.id %}">
+        <i class="material-symbols-rounded detail-action-icon">request_quote</i>
+      </a>
+    </li>
+    {% endif %}
+    <li class="nav-item mt-3 ms-1 mb-2">
+      <a class="a-deaf" target="_blank" title="Guardar cómo PDF/Imprimir" href=" {% url 'plan_pdf' plan_details.id %} ">
+        <i class="material-symbols-rounded detail-action-icon">picture_as_pdf</i>
+      </a>
+    </li>
+  {% endif %}
+          

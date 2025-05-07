@@ -1,0 +1,117 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Template {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+<link href="{{ ASSETS_ROOT }}/css/essay-material-form.css" rel="stylesheet" />
+<div class="container pt-1 pb-3">
+  <div class="row min-vh-80 justify-content-center h-100">
+    <div class=" container-sm col-12" style="max-width: 700px;">
+
+      <div class="card justify-content-center my-4" style="min-width: 430px;">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2" style="user-select: none">
+          <div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2">
+            <div class="mt-2 justify-content-center">
+              <h5 class="text-white text-center font-weight-bolder me-3">{% if 'edit' in request.get_full_path %}Editar {% else %}Agregar {% endif %}Ensayo</h5>
+            </div>
+          </div>
+        </div>
+        <div class="card-body container px-0 pb-2">
+          <div class="form-group d-flex input-group input-group-outline px-4">
+            <form class="form justify-content-center col-12" action="" method="POST" id="main-form">
+
+              {% csrf_token %}
+              <div class="col-12 px-4 text-center justify-content-center" style="user-select: none;">
+                <div class="row align-items-center mb-3">
+                  <div class="font-weight-bold text-end col-3 ps-0 pe-3" style="line-height: 1;">
+                    Tipo de Ensayo
+                  </div>
+                  <div class="py-0 ps-0 pe-5 col-9 {% if form.name.errors %}border-error{% endif %}">
+                    {{ form.name }}
+                  </div>
+                </div>
+                <div class="row align-items-center mb-3">
+                  <div class="font-weight-bold text-end col-3 ps-0 pe-3">
+                    <abbr title="Información adicional para mostrar debajo del ensayo (Opcional)">Descripción</abbr>
+                  </div>
+                  <div class="py-0 ps-0 pe-5 col-9 {% if form.detail.errors %}border-error{% endif %}">
+                    {{ form.detail }}
+                  </div>
+                 
+                </div>
+                <div class="row align-items-center mb-3">            
+                          
+                    <div class="font-weight-bold text-end col-3 ps-0 pe-3">
+                      {% if 'edit' in request.get_full_path %}
+                      {% else %}
+                      <a class="a-deaf" title="Agregar Unidad" href="{% url 'add_unit' %}?next={% url 'add_essay' %}">
+                        <i class="material-icons me-0"
+                          style="vertical-align: middle; font-size: 16px !important;">add_circle</i>
+                      </a>
+                      {% endif %}
+                      Unidad
+                    </div>
+                    <div class="col-9 ps-0">
+                      <div class="row row-cols-3 align-items-center">
+
+                        <div class="col-5 {% if form.unit.errors %}border-error{% endif %}">
+                          {{ form.unit }}
+                        </div>
+                        <div class="font-weight-bold text-end col-2 ps-0 pe-1">                    
+                          ASCA-ME                     
+                        </div>
+                        <div class="col-5 ps-0 pe-5 {% if form.method.errors %}border-error{% endif %}">
+                          {{ form.method }}                        
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="col-12 pe-5 pt-3">
+                      <label class="m-0 p-0 d-flex flex-row justify-content-end text-bold" for="confidential">
+                        
+                        Confidencial
+                        <div class="ps-2 m-0 form-check">
+                          {{ form.confidential }}
+                        </div>
+                      </label>
+                    </div>
+
+                </div>
+                {% if form.method.errors %}
+                <div class="row">
+                  <span class="text-s text-danger font-weight-bold">Sólo se admite el formato "<abbr title="Números con creos de relleno (001)">000</abbr>"</span>
+                </div>
+                {% endif %}
+                <div style="user-select: none;">
+                  <button type="submit" class="btn btn-primary mx-1 my-2">Guardar</button>
+                  <a href="/essays">
+                    <button type="button" class="btn btn-secondary mx-1 my-2">Cancelar</button>
+                  </a>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>   
+  $('#main-form').on('submit', function() {
+    $(this).find('button[type="submit"]').prop('disabled', true);
+  });
+  $('#unit').select2({
+    placeholder: 'Seleccione...',
+    allowClear:true,
+    width: '100%',
+    selectionCssClass: ':all:',
+    dropdownCssClass: ':all:'
+  });
+</script>
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

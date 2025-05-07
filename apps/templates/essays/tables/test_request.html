@@ -1,0 +1,259 @@
+{% load home_tags %}
+
+{% if objects %}
+  <i class="hidden" id="tab" value="{{ tab }}"></i>
+  <table class="table table-hover align-items-center mb-0">
+    <thead>
+      <tr>
+        {% if 'test_request' in segment %}
+        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">op</th>
+        {% endif %}
+        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">N° Solicitud</th>
+        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Cliente</th>
+        {% if not tab == 'deleted' and not tab == 'archived' and not segment == 'closed_test_request' %}
+        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">Estado</th>
+        {% endif %}
+        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Producto</th>
+        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">fecha</th>
+        {% if perms.essays.change_testrequest %}
+        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="user-select: none">editar</th>
+        {% endif %}
+        <th class="p-0"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for test_request in objects %}
+      <tr>
+        {% if 'test_request' in segment %}
+        <td class="col-1 ps-4 ms-2">
+          <a title="Ver expediente" href="{% url 'view_test_request' test_request.id %}{% if '?' in request.get_full_path %}?back=/test_requests/{{ request.GET | query_encode }}{% endif %}" class="mb-0 fw-bold">{% if test_request.production_order %}PR-{{ test_request.production_order }}{% else %}-{% endif %}</a>
+        </td>
+        {% endif %}
+        
+        <td class="text-center">
+          <a title="{% if not segment == 'test_request' %}Ver Solicitud{% endif %}" href="{% url 'view_test_request' test_request.id %}{% if '?' in request.get_full_path %}?back=/test_requests/{{ request.GET | query_encode }}{% endif %}" class="mb-0 fw-bold">{{ test_request.number|default_if_none:'Duplicado' }}</a>
+        </td>
+  
+        <td class="ps-3">
+          {% if test_request.check_test_client %}
+          <x title="Cliente de Prueba" style="cursor:help" class="fw-bold font-italic text-secondary">{{ test_request.test_client }}&thinsp;</x>
+          {% else %}{% comment %}/test_requests?client={{ test_request.client.id }}&header={{ request.GET.header }}{% endcomment %}
+          <a title="Filtrar por Cliente" hrefw="{{ test_request.client.id }}" class="fw-bold cursor-pointer client-filter">{{ test_request.client }}</a>
+          {% endif %}
+        </td>
+  
+        {% if not test_request.deleted and not segment == 'closed_test_request' and not tab == 'archived' %}
+        <td class="text-center">
+          {% include 'includes/status-icon.html' with stat=test_request.status %}
+        </td>
+        {% endif %}
+  
+        <td>
+          <h6 class="mb-0 text-sm">{{ test_request.product }}</h6>
+        </td>
+  
+        <td class="text-center text-sm fw-bold text-uppercase">
+          {{ test_request.date|date:"d/b/Y" }}
+        </td>
+        
+        <td class="text-center icon-container" style="user-select: none;">
+          {% if not test_request.deleted %}
+            {% if test_request.touched == True %}
+              {% if perms.essays.change_testrequest %}
+              <a href="{% url 'edit_test_request' test_request.id %}{% if '?' in request.get_full_path %}?next=/test_requests/{{ request.GET | query_encode }}{% endif %}" class="text-primary" data-toggle="tooltip" title="Editar">
+                <i class="material-icons">drive_file_rename_outline</i>
+              </a>
+              
+              <a href="{% url 'clone_test_request' test_request.id %}{% if '?' in request.get_full_path %}?next=/test_requests/{{ request.GET | query_encode }}{% endif %}" class="a-deaf clone-link" id="clone-{{ test_request.id }}" title="Duplicar">
+                <i class="material-icons">difference</i>
+              </a>
+              <span class="loader" title="Si la carga no concluye, comoníquese con soporte" id="clone-{{ test_request.id }}-l" style="scale: 80%; display: none;"></span>
+
+              {% endif %}
+  
+              {% if not test_request.closed %}
+                {% if perms.essays.close_testrequest and test_request.status.code == 'closed' %}
+                  <a class="text-info {% if not request.user.is_superuser %}d-flex align-content-baselin justify-content-center pe-3 {% endif %}" data-bs-toggle="modal" data-bs-target="#id-{{ test_request.id }}-re"
+                  style="user-select: none; cursor: pointer !important;" title="Cerrar y Publicar Expediente">
+                    <i class="material-icons">assignment_turned_in</i>
+                  </a>
+                  <div class="modal fade" id="id-{{ test_request.id }}-re" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="user-select: none;">
+                    <div class="modal-dialog">
+                      <div class="modal-content px-3">
+                        <div class="modal-header px-4 mx-n3" style="background-color: var(--mc-color) !important;">
+                          <h4 class="modal-title font-weight-bolder text-white" id="exampleModalLabel">¡Alerta!</h4>  
+                        </div>
+                        <div class="modal-body text-start px-1">
+                          <p class="mb-1 font-weight-bold" style="line-height: 1.25; font-weight: 500 !important;">
+                            ¿Seguro que desea <b class="text-info">cerrar</b> el expediente de prueba <b style="color: var(--mc-color)">{{ test_request.product }}</b>?</p>
+                        </div>
+                        <div class="modal-footer text-center justify-content-center py-2">
+                          <form method="POST" action="{% url 'close_test_request' test_request.id %}">
+                            {% csrf_token %}
+                            <button type="button" class="m-0 btn btn-secondary"
+                              data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="m-0 btn btn-info">Confirmar</button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+              {% elif perms.essays.open_testrequest %}
+                <a class="text-info" data-bs-toggle="modal" data-bs-target="#id-{{ test_request.id }}-re"
+                style="user-select: none; cursor: pointer !important;" title="Abrir Expediente">
+                  <i class="material-icons">assignment_return</i>
+                </a>
+                <div class="modal fade" id="id-{{ test_request.id }}-re" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="user-select: none;">
+                  <div class="modal-dialog">
+                    <div class="modal-content px-3">
+                      <div class="modal-header px-4 mx-n3" style="background-color: var(--mc-color) !important;">
+                        <h4 class="modal-title font-weight-bolder text-white" id="exampleModalLabel">¡Alerta!</h4>  
+                      </div>
+                      <div class="modal-body text-start px-1">
+                        <p class="mb-1 font-weight-bold" style="line-height: 1.25; font-weight: 500 !important;">
+                          ¿Seguro que desea <b class="text-info">abrir</b> el expediente de prueba <b style="color: var(--mc-color)">{{ test_request.product }}</b>?</p>
+                      </div>
+                      <div class="modal-footer text-center justify-content-center py-2">
+                        <form method="POST" action="{% url 'open_test_request' test_request.id %}">
+                          {% csrf_token %}
+                          <button type="button" class="m-0 btn btn-secondary"
+                            data-bs-dismiss="modal">Cancelar</button>
+                          <button type="submit" class="m-0 btn btn-info">Confirmar</button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+  
+            {% else %}
+            {% if perms.essays.change_testrequest %}
+  
+              {% if not test_request.reviewer or perms.essays.sign_testrequest and not test_request.archived %}
+                <a href="{% url 'edit_test_request' test_request.id %}{% if '?' in request.get_full_path %}?next=/test_requests/{{ request.GET | query_encode }}{% endif %}" class="text-primary" title="Editar">
+                  <i class="material-icons">drive_file_rename_outline</i>
+                </a>
+              {% endif %}
+              <a href="{% url 'clone_test_request' test_request.id %}{% if '?' in request.get_full_path %}?next=/test_requests/{{ request.GET | query_encode }}{% endif %}" class="a-deaf clone-link" id="clone-{{ test_request.id }}" title="Duplicar">
+                <i class="material-icons">difference</i>
+              </a>
+              <span class="loader" title="Si la carga no concluye, comoníquese con soporte" id="clone-{{ test_request.id }}-l" style="scale: 80%; display: none;"></span>
+              {% if perms.essays.archive_testrequest %}
+                {% if not test_request.archived %}
+                  <a class="font-weight-bold text-xs cursor-pointer" title="Archivar" href="{% url 'archive_test_request' test_request.id %}">
+                    <i class="material-icons">archive</i>
+                  </a>
+                {% else %}
+                  <a class="text-primary font-weight-bold text-xs cursor-pointer" title="Desarchivar" href="{% url 'unarchive_test_request' test_request.id %}">
+                    <i class="material-icons">unarchive</i>
+                  </a>
+                {% endif %}
+              {% endif %}
+  
+            {% endif %}
+  
+            {% if perms.essays.delete_testrequest and not test_request.archived %}
+            {% if not test_request.reviewer or perms.essays.sign_testrequest %}
+  
+            <!-- Button trigger modal -->
+            <a class="text-danger" data-bs-toggle="modal" data-bs-target="#id-{{ test_request.id }}"
+              style="user-select: none; cursor: pointer !important;" title="Eliminar">
+              <i class="material-icons">delete</i>
+            </a>  
+            <!-- Modal -->
+            <div class="modal fade" id="id-{{ test_request.id }}" tabindex="-1" aria-labelledby="exampleModalLabel"
+              aria-hidden="true" style="user-select: none;">
+              <div class="modal-dialog">
+                <div class="modal-content px-3">
+                  <div class="bg-primary modal-header px-4 mx-n3">
+                    <h4 class="modal-title font-weight-bolder text-white" id="exampleModalLabel">¡Advertencia!</h4>
+                  </div>
+                  <form method="POST" action="{% url 'delete_test_request' test_request.id %}{% if '?' in request.get_full_path %}?next=/test_requests/{{ request.GET | query_encode }}{% endif %}">
+                    {% csrf_token %}
+                    <div class="modal-body text-start px-1">
+                      <p class="mb-1 font-weight-bold" style="line-height: 1.25;">
+                        ¿Seguro que desea eliminar la solicitud de prueba?</p>
+                      <p class="mb-n1 text-xs">Esta acción no puede deshacerse</p>
+                      <p class="mt-1 mb-0 font-weight-bold text-sm text-primary">Razón</p>
+                      <textarea required name="deleted_reason" class="form-control align-items-center myform-focus py-1 px-2" style="transition: none !important;" id="id_deleted_reason"></textarea>
+                    </div>
+                    <div class="modal-footer text-center justify-content-center py-2">
+                      <button type="button" class="m-0 mx-1 btn btn-secondary"
+                      data-bs-dismiss="modal">Cancelar</button>
+                      <button type="submit" class="m-0 mx-1 btn btn-danger">Confirmar</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+            {% endif %}
+            {% endif %}
+          {% else %}
+          <!-----------------------------Restore----------------------------------->
+          {% if perms.essays.restore_testrequest %}
+          <a class="a-deaf font-weight-bold text-xs cursor-pointer" title="Restaurar" data-bs-toggle="modal" data-bs-target="#id-{{ test_request.id }}-r">
+            <i class="material-icons">settings_backup_restore</i>
+          </a>
+          <div class="modal fade" id="id-{{ test_request.id }}-r" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="user-select: none;">
+            <div class="modal-dialog">
+              <div class="modal-content px-3">
+                <div class="modal-header px-4 mx-n3" style="background-color: var(--mc-color) !important;">
+                  <h4 class="modal-title font-weight-bolder text-white" id="exampleModalLabel">¡Alerta!</h4>  
+                </div>
+                <div class="modal-body text-start px-1">
+                  <p class="mb-1 font-weight-bold" style="line-height: 1.25; font-weight: 500 !important;">
+                    ¿Seguro que desea <b class="text-success">resturar</b> la Solicitud de prueba <b style="color: var(--mc-color)">{{ test_request.product }}</b>?</p>
+                </div>
+                <div class="modal-footer text-center justify-content-center py-2">
+                  <form method="POST" action="{% url 'restore_test_request' test_request.id %}">
+                    {% csrf_token %}
+                    <button type="button" class="m-0 btn btn-secondary"
+                      data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="m-0 btn btn-success">Confirmar</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div> 
+          {% endif %}
+          <!-----------------------------DeleteFR----------------------------------->
+          {% if perms.essays.delete_true_testrequest %}
+          <a class="text-danger cursor-pointer font-weight-bold" data-bs-toggle="modal" data-bs-target="#id-{{ test_request.id }}-del" style="user-select: none;" title="Eliminar permanentemente">
+            <i class="material-icons">delete</i>
+          </a>
+          <div class="modal fade" id="id-{{ test_request.id }}-del" tabindex="-1"
+          aria-labelledby="TrueDelete" aria-hidden="true" style="user-select: none;">
+            <div class="modal-dialog">
+              <form method="POST" action="{% url 'delete_true_test_request' test_request.id %}">
+                {% csrf_token %}
+                <div class="modal-content px-3">
+                  <div class="modal-header px-4 mx-n3" style="background-color: var(--mc-color) !important;">
+                    <h4 class="modal-title font-weight-bolder text-white" id="TrueDelete">¡Advertencia!</h4>
+                  </div>
+                  <div class="modal-body text-start px-1">
+                    <p class="mb-1 font-weight-bold" style="line-height: 1.25; font-weight: 500 !important;">
+                      ¿Seguro que desea eliminar <b class="text-danger">permanentmente</b> la Solicitud de prueba <b style="color: var(--mc-color)">{{ test_request.product }}</b>?</p>
+                    <p class="mb-0 text-xs">Los datos de estructura y ensayos se perderán, esta acción es totalmente irreversible</p>
+                  </div>
+                  <div class="modal-footer text-center justify-content-center py-2">
+                    <button type="button" class="m-0 mx-1 btn btn-secondary"data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="m-0 mx-1 btn btn-danger">Confirmar</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+          {% endif %}
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+{% include 'includes/no-table-results.html' %}
+{% endif %}
+
+  

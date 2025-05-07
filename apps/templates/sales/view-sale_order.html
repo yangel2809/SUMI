@@ -1,0 +1,17 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+{% load tz %}
+<link href="{{ ASSETS_ROOT }}/css/index.css" rel="stylesheet" />
+
+<div class="container-fluid pt-1 px-sm-4 px-3 pb-3">
+  <div class="row justify-content-center min-vh-80 h-100">
+    <div class="col-lg-10 col-12 px-0 px-md-2">
+      <div class="card">
+        <div class="card-body justify-content-center px-md-4 px-0 my-md-3 pb-2">
+          {% include 'sales/details/sale_order.html' %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}

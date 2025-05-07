@@ -1,0 +1,18 @@
+{% extends 'layouts/base_table.html' %}
+
+{% block table_header %}
+  <h5 class="text-white font-weight-bolder text-nowrap pe-3 ">Clientes</h5>
+  <div class="ms-auto my-auto text-nowrap">
+    {% if perms.home.add_client %}
+      <a title="Agregar Cliente" href="/clients/add">
+        <i class="material-icons text-white ">person_add</i>
+      </a>
+    {% endif %}
+  </div>
+{% endblock table_header %}
+
+{% block table_scripts %}
+<script>
+    var address = "{% url 'clients' %}";
+</script>
+{% endblock table_scripts %}

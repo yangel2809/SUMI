@@ -1,0 +1,36 @@
+<label class="mb-0 fw-bold text-primary">
+  Despachos
+  <a class="a-deaf text-middle" id="add_form">
+    <i class="material-icons" style="vertical-align: middle; font-size: 15px !important;">add_circle</i>
+  </a>
+  <a class="a-deaf text-middle" id="remove_form">
+    <i class="material-icons" style="vertical-align: middle; font-size: 15px !important;">remove_circle</i>
+  </a>
+</label>
+{{ formset.management_form }}
+<div id="formset_field" >
+  {% for dispatch in formset %}
+  <div class="d-flex flex-row mb-2 gap-2" id="form-row-{{ forloop.counter0 }}">
+    {{ dispatch.id }}
+    <div class="flex-grow-1 {% if dispatch.errors.f_date %}border-error{% endif %}">{{ dispatch.f_date }}</div>
+    <div class="flex-grow-1 {% if dispatch.errors.e_date %}border-error{% endif %}">{{ dispatch.e_date }}</div>
+    <div class="flex-grow-1 {% if dispatch.errors.batch_number %}border-error{% endif %}">{{ dispatch.batch_number }}</div>
+    <div class="flex-grow-1 {% if dispatch.errors.quantity %}border-error{% endif %}">{{ dispatch.quantity }}</div>
+
+    {% if dispatch.instance.pk %}
+    <label class="cursor-pointer m-0" title="Seleccione para Eliminar" for="id_adresses-{{ forloop.counter0 }}-DELETE">
+      <i class="fa fa-trash" style="vertical-align: bottom; margin-top: 11px !important;" aria-hidden="true"></i>
+    </label>
+    <div class="p-0 pt-1 form-check">
+      {{ dispatch.DELETE }}
+    </div>
+    {% endif %}
+
+  </div>
+  {% endfor %}
+</div>
+<div id="empty_formset" class="d-none">
+  <div class="mb-2" id="form-row-__prefix__">
+    {{ formset.empty_form.address }}
+  </div>
+</div>

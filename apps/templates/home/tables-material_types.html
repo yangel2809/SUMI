@@ -1,0 +1,20 @@
+{% extends 'layouts/base_table.html' %}
+
+{% block table_header %}
+<h5 class="text-white font-weight-bolder text-nowrap pe-3">
+  {% if perms.home.view_material %}<a class="faded-title" href="{% url 'materials' %}">Materiales</a> | {% endif %}Tipos de Materiales 
+</h5>
+{% if perms.home.add_materialtype %}
+<div class="ms-auto my-auto text-nowrap">
+  <a title="Agregar Tipo de Material" href="{% url 'add_material_type' %}">
+    <i class="material-icons text-white ">add_circle</i>
+  </a>
+</div>
+{% endif %}
+{% endblock table_header %}
+
+{% block table_scripts %}
+<script>
+    var address = "{% url 'material_types' %}";
+</script>
+{% endblock table_scripts %}

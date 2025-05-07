@@ -1,0 +1,68 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+
+<div class="container pt-1 pb-3">
+  <div class="row min-vh-80 justify-content-center h-100">
+    <div class=" container-sm col-12" style="max-width: 700px;">
+
+      <div class="card justify-content-center my-4" style="min-width: 430px;">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2" style="user-select: none">
+          <div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2">
+            <div class="mt-2 justify-content-center">
+              <h5 class="text-white text-center font-weight-bolder me-3">{% if 'edit' in request.get_full_path %}Editar {% else %}Agregar {% endif %}Unidad</h5>
+            </div>
+          </div>
+        </div>
+        <div class="card-body container px-0 pb-2">
+          <div class="form-group d-flex input-group input-group-outline px-4">
+            <form class="form justify-content-center col-12" action="" method="POST" id="main-form">
+
+              {% csrf_token %}
+              <div class="col-12 px-4 pb-0 text-center justify-content-center" style="user-select: none;">
+                <div class="row align-items-center mb-3">
+                  <div class=" text-end col-4 ps-0 pe-2">
+                    <p class="font-weight-bold mb-0">Nombre</p>
+                  </div>
+                  <div class="py-0 ps-0 pe-5 col-8">
+                    {{ form.name }}
+                  </div>                 
+                </div>
+                <div class="row align-items-center mb-3">
+                  <div class=" text-end col-4 ps-0 pe-2">
+                    <p class="font-weight-bold mb-0">Unidad</p>
+                  </div>
+                  <div class="py-0 ps-0 pe-5 col-8">
+                    {{ form.symbol }}
+                  </div>                 
+                </div>
+                <div class="row align-items-center mb-3">
+                  <div class=" text-end col-4 ps-0 pe-2">
+                    <p class="font-weight-bold mb-0">Descripción</p>
+                  </div>
+                  <div class="py-0 ps-0 pe-5 col-8">
+                    {{ form.description }}
+                  </div>                 
+                </div>
+                <div style="user-select: none;">
+                  <button type="submit" class="btn btn-primary mx-1 my-2">Guardar</button>
+                  <a href="{{ request.META.HTTP_REFERER }}">
+                    <button type="button" class="btn btn-secondary mx-1 my-2">Cancelar</button>
+                  </a>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ <script>
+  $('#main-form').on('submit', function() {
+    $(this).find('button[type="submit"]').prop('disabled', true);
+  });
+ </script>
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

@@ -1,0 +1,205 @@
+<link href="{{ ASSETS_ROOT }}/css/essay-material-form.css" rel="stylesheet" />
+
+<li class="nav-item mt-3 ms-1 mb-2 doc-edit" id="edit_tr">
+  <a class="a-deaf" title="Editar" href="{% url 'sale_order_edit' sale_order.id %}">
+    <i class="material-symbols-rounded detail-action-icon">drive_file_rename_outline</i>
+  </a>
+</li>
+<li class="nav-item mt-3 ms-1 mb-2 doc-edit" id="edit_tr">
+  {% if perms.sales.add_saleorderreview and not sale_order.treview and not sale_order.treview.approved %}
+  <!-- Button trigger modal -->
+  <a class="a-deaf" data-bs-toggle="modal" data-bs-target="#modal-id-1"
+    style="user-select: none; cursor: pointer !important;" title="Revisar">
+    <i class="material-symbols-rounded detail-action-icon">rule</i>
+  </a>  
+  <!-- Modal -->
+  {% include 'sales/modals/treview.html' with counter=1 sale_order=sale_order %}
+  {% endif %}
+</li>
+<li class="nav-item mt-3 ms-1 mb-2">
+  <!-- Button trigger modal -->
+  <a class="a-deaf user-select-none cursor-pointer" title="Eliminar" data-bs-toggle="modal" data-bs-target="#id-{{ sale_order.id }}-del">
+    <i class="material-symbols-rounded detail-action-icon">delete</i>
+  </a>
+</li>
+  <div class="modal fade" id="id-{{ sale_order.id }}-del" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true" style="user-select: none;">
+    <div class="modal-dialog">
+      <div class="modal-content px-3">
+        <div class="modal-header px-4 mx-n3" style="background-color: var(--mc-color) !important;">
+          <h4 class="modal-title font-weight-bolder text-white" id="exampleModalLabel">¡Advertencia!</h4>
+        </div>
+        <div class="modal-body text-start px-1">
+          <p class="mb-1 font-weight-bold" style="line-height: 1.25; font-weight: 500 !important;">
+            ¿Seguro que desea eliminar el Pedido De compra?</p>
+          <p class="mb-0 text-xs">Esta acción es irreversible</p>
+        </div>
+        <div class="modal-footer text-center justify-content-center py-2">
+          <form method="POST" action="{% url 'sale_order_delete' sale_order.id %}">
+            {% csrf_token %}
+            <button type="button" class="m-0 btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="m-0 btn btn-danger">Confirmar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</li>
+
+{% if sale_order.approver and sale_order.reviewer and not sale_order.has_order %}
+<li class="nav-item mt-3 ms-1 mb-2 doc-edit" id="edit_tr">
+  <a class="a-deaf user-select-none cursor-pointer" title="Asignar OP" data-bs-toggle="modal" data-bs-target="#id-{{ sale_order.id }}-op">
+    <i class="material-symbols-rounded detail-action-icon">inventory</i>
+  </a>
+</li>
+<div class="modal fade" id="id-{{ sale_order.id }}-op" tabindex="-1" aria-labelledby="exampleModalLabel"
+  aria-hidden="true" style="user-select: none;">
+  <div class="modal-dialog">
+    <div class="modal-content px-3">
+      <form method="POST" action="{% url 'order_assign' %}">
+        {% csrf_token %}
+        <div class="modal-header px-4 mx-n3" style="background-color: var(--mc-color) !important;">
+          <h5 class="modal-title font-weight-bolder text-white" id="exampleModalLabel">Asignar Órden de Producción</h5>
+        </div>
+        <div class="modal-body text-start px-1">
+          <div class="form-group">
+            <input type="hidden" name="sale_order" value="{{ sale_order.id }}">
+            <label class="mb-0" for="op_number">Número de Órden de Producción</label>
+            <input type="number" name="number" class="hide-spinner px-3 mb-2 form-control myform-focus"
+            style="padding-left: 35px !important;" 
+            autocomplete="false" id="op_number" required min="0" maxlength="7" max="9999999">
+            <x class="text-dark infield-text" style="margin-top: -40px !important;">OP-</x>
+            <label class="mb-0" for="op_date">Fecha OP</label>
+            <input type="text" name="date" class="px-3 mb-2 form-control myform-focus" autocomplete="false" id="op_date" required
+            placeholder="DD/MM/AAAA">
+          </div>
+          <p id="error-message" class="fw-bold text-danger"></p>
+          <p id="success-message" class="fw-bold text-success"></p>
+        </div>
+        <div class="modal-footer text-center justify-content-center gap-2">
+          <button type="button" class="m-0 btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="m-0 btn btn-success">Confirmar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<style>
+  .ui-datepicker{
+    z-index: 99999 !important;
+  }
+</style>
+<script>
+$(document).ready(function () {
+  $( "#op_date" ).datepicker( {
+    showOtherMonths: "true",
+    selectOtherMonths: "true",
+    },$.datepicker.regional[ "es" ] );
+    $('#printer').select2({
+      minimumResultsForSearch: Infinity,
+      placeholder: 'Seleccionar...',
+      width: '100%',
+      selectionCssClass: ':all:',
+      dropdownCssClass: ':all:'
+    });
+
+  $('.approval-check').on('change', function(){
+      $('#'+ $(this).attr('id') + '-r').toggleClass('text-primary')
+      $('#'+ $(this).attr('id') + '-a').toggleClass('text-primary')
+  })
+
+  $('.suggest-check').on('change', function(){
+      $('#'+ $(this).attr('id') + '-field').toggleClass('d-none')
+      $('#'+ $(this).attr('id') + '-select').val(null).trigger('change')
+  })
+
+
+    $('#treview-form-1').on('submit', function(e) {
+      e.preventDefault();
+      $('#modal-submit-1').prop('disabled', true)
+      var formData = $(this).serialize();
+      $.ajax({
+        url: '{% url "review_sale_order" %}',
+        data: formData,
+        type: 'POST',
+        dataType: 'json',
+        success: function(data) {
+          if(data.status == 'success'){
+            setTimeout(function() {
+              $('#modal-id-1').modal('hide');
+              window.location.reload();
+            }, 1000);
+          }else{
+            /*
+            var messageObj = JSON.parse(data.message);
+            $('#error-message-t').text(messageObj.name[0].message);*/
+          }
+        },
+        error: function(xhr,errmsg,err) {
+          $('#error-message-t').text('Oops! un error tipo: '+errmsg+
+            ' \nPorfavor intente nuevamente, si el error persiste, contacte a soporte técnico.');
+        }
+      });
+    });
+
+    $('#modal-id-1').on('hidden.bs.modal', function () {
+      $('#modal-id-1').find('form')[0].reset();
+
+      $('#suggested-id-1-field').removeClass('d-none')
+      $('#suggested-id-1-field').addClass('d-none')
+
+      $('#approved-1-r').removeClass('text-primary')
+
+      $('#approved-1-a').removeClass('text-primary')
+      $('#approved-1-a').addClass('text-primary')
+
+      $('#modal-id-1').find('select').val(null).trigger('change');
+    });
+
+    $('.suggested-replace-field').each(function(){
+      $(this).select2({
+        placeholder: 'Seleccione Plan de Calidad...',
+          width: '100%',
+          selectionCssClass: ':all:',
+          dropdownCssClass: ':all:',
+          ajax: {
+            url: '{% url "plans" %}',
+            dataType: 'json',
+            data: function (params) {
+              var queryParameters = {
+                search_text: params.term,
+                list_index: true
+              }
+              return queryParameters;
+            },
+            processResults: function (data) {
+              return {
+                results: JSON.parse(data).map(function(item) {
+                  return { id: item.pk, text: `${item.fields.gp_code} - PC-ASC-${item.fields.pc} - ${item.fields.product}` };
+                })
+              };
+            },
+          },
+          language: {
+            noResults: function () {
+              return "No hay resultados";
+            },
+            searching: function () {
+              return "Buscando...";
+            }
+          }
+      })
+        
+    })
+
+  })
+</script>
+
+<li class="nav-item mt-3 ms-1 mb-2">
+  <a class="a-deaf"  title="Guardar cómo PDF/Imprimir" href="javascript:window.print()">
+    <i class="material-symbols-rounded detail-action-icon">picture_as_pdf</i>
+  </a>
+</li>
+          

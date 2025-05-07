@@ -1,0 +1,134 @@
+{% extends "layouts/base.html" %}
+{% load home_tags %}
+{% block content %}
+<div class="container-fluid pt-1 px-sm-4 px-3 pb-6" >
+  <div class="row" id="info-container">
+    <div class="col-12 px-0 px-md-2">
+      <div class="card px-2 px-lg-3 pt-2 pt-md-3 pb-2" style="background-color: #f3f3f3; border-bottom-left-radius: 0;">
+        <div class="card-body p-1 py-3 py-md-2 mx-0 mx-md-1 py-xl-3" id="main-data-container">
+          {% include content %}
+        </div>
+      </div>
+
+      <div class="card-tab" id="card_tab">
+        
+        <p hrefx="{% url 'sale_order_view' order_obj.sale_order.id %}?production_file=True" class="color-sal tab fw-bold text-dark {% if tab == 'parent' %}tab-active{% endif %}">Pedido {{ order_obj.sale_order.request_number }} </p>
+
+        <p hrefx="{% url 'order_details' order_obj.id %}" class="tab fw-bold text-dark {% if tab == 'main' %}tab-active{% endif %}" value="#edit_order" value2="#delete_order"  pdf="#print-btn">Orden de Producción</p>
+      
+        <!--Printer-->
+        {% if perms.production.add_printerboot %}
+          <p hrefx="{% url 'order_details' order_obj.id %}printer" class="tab fw-bold color-crx" redirect="true">+ <i class="fa fa-print" aria-hidden="true"></i></p>
+        {% endif %}
+        {% if printer_boot %}
+          {% for boot in printer_boot %}
+            <p hrefx="{% url 'production_printer_details' pk=order_obj.id ck=boot.id %}" class="tab fw-bold color-crx {% if tab_p == boot.id %}tab-active{% endif %}">Arranque de Imp. {% if printer_boot|length > 1 %}#{{ forloop.counter }}{% endif %}</p>
+          {% endfor %}
+        {% endif %}
+
+        <!--Laminator-->
+        {% if perms.production.add_laminatorboot %}
+          <p hrefx="{% url 'order_details' order_obj.id %}laminator" class="tab fw-bold color-mcl" redirect="true">+ <i class="fas fa-scroll" aria-hidden="true"></i></p>
+        {% endif %}
+        {% if laminator_boot %}
+          {% for boot in laminator_boot %}
+            <p hrefx="{% url 'order_details' order_obj.id %}laminator/{{ boot.id }}" class="tab fw-bold {% if boot.id == tab_l %}tab-active{% endif %} color-mcl">Arranque de Lam. P-{{ boot.step }}</p>
+          {% endfor %}
+        {% endif %}
+        
+        <!--Cutter-->
+        {% if perms.production.add_cutterboot %}
+          <p hrefx="{% url 'order_details' order_obj.id %}cutter" class="tab fw-bold color-cut" redirect="true">+ <i class="fa fa-scissors" aria-hidden="true"></i></p>
+        {% endif %}
+        {% if cutter_boot %}
+          {% for boot in cutter_boot %}
+            <p hrefx="{% url 'order_details' order_obj.id %}cutter/{{ boot.id }}" class="tab fw-bold {% if boot.id == tab_c %}tab-active{% endif %} color-cut" value="#edit_cut_{{ forloop.counter0 }}" value2="#delete_cut_{{ forloop.counter0 }}" pdf="#print-btn">Arranque de Cort. {% if cutter_boot|length > 1 %}#{{ forloop.counter }}{% endif %}</p>
+          {% endfor %}
+        {% endif %}
+
+        <!--Techspecs-->
+        {% if printer_boot or laminator_boot or cutter_boot %}
+          <p hrefx="{% url 'order_details' order_obj.id %}techspecs" class="tab fw-bold color-tec {% if tab == 'tech_specs' %}tab-active{% endif %}" value="#edit_ts_{{ order_obj.technicalspecs.id  }}"  value2="#delete_ts_{{ order_obj.technicalspecs.id  }}">Cert. de Análisis <i class="fas fa-clipboard-check"></i></p>
+        {% endif %}
+
+        <!--Annexes-->
+        <p hrefx="{% url 'order_details' order_obj.id %}annexes" class="tab fw-bold color-anx {% if tab == 'annex' %}tab-active{% endif %}">Anexos <i class="material-symbols-rounded"  style="font-size:18px; vertical-align: sub;">photo_library</i></p>
+        
+      </div>
+      <div class="tab-wrapper">
+      </div>
+     
+
+    </div>
+  </div>
+</div>
+<script>
+  
+$(document).ready(function () {
+    
+    var activeTab = $('.tab-active');
+    if (activeTab.length) {
+        $('.card-tab').animate({
+            scrollLeft: activeTab.position().left
+        },0);
+    }
+    $("#card_tab").click(function (event) {
+      // Comprueba si el evento ocurrió en el pseudo-elemento ::after
+      if (event.target === this) {
+        // Desplaza el div hasta el final en el eje x con animación
+        $(this).animate({ scrollLeft: this.scrollWidth }, 'slow');
+      }
+    });
+    function checkOverflow() {
+      var element = $('.card-tab')[0];
+      var overflow = element.scrollWidth > element.clientWidth;
+      if (overflow) {
+        $('.card-tab').addClass('arrow');
+      } else {
+        $('.card-tab').removeClass('arrow');
+      }
+    }
+
+    $(window).on('resize', function () {
+      checkOverflow();
+    }).trigger('resize');
+
+    $(".tab").click(function () {
+      if ($(this).hasClass("tab-active")) {
+        return;
+      }
+
+      if ($(this).attr('redirect')) {
+        window.location.href = $(this).attr('hrefx');
+      } else {
+        $(".tab-active").removeClass("tab-active");
+        $(this).addClass("tab-active");
+        history.pushState({}, '', $(this).attr('hrefx'));
+        
+        $(".doc-edit").addClass("d-none");
+        $($(this).attr("value")).removeClass("d-none");
+        $($(this).attr("value2")).removeClass("d-none");
+        $($(this).attr("pdf")).removeClass("d-none");
+
+        let data = null;
+        var goto = $(this).attr('hrefx')
+        $.ajax({
+          url: goto,
+          data: data,
+          dataType: 'json',
+          success: function (data) {
+            $('#main-data-container').html(data.content_html);
+            $('main').animate({ scrollTop: 0 }, "fast");
+          }
+        });
+      }
+    });
+    
+});
+
+
+</script>
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

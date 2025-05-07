@@ -1,0 +1,95 @@
+{% load home_tags %}
+{% if objects %}
+<i class="hidden" id="tab" value="{{ tab }}"></i>
+<table class="table table-hover align-items-center mb-0">
+  <thead>
+    <tr>
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 px-2 ps-4">Producto</th>
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 px-2">Cliente</th>
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">Fecha</th>
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">Editar</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for sales_test_request in objects %}
+    <tr class="{% if forloop.last %}no-border{% endif %} table-row" pid="{{ sales_test_request.id }}">
+      <td class="ps-4 fw-bold">
+        {{ sales_test_request.product }}
+        
+        {% comment %}
+          <a class="fw-bolder font-monospace" href="{% url 'sales_test_request_view' sales_test_request.id %}">
+          </a>
+        {% endcomment %}
+          
+      </td>
+      <td class="fw-bold">
+        <h6 class="mb-0 fw-bold">{{ sales_test_request.client.name }}</h6>
+      </td>
+      <td class="text-center text-xs fw-bold text-uppercase">
+        {{ sales_test_request.date|date:"d/b/Y" }}
+      </td>
+      
+      
+      {% if perms.sales.change_salestestrequest or perms.sales.delete_salestestrequest %}
+      <td class="text-center" style="user-select: none;">
+
+        {% if perms.sales.change_salestestrequest and not sales_test_request.archived %}
+        <a href="{% url 'edit_sales_test_request' sales_test_request.id %}" class="text-primary" data-toggle="tooltip"
+          title="Editar">
+          <i class="material-icons">drive_file_rename_outline</i>
+        </a>
+        {% endif %}
+        
+        {% if perms.sales.delete_salestestrequestreview and sales_test_request.treview and not sales_test_request.archived %}
+        <a class="text-danger" data-bs-toggle="modal" data-bs-target="#modal-id-{{ forloop.counter0 }}-return"
+        style="user-select: none; cursor: pointer !important;" title="Deshacer revisión">
+          <i class="material-icons">repartition</i>
+        </a> 
+        {% include 'sales/modals/treview-undo.html' with counter=forloop.counter0 sales_test_request=sales_test_request %}
+        {% endif %}
+        
+        {% if perms.sales.delete_salestestrequest %}
+        <!-- Button trigger modal -->
+        <a class="" data-bs-toggle="modal" data-bs-target="#id-{{ sales_test_request.id }}"
+          style="user-select: none; cursor: pointer !important;" title="Eliminar">
+          <i class="material-icons">delete</i>
+        </a>  
+        <!-- Modal -->
+        <div class="modal fade" id="id-{{ sales_test_request.id }}" tabindex="-1" aria-labelledby="exampleModalLabel"
+          aria-hidden="true" style="user-select: none;">
+          <div class="modal-dialog">
+            <div class="modal-content px-3">
+              <div class="bg-primary modal-header px-4 mx-n3">
+                <h4 class="modal-title font-weight-bolder text-white" id="exampleModalLabel">¡Advertencia!</h4>
+              </div>
+              <form method="POST" action="{% url 'delete_sales_test_request' sales_test_request.id %}">
+                {% csrf_token %}
+                <div class="modal-body text-start px-1">
+                  <p class="mb-1 font-weight-bold" style="line-height: 1.25;">
+                    ¿Seguro que desea eliminar la solicitud?</p>
+                  <p class="mb-n1 text-xs">Esta acción no puede deshacerse</p>
+                </div>
+                <div class="modal-footer text-center justify-content-center py-2">
+                  <button type="button" class="m-0 mx-1 btn btn-secondary"
+                  data-bs-dismiss="modal">Cancelar</button>
+                  <button type="submit" class="m-0 mx-1 btn btn-danger">Confirmar</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+      </td>
+      {% endif %}
+
+    </tr>
+    {% endfor %}
+    <script>
+      
+    </script>
+  </tbody>
+</table>
+{% else %}
+{% include 'includes/no-table-results.html' %}
+{% endif %}

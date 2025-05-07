@@ -1,0 +1,333 @@
+{% load tz %}
+{% load home_tags %}
+
+<!---------------------------------[Content Start]--------------------------------->
+{% if order_obj.sale_order.plan.company == 'mcl' %}
+<style>
+  :root {
+    --mc-color: #946037;
+    --mc-selection: #ad7e5a;
+    --mc-shadow-color: #94603780;
+    --mc-calendar-today: #94603780;
+    --critical-color: #94603769;
+    --mc-hover-color: #94603759;
+  }
+</style>
+<script>$('meta[name="theme-color"]').attr('content', '#946037')</script>
+{% endif %}
+<div class="tabbed-content" id="parent-content">
+  <div class="d-flex flex-row flex-wrap justify-content-between px-1 px-md-3">
+    <div class="d-flex flex-sm-row{% if order_obj.sale_order.plan.company == 'mcl' %}-reverse{% endif %} flex-column{% if not order_obj.sale_order.plan.company == 'crx' %}-reverse{% endif %} user-select-none">
+      <div class="p-1">
+        {% if order_obj.sale_order.plan.company == 'mcl' %}
+          <img alt="Morrocel c.a RIF:J-06000377-6" width="220em" src="{{ ASSETS_ROOT }}/img/logo_mcl.svg" />
+        {% else %}
+          <img alt="Curex c.a RIF:J-00074598-6" width="220em" src="{{ ASSETS_ROOT }}/img/logo_crx.svg" />
+        {% endif %}
+      </div>
+    </div>
+    <div class="d-flex flex-column align-items-end">
+      <p class="text-end m-0 mb-n1 fw-bolder text-xxs">
+        F-ASC-L21
+      </p>
+      <p class="text-end m-0 mb-n1 fw-bolder text-xxs">
+        REV-10
+      </p>
+      <p class="text-end m-0 mb-n1 fw-bolder text-xxs text-uppercase">
+        04/ABR/2016
+      </p>
+    </div>
+    <h3 class="col-12 text-center mb-1 mt-2 fw-bold text-primary" style="line-height: 1;">Control: Arranque de Producción Cortadoras</h3>
+  </div>
+
+  <div class="row px-1 px-md-3">
+    <div class="d-flex flex-row flex-wrap justify-content-lg-between gap-3 py-2">
+      <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+        <x class="m-0">Máquina cortadora:&thinsp;</x>
+        <x class="text-dark fw-bold">{{ cutter_boot_obj.machine }}</x>
+      </div>
+      {% if cutter_boot_obj.rewinder %}
+      <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+        <x class="m-0">Máquina rebobinadora:&thinsp;</x>
+        <x class="text-dark fw-bold">{{ cutter_boot_obj.rewinder }}</x>
+      </div>
+      {% endif %}
+      <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+        <x class="m-0">Fecha y hora:&thinsp;</x>
+        <x class="text-dark fw-bold"><abbr title="Formato 24 Horas">{{ cutter_boot_obj.date_time }}</abbr></x>
+      </div>
+      <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+        <x class="m-0">Turno:&thinsp;</x>
+        <x class="text-dark fw-bold">{{ cutter_boot_obj.turn }}</x>
+      </div>
+      <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+        <x class="m-0">Pedido N°:&thinsp;</x>
+        <x class="text-dark fw-bold">{{ order_obj.sale_order.number }}</x>
+      </div>
+      <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+        <x class="m-0">Orden de produción:&thinsp;</x>
+        <x class="text-dark fw-bold">OP-{{ order_obj.number }}</x>
+      </div>
+      <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+        <x class="m-0">Cliente:&thinsp;</x>
+        <x class="text-dark fw-bold">{{ order_obj.sale_order.plan.client }}</x>
+      </div>
+      <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+        <x class="m-0">Producto:&thinsp;</x>
+        <x class="text-dark fw-bold">{{ order_obj.sale_order.plan.product }}</x>
+      </div>
+      <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+        <x class="m-0">Código:&thinsp;</x>
+        <x class="text-dark fw-bold">{{ order_obj.sale_order.plan.gp_code }}</x>
+      </div>
+      <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+        <x class="m-0">Velocidad de Máquina (m/min):&thinsp;</x>
+        <x class="text-dark fw-bold">{{ cutter_boot_obj.machine_speed|truncate|swap_comma }}</x>
+      </div>
+      <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+        <x class="mb-0">Tratamiento antiestático:&thinsp;</x>
+        <x class="text-dark fw-bold">{% if cutter_boot_obj.check_crown_treatment %}SÍ{% else %}NO{% endif %}</x>
+      </div>
+      <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+        <x class="m-0">Gramaje&thinsp;</x>
+        <x class="text-dark fw-bold">{{ tr_weight|truncate|swap_comma }}μ</x>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="card my-3 mt-4 px-0">
+    <div class="card-header p-0 mt-n4 position-relative mx-2 z-index-2">
+      <div class="bg-primary text-center shadow-primary border-radius-lg ps-3 pt-2 pb-2">
+        <h5 class="text-white font-weight-bolder m-0">Análisis de Muestra</h5>    
+      </div>
+    </div>
+
+    <div class="card-body mt-n4 border-radius-lg px-md-3 px-2 pb-2">
+      <div class="table-responsive p-0">
+        <table class="table align-items-center text-align-center mb-0">
+          <thead>
+            <tr>
+              <th>Ensayo</th>
+              <th class="text-center" colspan="2">Unidad / Especificaciones</th>
+              <th class="text-center">Resultados / Observaciones</th>
+            </tr>
+          </thead>
+          <tbody id="form_set" class=" p-0 m-0">
+            {% if cutter_boot_obj.w_p %}
+            <tr>
+              <td class="fw-bold">Ancho</td>
+              <td class="text-center"><abbr title="Milímetros">mm</abbr></td>
+              <td class="text-center fw-bold">{{ order_obj.sale_order.plan.width_bobbin }}</td>
+              <td class="d-flex flex-row gap-2 justify-content-between font-monospace-alt">
+                <div>A: <x class="fw-bold">{{ cutter_boot_obj.w_a|truncate|default_if_none:'-'|swap_comma }}</x></div>
+                <div>C: <x class="fw-bold">{{ cutter_boot_obj.w_c|truncate|default_if_none:'-'|swap_comma }}</x></div>
+                <div>B: <x class="fw-bold">{{ cutter_boot_obj.w_b|truncate|default_if_none:'-'|swap_comma }}</x></div>
+                <div>X̄: <x class="fw-bold">{{ cutter_boot_obj.w_p|truncate|default_if_none:'-'|swap_comma }}</x></div>
+              </td>
+            </tr>
+            {% endif %}
+            {% if cutter_boot_obj.r_p %}
+            <tr>
+              <td class="fw-bold">Repetición</td>
+              <td class="text-center"><abbr title="Milímetros">mm</abbr></td>
+              <td class="text-center fw-bold">{{ order_obj.sale_order.plan.repetition }}{{ order_obj.sale_order.plan.repetition_unit }}</td>
+              <td class="d-flex flex-row gap-2 justify-content-between font-monospace-alt">
+                <div>A: <x class="fw-bold">{{ cutter_boot_obj.r_a|truncate|default_if_none:'-'|swap_comma }}</x></div>
+                <div>C: <x class="fw-bold">{{ cutter_boot_obj.r_c|truncate|default_if_none:'-'|swap_comma }}</x></div>
+                <div>B: <x class="fw-bold">{{ cutter_boot_obj.r_b|truncate|default_if_none:'-'|swap_comma }}</x></div>
+                <div>X̄: <x class="fw-bold">{{ cutter_boot_obj.r_p|truncate|default_if_none:'-'|swap_comma }}</x></div>
+              </td>
+            </tr>
+            {% endif %}
+            <tr>
+              <td class="fw-bold">Apariencia</td>
+              <td class="text-center fw-bold" colspan="2">{{ cutter_boot_obj.apearence }}</td>
+              <td class="text-center">
+                {% if cutter_boot_obj.apearence_observation %}
+                {{ cutter_boot_obj.apearence_observation }}
+                {% endif %}
+              </td>
+            </tr>
+            <tr>
+              <td class="fw-bold">Core</td>
+              <td class="text-center"><abbr title="Pulgadas">in</abbr></td>
+              <td class="text-center fw-bold">{{ order_obj.sale_order.plan.core_dia_bobbin }}</td>
+              <td class="text-center">
+                {% if cutter_boot_obj.core %}
+                {{ cutter_boot_obj.core }}
+                {% endif %}
+              </td>
+            </tr>
+            {% if cutter_boot_obj.exterior_dia_bobbin %}
+            <tr>
+              <td class="fw-bold">Diámetro Externo</td>
+              <td class="text-center fw-bold" colspan="2">{{ cutter_boot_obj.exterior_dia_bobbin }}</td>
+              <td class="text-center">
+                {% if cutter_boot_obj.exterior_dia %}
+                {{ cutter_boot_obj.exterior_dia }}
+                {% endif %}
+              </td>
+            </tr>
+            {% endif %}
+            {% if cutter_boot_obj.print_spec or cutter_boot_obj.print %}
+            <tr>
+              <td class="fw-bold">Impresión</td>
+              <td class="text-center fw-bold" colspan="2">{{ cutter_boot_obj.print_spec|default_if_none:"" }}</td>
+              <td class="text-center">
+                {% if cutter_boot_obj.print %}
+                {{ cutter_boot_obj.print }}
+                {% endif %}
+              </td>
+            </tr>
+            {% endif %}
+            <tr>
+              <td class="fw-bold">Posición de Embobinado</td>
+              <td class="text-center">N°</td>
+              <td style="white-space: normal; text-align: center; max-width: 190px !important;" class="fw-bold text-xs">
+                {% if order_obj.sale_order.plan.winding %}{{ order_obj.sale_order.plan.winding }}{% endif %}{% if order_obj.sale_order.plan.winding and order_obj.sale_order.plan.winding_description %},&thinsp;{% endif %}
+                {% if order_obj.sale_order.plan.winding_description %}{{ order_obj.sale_order.plan.winding_description }}{% endif %}
+              </td>
+              <td class="text-center">
+                {% if cutter_boot_obj.winding_position %}
+                {{ cutter_boot_obj.winding_position }}
+                {% endif %}
+              </td>
+            </tr>
+            <tr>
+              <td class="fw-bold">Distancia Borde Material</td>
+              <td class="text-center"><abbr title="Milímetros">mm</abbr></td>
+              <td class="text-center fw-bold">{{ cutter_boot_obj.dist_boder_cell_material }}</td>
+              <td class="text-center">
+                {% if cutter_boot_obj.dist_boder_material %}
+                {{ cutter_boot_obj.dist_boder_material }}
+                {% endif %}
+              </td>
+            </tr>
+            {% if cutter_boot_obj.joint_color %}
+            <tr>
+              <td class="fw-bold">Color Empate</td>
+              <td class="text-center"><abbr title="Milímetros">mm</abbr></td>
+              <td class="text-center fw-bold">{{ cutter_boot_obj.joint_color }}</td>
+              <td class="text-center">
+                {% if cutter_boot_obj.joint_color_observation %}
+                {{ cutter_boot_obj.joint_color_observation }}
+                {% endif %}
+              </td>
+            </tr>
+            {% endif %}
+            {% if cutter_boot_obj.n_litters_spec or cutter_boot_obj.n_litters %}
+            <tr>
+              <td class="fw-bold">Estática</td>
+              <td class="text-center">Kvolt</abbr></td>
+              <td class="text-center fw-bold">
+                {% if cutter_boot_obj.n_litters_spec %}
+                {{ cutter_boot_obj.n_litters_spec }}
+                {% endif %}
+              </td>
+              <td class="text-center">
+                {% if cutter_boot_obj.n_litters %}
+                {{ cutter_boot_obj.n_litters }}
+                {% endif %}
+              </td>
+            </tr>
+            {% endif %}
+            {% if cutter_boot_obj.packaging_spec or cutter_boot_obj.packaging  %}
+            <tr>
+              <td class="fw-bold">Embalaje</td>
+              <td class="text-center"><abbr title="Milímetros">mm</abbr></td>
+              <td class="text-center fw-bold">{% if cutter_boot_obj.packaging_spec %}
+                {{ cutter_boot_obj.packaging_spec }}
+                {% endif %}</td>
+              <td class="text-center">
+                {% if cutter_boot_obj.packaging %}
+                {{ cutter_boot_obj.packaging }}
+                {% endif %}
+              </td>
+            </tr>
+            {% endif %}
+            {% if cutter_boot_obj.pallet_spec or cutter_boot_obj.pallet %}
+            <tr>
+              <td class="fw-bold">Paleta (Dimensiones)</td>
+              <td class="text-center"><abbr title="Metros">m</abbr></td>
+              <td class="text-center fw-bold">
+                {% if cutter_boot_obj.pallet_spec %}
+                {{ cutter_boot_obj.pallet_spec }}
+                {% endif %}
+              </td>
+              <td class="text-center">
+                {% if cutter_boot_obj.pallet %}
+                {{ cutter_boot_obj.pallet }}
+                {% endif %}
+              </td>
+            </tr>
+            {% endif %}
+            {% if cutter_boot_obj.static_spec or cutter_boot_obj.static %}
+            <tr>
+              <td class="fw-bold">N° Camadas</td>
+              <td class="text-center">N°</td>
+              <td class="text-center fw-bold">
+                {% if cutter_boot_obj.static_spec %}
+                Máximo: {{ cutter_boot_obj.static_spec }}
+                {% endif %}
+              </td>
+              <td class="text-center">
+                {% if cutter_boot_obj.static %}
+                {{ cutter_boot_obj.static }}
+                {% endif %}
+              </td>
+            </tr>
+            {% endif %}
+
+            {% if cutter_boot_obj.identification or cutter_boot_obj.ex_tag or cutter_boot_obj.in_tag %}
+            <tr>
+              <td class="fw-bold">Identificación</td>
+              <td colspan="2" class="text-center fw-bold">
+                {% if cutter_boot_obj.identification %}
+                {{ cutter_boot_obj.identification }}
+                {% endif %}
+              </td>
+              <td class="d-flex flex-row flex-nowrap justify-content-center align-items-baseline">
+                <div class="d-flex align-items-baseline flex-row pt-2">
+                  <x class="mb-0">Etiqueta externa:&thinsp;</x>
+                  <x class="text-dark fw-bold">{% if cutter_boot_obj.ex_tag %}SÍ{% else %}NO{% endif %}</x>
+                </div>&emsp13;
+                <div class="d-flex align-items-baseline flex-row pt-2">
+                  <x class="mb-0">Etiqueta Interna:&thinsp;</x>
+                  <x class="text-dark fw-bold">{% if cutter_boot_obj.in_tag %}SÍ{% else %}NO{% endif %}</x>
+                </div>
+              </td>
+            </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <p class="mx-md-3 px-1 fst-italic fw-bold text-xs d-flex flex-row flex-wrap justify-content-left gap-3">
+    <x><x class="text-primary">AC:</x> ACEPTADO</x>
+    <x><x class="text-primary">AD:</x> ACEPTADO CON DESVIACIÓN</x>
+    <x><x class="text-primary">DE:</x> DEFICIENTE</x>
+    <x><x class="text-primary">NA:</x> NO APLICA</x>
+  </p>
+  
+  <div class="d-flex flex-row flex-wrap justify-content-between gap-3 pb-1 px-1 px-md-3">
+    {% if cutter_boot_obj.observation.html %}
+    {% if cutter_boot_obj.observation.html != '<p><br></p>' %}
+    <h6 class="fw-bold text-primary m-0">Observaciones</h6>
+    <div class="col-12 pb-2">{{ cutter_boot_obj.observation.html|safe }}</div>
+    {% endif %}
+    {% endif %}
+  
+
+    <div>
+      <h5 class="fw-bold text-primary m-0">Por Aseguramiento de la Calidad</h5>
+      <p class="text-lg fw-normal p-0 m-0">{{ cutter_boot_obj.quality_analist }}</p>
+    </div>
+    <div>
+      <h5 class="fw-bold text-primary m-0">Por Producción</h5>
+      <p class="text-lg fw-normal text-sm-end p-0 m-0">{{ cutter_boot_obj.production_operator }}</p>
+    </div>
+  </div>
+
+</div>

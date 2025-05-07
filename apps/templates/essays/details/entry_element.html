@@ -1,0 +1,235 @@
+{% load tz %}
+{% load home_tags %}
+
+<!---------------------------------[Content Start]--------------------------------->
+<div class="tabbed-content" id="entry-element" {% if not entry_first %}style="display: none;"{% endif %}>
+  
+  <!------------------------------------[Head]------------------------------------>
+  <div class="d-flex flex-row flex-wrap justify-content-between">
+    <div class="d-flex flex-sm-row flex-column user-select-none">
+      
+     {% if entry_element_obj.entry_element %}
+       <div class="p-1">
+         {% if entry_element_obj.entry_element.company == 'mcl' %}
+           <img alt="Morrocel c.a RIF:J-06000377-6" width="220rem" src="{{ ASSETS_ROOT }}/img/logo_mcl.svg" />
+         {% else %}
+           <img alt="Curex c.a RIF:J-00074598-6" width="220rem" src="{{ ASSETS_ROOT }}/img/logo_crx.svg" />
+         {% endif %}
+       </div>
+     {% endif %}
+      
+    </div>
+    <div class="d-flex flex-column align-items-end">
+      <p class="text-end m-0 mb-n1 fw-bolder text-xxs">
+        F-IDAT-10
+      </p>
+      <p class="text-end m-0 mb-n1 fw-bolder text-xxs">
+        REV-08
+      </p>
+      <p class="text-end m-0 mb-n1 fw-bolder text-xxs text-uppercase">
+        01/ENE/2025
+      </p>
+    </div>
+    <h3 class="col-12 text-center mb-1 mt-2 fw-bold text-primary" style="line-height: 1;">Elemento de Entrada</h3>
+  </div>
+  <!------------------------------------[Body]------------------------------------>
+  <div class="p-0">
+                
+    <div class="d-flex flex-wrap px-2 justify-content-between">
+      <div class="d-flex">Cliente:&thinsp;<p class="fw-bold text-dark">{% if entry_element_obj.check_test_client %}<abbr title="Cliente de Prueba">{{ entry_element_obj.test_client }}</abbr>{% else %}{{ entry_element_obj.client }}{% endif %}</p></div>
+
+      <div class="d-flex">Fecha:&thinsp;<abbr title="{{ entry_element_obj.date|date:'l - ' }}{{ entry_element_obj.date }}" class="fw-bold text-dark-hover">{{ entry_element_obj.date|date:"d/m/Y" }}</abbr></div>
+
+    </div>
+    <h4 class="mb-n2 mt-2 fw-bold ps-2 text-primary">Elementos Externos</h4>
+    <hr class="mx-2 my-2">
+
+    <h5 class="text-start text-md-center text-primary fw-bold mb-0 mt-3 ms-2">Requerimiento del Cliente</h5>
+    <div class="d-flex justify-content-md-center flex-wrap px-2 gap-4">
+      <div class="d-flex flex-wrap">Nombre Completo del Producto:&thinsp;<span class="fw-bold text-dark word-break">{{ entry_element_obj.product }}</span></div>
+      <div class="d-flex flex-wrap">Diseño:&thinsp;<span class="fw-bold text-dark">{{ entry_element_obj.design }}</span></div>
+    </div>
+    
+    
+    {% if entry_element_obj.samples or entry_element_obj.mechanichal_plans or entry_element_obj.technical_specs or entry_element_obj.art or entry_element_obj.ee_other %}
+      <h5 class="text-start text-md-center text-primary fw-bold mb-0 mt-3 ms-2">Elementos Suministrados por el Cliente</h5>
+      <div class="d-flex justify-content-start justify-content-md-center flex-wrap px-2 gap-4">
+        {% if entry_element_obj.samples %}<div class="text-dark fw-bold">Muestras del Cliente</div>{% endif %}
+        {% if entry_element_obj.mechanichal_plans %}<div class="text-dark fw-bold">Planos Mecánicos del Cliente</div>{% endif %}
+        {% if entry_element_obj.technical_specs %}<div class="text-dark fw-bold">Especificaciones Técnicas del Cliente</div>{% endif %}
+        {% if entry_element_obj.art %}<div class="text-dark fw-bold">Arte del Cliente</div>{% endif %}
+        {% if entry_element_obj.ee_other %}<div>Otros:&thinsp;<x class="fw-bold text-dark">{{ entry_element_obj.ee_other_description }}</x></div>{% endif %}
+      </div>
+    {% endif %}
+      
+
+    {% if entry_element_obj.product_performance.html %}
+    {% if entry_element_obj.product_performance.html != '<p><br></p>' %}
+    <div class="px-2 pt-2">
+      <h5 class="text-start text-md-center text-primary fw-bold mb-0 mt-3">Requisistos Funcionales del Producto</h5>
+      <div>{{ entry_element_obj.product_performance.html|safe }}</div>
+      <hr class="mt-2">
+    </div>
+    {% endif %}
+    {% endif %}
+    
+    {% if not entry_element_obj.not_applicable %}
+    
+    {% if entry_element_obj.cpe or entry_element_obj.barcode or entry_element_obj.nutrituonal_table or entry_element_obj.net_content or entry_element_obj.sanitary_reg or entry_element_obj.lr_other %}
+      <h5 class="text-start text-md-center text-primary fw-bold mb-0 mt-3 ms-2">Requisistos Legales del Producto</h5>
+      <div class="d-flex justify-content-start justify-content-md-center flex-wrap px-2 gap-4">
+        {% if entry_element_obj.cpe %}<div class="text-dark fw-bold">C.P.E.</div>{% endif %}
+        {% if entry_element_obj.barcode %}<div class="text-dark fw-bold">Código de Barras</div>{% endif %}
+        {% if entry_element_obj.nutrituonal_table %}<div class="text-dark fw-bold">Tabla Nutricional</div>{% endif %}
+        {% if entry_element_obj.net_content %}<div class="text-dark fw-bold">Contenido Neto</div>{% endif %}
+        {% if entry_element_obj.sanitary_reg %}<div class="text-dark fw-bold">Regulaciones Sanitarias</div>{% endif %}
+        {% if entry_element_obj.lr_other %}<div>Otros:&thinsp;<x class="fw-bold text-dark">{{ entry_element_obj.lr_other_description}}</x></div>{% endif %}
+      </div>
+    {% endif %}
+      
+    {% endif %}
+    
+    
+    {% if entry_element_obj.delivery_date or entry_element_obj.quantity or entry_element_obj.technical_assistance or entry_element_obj.post_sale_service or entry_element_obj.sc_other %}
+      
+      <h5 class="text-start text-md-center text-primary fw-bold mb-0 mt-3 ms-2">Condiciones del Servicio</h5>
+      <div class="d-flex justify-content-start justify-content-md-center flex-wrap px-2 gap-4">
+        {% if entry_element_obj.delivery_date %}<div class="text-dark fw-bold">Fecha de Entrega</div>{% endif %}
+        {% if entry_element_obj.quantity %}<div class="text-dark fw-bold">Cantidad</div>{% endif %}
+        {% if entry_element_obj.technical_assistance %}<div class="text-dark fw-bold">Asistencia Técnica</div>{% endif %}
+        {% if entry_element_obj.post_sale_service %}<div class="text-dark fw-bold">Servicio Post-Venta</div>{% endif %}
+        {% if entry_element_obj.sc_other %}<div>Otros:&thinsp;<x class="fw-bold text-dark">{{ entry_element_obj.sc_other_description }}</x></div>{% endif %}
+      </div>
+    {% endif %}
+      
+    
+    <div class="px-2">
+      
+      {% if entry_element_obj.ssmtc %}
+        <div class="d-flex flex-wrap flex-column col-12 mt-3">
+          <div class="fw-bold text-primary">Se requieren condiciones de almacenamiento, manipulación, transporte o entrega específica</div>
+          <div class="col-12 ">{{ entry_element_obj.ssmtc_description|default_if_none:"" }}</div>
+        </div>
+      {% endif %}
+      
+      {% if entry_element_obj.nmp %}
+        <div class="d-flex flex-wrap flex-column col-12 mt-3">
+          <div class="fw-bold text-primary">Se requiere desarrollo de nuevas materias primas y/o proveedores</div>
+          <div class="col-12 ">{{ entry_element_obj.nmp_description|default_if_none:"" }}</div>
+        </div>
+      {% endif %}
+      
+      {% if entry_element_obj.norms %}
+      <h5 class="text-start text-md-center text-primary fw-bold mb-0 mt-3">Normas Nacionales y/o Internacionales</h5>
+      <div class="d-flex justify-content-start justify-content-md-center flex-wrap gap-4">
+        {% if entry_element_obj.iso %}<div class="text-dark fw-bold">Norma ISO 9001-2015</div>{% endif %}
+        {% if entry_element_obj.gazette %}<div class="text-dark fw-bold"><abbr title="Normas sobre Prácticas para la Fabricación, Almacenamiento y Transporte de Envases, Empaques y/o Artículos Destinados a estar en Contacto con Alimentos">Gaceta Oficial Nº 38.678 del 8 de mayo de 2007</abbr></div>{% endif %}
+        {% if entry_element_obj.norms_other %}<div>Otros:&thinsp;<x class="fw-bold text-dark">{{ entry_element_obj.norms_description }}</x></div>{% endif %}
+      </div>
+      {% endif %}
+
+    </div>
+    
+      
+    {% if entry_element_obj.mounting or entry_element_obj.printing or entry_element_obj.lamination or entry_element_obj.covering or entry_element_obj.cutting or entry_element_obj.reaming or entry_element_obj.bagging or entry_element_obj.tech_inv or entry_element_obj.hr or entry_element_obj.similar_products %}
+    <h4 class="mb-n2 mt-2 fw-bold text-primary ps-2">Elementos Internos</h4>
+    <hr class="mx-2 my-2">
+    
+    {% if entry_element_obj.mounting or entry_element_obj.printing or entry_element_obj.lamination or entry_element_obj.covering or entry_element_obj.cutting or entry_element_obj.reaming or entry_element_obj.bagging %}
+      <h5 class="text-start text-md-center text-primary fw-bold mb-0 mt-3 ms-2">Procesos Involucrados</h5>
+      <div class="d-flex justify-content-start justify-content-md-center flex-wrap px-2 gap-4">
+        {% if entry_element_obj.mounting %}<div class="text-dark fw-bold">Montaje</div>{% endif %}
+        {% if entry_element_obj.printing %}<div class="text-dark fw-bold">Impresión</div>{% endif %}
+        {% if entry_element_obj.lamination %}<div class="text-dark fw-bold">Laminación</div>{% endif %}
+        {% if entry_element_obj.covering %}<div class="text-dark fw-bold">Recubrimiento</div>{% endif %}
+        {% if entry_element_obj.cutting %}<div class="text-dark fw-bold">Corte</div>{% endif %}
+        {% if entry_element_obj.reaming %}<div class="text-dark fw-bold">Resmado</div>{% endif %}
+        {% if entry_element_obj.bagging %}<div class="text-dark fw-bold">Bolseado</div>{% endif %}
+      </div>
+      {% endif %}
+  
+      <div class="px-2">
+        {% if entry_element_obj.tech_inv %}
+          <div class="d-flex flex-wrap flex-column col-12 mt-3">
+            <div class="fw-bold text-primary">Se requiere inversión tecnológica para este desarrollo</div>
+            <div class="col-12 ">{{ entry_element_obj.tech_inv_description|default_if_none:"" }}</div>
+          </div>
+        {% endif %}
+  
+        {% if entry_element_obj.hr %}
+          <div class="d-flex flex-wrap flex-column col-12 mt-3">
+            <div class="fw-bold text-primary">Se requiere de recursos humanos para el diseño y desarrollo</div>
+            <div class="col-12 ">{{ entry_element_obj.hr_description|default_if_none:"" }}</div>
+          </div>
+        {% endif %}
+  
+        {% if entry_element_obj.similar_products %}
+          <div class="d-flex flex-wrap flex-column col-12 mt-3">
+            <div class="fw-bold text-primary">Se tienen registros de productos similares</div>
+            <div class="col-12 ">{% if entry_element_obj.op %}OP-{{ entry_element_obj.op }} - {{ entry_element_obj.product_client|default_if_none:"" }} - {{ entry_element_obj.description|default_if_none:"" }}{% endif %}</div>
+          </div>
+        {% endif %}
+        
+      </div>
+      {% endif %}
+      
+    
+    
+    {% if entry_element_obj.failure or entry_element_obj.ambiental %}
+      <h5 class="mb-n2 mt-2 fw-bold text-primary ps-2">Elementos para mantener las características del producto</h5>
+      <hr class="mx-2 my-2">
+  
+      <div class="d-flex flex-wrap px-2 gap-2 pb-2">
+        
+        {% if entry_element_obj.ambiental %}
+        <div class="d-flex flex-wrap flex-column col-12 mt-3">
+          <div class="fw-bold text-primary">Se requiere de condiciones ambientales especiales para mantener el producto</div>
+          <div class="col-12 ">{{ entry_element_obj.ambiental_description|default_if_none:"" }}</div>
+        </div>
+        {% endif %}
+  
+        
+        {% if entry_element_obj.failure %}
+        <div class="d-flex flex-wrap flex-column col-12 mt-3">
+          <div class="fw-bold text-primary">Existen fallas potenciales</div>
+          <div class="col-12 ">{{ entry_element_obj.failure_description|default_if_none:"" }}</div>        
+          
+          {% if entry_element_obj.fail_consequence %}
+            <div class="col-12 "><x class="fw-bold">Esto trae cómo consecuencia:</x>&thinsp;{{ entry_element_obj.fail_consequence}}</div>
+          {% endif %}
+            
+        </div>
+        {% endif %}
+  
+      </div>
+      {% endif %}
+      
+      
+    {% if entry_element_obj.observation.html %}
+    {% if entry_element_obj.observation.html != '<p><br></p>' %}
+    <hr class="mx-2 my-2">
+    <div class="px-2 pt-2">
+      <h5 class="text-start text-md-center text-primary fw-bold mb-0">Observaciones</h5>
+      <div>{{ entry_element_obj.observation.html|safe }}</div>
+    </div>
+    <hr class="mx-2 mt-2">
+    {% endif %}
+    {% endif %}
+
+    {% if entry_element_obj.documents.all %}
+      {% include 'includes/document_preview.html' with existing=entry_element_obj.documents.all %}
+	  {% endif %}
+
+    <div class="d-flex flex-row flex-wrap justify-content-between px-2 gap-3">
+      <div class="d-flex flex-column">
+        <h6 class="m-0 text-primary fw-bold">Realizado por:</h6>
+        <p class="m-0 fw-bold">{{ entry_element_obj.elaborator }}</p>
+      </div>
+      <div class="d-flex flex-column">
+        <h6 class="m-0 text-primary fw-bold">Revisado por:</h6>
+        <p class="m-0 fw-bold {% if entry_element_obj.reviewer %}">{{ entry_element_obj.reviewer }}{% else %}fst-italic">Pendiente por Revisión{% endif %}</p>
+      </div>
+    </div>
+
+  </div>
+</div>

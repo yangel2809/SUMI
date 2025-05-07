@@ -1,0 +1,59 @@
+<p class="text-bold text-center pt-3 mb-0 pe-2">
+	<x class="text-primary">Fecha de Entrega</x>
+	<a class="a-deaf text-middle" id="add_form">
+		<i class="material-icons" style="vertical-align: text-top; font-size: 15px !important;">add_circle</i>
+	</a>
+	<a class="a-deaf text-middle" id="remove_form">
+		<i class="material-icons" style="vertical-align: text-top; font-size: 15px !important;">remove_circle</i>
+	</a>
+</p>
+<div class="table-responsive p-0 px-3" style="overflow-y: hidden;">
+	{{ formset.management_form }}
+	<table class="table align-items-center justify-content-center mb-0">
+		<thead>
+			<tr>
+				<th class="p-0 ps-2" style="font-size: 13px;">Cantidad</th>
+				<th class="p-0 ps-2" style="font-size: 13px;">Fecha</th>
+				{% if formset.instance.pk %}
+				<th class="text-center col-1 p-0">
+					<i class="material-icons">delete</i>
+				</th>
+				{% endif %}
+			</tr>
+		</thead>
+		<tbody id="dd_formset">
+			{% for dd in formset %}
+			<tr id="d_row-{{ forloop.counter0 }}">
+				{{ dd.id }}
+				<td class="text-center p-0 py-1 pe-1">
+					<div class="{% if dd.quantity.errors %}border-error{% endif %}">{{ dd.quantity }}</div>
+				</td>
+				<td class="text-center p-0 py-1 ps-1">
+					<div class="{% if dd.delivery_date.errors %}border-error{% endif %}">{{ dd.delivery_date }}</div>
+				</td>
+				{% if dd.instance.pk %}
+				<td class="text-center">
+					<div class="p-0 form-check">
+						{{ dd.DELETE }}
+					</div>
+				</td>
+				{% endif %}
+			</tr>
+			{% endfor %}
+		</tbody>
+
+		<tbody id="empty_form" style="display:none !important;">
+			
+			<tr id="d_row-__prefix__">
+				<td class="text-center p-0 py-1 pe-1">
+					<div class="{% if formset.quantity.errors %}border-error{% endif %}">{{ formset.empty_form.quantity }}</div>
+				</td>
+				<td class="text-center p-0 py-1 ps-1">
+					<div class="{% if formset.delivery_date.errors %}border-error{% endif %}">{{ formset.empty_form.delivery_date }}</div>
+				</td>
+			</tr>
+
+		</tbody>
+
+	</table>
+</div>

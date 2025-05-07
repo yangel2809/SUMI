@@ -1,0 +1,160 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<!-- form_view.html -->
+{% if test_request_obj.company == 'mcl' %}
+<style>
+  :root {
+    --mc-color: #946037;
+    --mc-selection: #ad7e5a;
+    --mc-shadow-color: #94603780;
+    --mc-calendar-today: #94603780;
+    --critical-color: #94603769;
+    --mc-hover-color: #94603759;
+  }
+</style>
+<script>$('meta[name="theme-color"]').attr('content', '#946037')</script>
+{% endif %}
+<link href="{{ ASSETS_ROOT }}/css/essay-material-form.css" rel="stylesheet" />
+<div class="container-fluid pt-1 px-sm-4 px-3 pb-3">
+  <div class="row min-vh-80 h-100 justify-content-center">
+    <div class="form-group input-group input-group-outline justify-content-center col-xl-9 col-12 px-0 px-md-2">
+      <form method="POST">
+        {% csrf_token %}
+        <!-----------------------------------------------------TEST FORMSET----------------------------------------------------->
+        <div class="card my-3">
+          <div class="card-header p-0 mt-n4 position-relative mx-3 z-index-2" style="user-select: none">
+            <div class="bg-primary shadow-primary border-radius-lg px-3 pt-3 pb-2">
+              <div class="mt-0 d-flex justify-content-between">
+                <h5 class="text-white ext-center font-weight-bolder">Editar ensayo y resultados</h5>
+              </div>
+            </div>
+          </div>
+          <div class="card-body mt-n4 border-radius-lg px-0 pb-2">
+            <div>
+              <div class="d-flex flex-column flex-nowrap pt-2 px-3"><label class="text-primary fw-bold">Ensayo</label>
+                {{ form.essay }}
+              </div>
+            </div>
+            <div class="table-responsive p-0" style="overflow-y: hidden;">
+              <table class="table table-hover align-items-center text-align-center mb-0">
+                <thead class="align-items-center text-xs mb-n1">
+                  <tr>
+                    <th class="ps-3 col-3 pb-2">Bobina</th>
+                    <th class="text-center px-1 col-8 pb-2">Resultado</th>
+                  </tr>
+                </thead>
+                <tbody id="form_set" class=" p-0 m-0" style="user-select: none;">
+                  {{ formset.management_form }}
+                  <!--Test form goes here-->
+                  {% for forms in formset %}
+                  {% for hidden in formset.hidden_fields %}
+                    {{ hidden }}
+                  {% endfor %}
+                  <tr id="form-row-{{ forloop.counter0 }}">
+                    <td class="ps-3 text-dark fw-bold">
+                      <div>
+                        Bobina: {{ forloop.counter }}
+                        {{ forms.id }}
+                      </div>
+                    </td>
+                    <td class="mx-0 ps-0 col-6">
+                      <div class="d-flex flex-row p-0 m-0">
+                        <a class="mx-2 pt-2  a-deaf font-weight-black cursor-pointer" id="swap-{{ forloop.counter0 }}">
+                          <i id="swap-fw-{{ forloop.counter0 }}" class="material-symbols-rounded" aria-hidden="true">expand_content</i>
+                          <i id="swap-bk-{{ forloop.counter0 }}" class="material-symbols-rounded" aria-hidden="true" style="display: none;">collapse_content</i>
+                        </a>
+                        <div class="px-1 {% if results.errors.result_t %}border-error{% endif %} flex-row-reverse w-100"
+                          id="text-{{ forloop.counter0 }}-container" style="display: flex;">
+                          <a class="position-absolute m-2 a-deaf font-weight-black cursor-pointer"
+                            id="symbol-{{ forloop.counter0 }}" style="user-select: none;">±</a>
+                          {{ forms.result_t }}
+                        </div>
+                        <div class="flex-row p-0 m-0 w-100" id="results-{{ forloop.counter0 }}-container"
+                          style="display: none;">
+                          <div class="px-1 col-4 {% if results.errors.result_a %}border-error{% endif %}">
+                            {{ forms.result_a }}
+                            {{ forms.check_a }} <label class="cursor-pointer mb-0 text-xs fw-bold" style="position: relative; bottom: 2px;" for="id_results-{{ forloop.counter0 }}-check_a">y rompe</label>
+                          </div>
+                          <div class="px-1 col-4 {% if results.errors.result_c %}border-error{% endif %}">
+                            {{ forms.result_c }}
+                            {{ forms.check_c }} <label class="cursor-pointer mb-0 text-xs fw-bold" style="position: relative; bottom: 2px;" for="id_results-{{ forloop.counter0 }}-check_c">y rompe</label>
+                          </div>
+                          <div class="px-1 col-4 {% if results.errors.result_b %}border-error{% endif %}">
+                            {{ forms.result_b }}
+                            {{ forms.check_b }} <label class="cursor-pointer mb-0 text-xs fw-bold" style="position: relative; bottom: 2px;" for="id_results-{{ forloop.counter0 }}-check_b">y rompe</label>
+                          </div>
+                        </div>
+                        <script>
+                          $(document).ready(function () {
+                            $('#id_essay').select2({
+                              allowClear: true,
+                              placeholder: 'Seleccione...',
+                              width: '100%',
+                              selectionCssClass: ':all:',
+                              dropdownCssClass: ':all:'
+                            });
+                            if ($("#id_results-{{ forloop.counter0 }}-result_a").val() || $("#id_results-{{ forloop.counter0 }}-result_b").val() || $("#id_results-{{ forloop.counter0 }}-result_c").val()) {
+                              $("#text-{{ forloop.counter0 }}-container").hide();
+                              $("#swap-fw-{{ forloop.counter0 }}").hide();
+                              $("#results-{{ forloop.counter0 }}-container").css("display", "flex");
+                              $("#swap-bk-{{ forloop.counter0 }}").show();
+                            }
+                          });
+                        </script>
+                      </div>
+                    </td>
+
+                    <script>
+                      $("#symbol-{{ forloop.counter0 }}").click(function () {
+                        var text = $("#id_results-{{ forloop.counter0 }}-result_t").val();
+                        $("#id_results-{{ forloop.counter0 }}-result_t").val(text + "±");
+                        $("#id_results-{{ forloop.counter0 }}-result_t").focus();
+                      });
+
+                      $('#swap-{{ forloop.counter0 }}').on('click', function () {
+                        if ($('#results-{{ forloop.counter0 }}-container').is(":hidden")) {
+                          $('#results-{{ forloop.counter0 }}-container').css('display', 'flex');
+                          $('#text-{{ forloop.counter0 }}-container').hide();
+                          $('#swap-fw-{{ forloop.counter0 }}').hide();
+                          $('#swap-bk-{{ forloop.counter0 }}').show();
+
+                          $('#id_results-{{ forloop.counter0 }}-result_t').val(null);
+                        } else {
+                          $('#results-{{ forloop.counter0 }}-container').hide();
+                          $('#text-{{ forloop.counter0 }}-container').show();
+                          $('#swap-fw-{{ forloop.counter0 }}').show();
+                          $('#swap-bk-{{ forloop.counter0 }}').hide();
+
+                          $('#id_results-{{ forloop.counter0 }}-result_a').val(null);
+                          $('#id_results-{{ forloop.counter0 }}-result_b').val(null);
+                          $('#id_results-{{ forloop.counter0 }}-result_c').val(null);
+                        }
+                      });
+                    </script>                    
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              <div class="p-0" style="user-select:none">
+                <hr class="p-0 m-0">
+                <div
+                  class="d-flex justify-content-center text-sm align-content-middle font-weight-bolder p-0 mt-2 mb-0">
+                  <a class="a-deaf text-middle" id="add_more_b" style="cursor: pointer !important">
+                    <div>
+                      <button class="mb-0 btn btn-primary" type="submit">Guardar</button>
+                      <a onClick="window.history.back();return false;">
+                        <button type="button" class="mb-0 btn btn-secondary">Cancelar</button>
+                      </a>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--------------------------------------------------END TEST FORMSET-------------------------------------------------->
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock content %}

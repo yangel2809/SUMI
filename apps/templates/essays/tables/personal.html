@@ -1,0 +1,71 @@
+{% load home_tags %}
+{% if objects %}
+<i class="hidden" id="tab" value="{{ tab }}"></i>
+<table class="table align-items-center mb-0">
+  <thead>
+    <tr>
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nombre</th>
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">Status</th>
+      {% if perms.essays.change_personal %}
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="user-select: none">Editar</th>
+      {% endif %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for person in objects %}
+    <tr>
+      <td class="ps-4 fw-bold">
+        <h6 class="mb-0 fw-bold">{{ person.name }}</h6>
+      </td>
+      <td class="text-center justify-content-center">
+        <h6 class="mb-0 text-sm">{% if person.active %}Activo{% else %}Inactivo{% endif %} </h6>
+      </td>
+      
+      {% if perms.essays.change_personal or perms.essays.delete_personal %}
+      <td class="text-center icon-container" style="user-select: none;">
+          {% if perms.essays.change_personal %}
+          <a href="{{ url }}{{ person.id }}/edit" class="text-primary" data-toggle="tooltip"
+            data-original-title="Eliminar">
+            <i class="material-icons">drive_file_rename_outline</i>
+          </a>
+          {% endif %}
+          {% if perms.essays.delete_personal %}
+          <!-- Button trigger modal -->
+          <a class="" data-bs-toggle="modal" data-bs-target="#id-{{ person.id }}"
+            style="user-select: none; cursor: pointer !important;" title="Eliminar">
+            <i class="material-icons">delete</i>
+          </a>  
+          <!-- Modal -->
+          <div class="modal fade" id="id-{{ person.id }}" tabindex="-1" aria-labelledby="exampleModalLabel"
+            aria-hidden="true" style="user-select: none;">
+            <div class="modal-dialog">
+              <div class="modal-content px-3">
+                <div class="bg-primary modal-header px-4 mx-n3">
+                  <h4 class="modal-title font-weight-bolder text-white" id="exampleModalLabel">¡Advertencia!</h4>
+                </div>
+                <form method="POST" action="{{ url }}{{ person.id }}/delete/">
+                  {% csrf_token %}
+                  <div class="modal-body text-start px-1">
+                    <p class="mb-1 font-weight-bold" style="line-height: 1.25;">
+                      ¿Seguro que desea eliminar a {{ person }}?</p>
+                    <p class="mb-n1 text-xs">Esta acción no puede deshacerse y desaparecerá de todos los documentos en los que se encuentre presente</p>
+                  </div>
+                  <div class="modal-footer text-center justify-content-center py-2">
+                    <button type="button" class="m-0 mx-1 btn btn-secondary"
+                    data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="m-0 mx-1 btn btn-danger">Confirmar</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+      </td>
+      {% endif %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+{% include 'includes/no-table-results.html' %}
+{% endif %}

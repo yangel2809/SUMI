@@ -1,0 +1,368 @@
+{% load tz %}
+{% load home_tags %}
+
+<!---------------------------------[Content Start]--------------------------------->
+{% if order_obj.sale_order.plan.company == 'mcl' %}
+<style>:root {--mc-color: #946037;--mc-selection: #ad7e5a;--mc-shadow-color: #94603780;--mc-calendar-today: #94603780;--critical-color: #94603769;--mc-hover-color: #94603759;}</style>
+<script>$('meta[name="theme-color"]').attr('content', '#946037')</script>
+{% endif %}
+<!----------------------------------[Print Cover]---------------------------------->
+{% if not order_obj.technicalspecs.boss %}
+<style>  
+   .printcover {
+    z-index: 99999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+   
+    background-image: linear-gradient(185deg, #42424a 0%, #191919 92%);
+  }
+  .separator{border-left: solid 1px #d5d6dd !important;}
+</style>
+<div class="no-screens printcover">
+  <p class="fs-3 text-white user-select-none"><span class="font-weight-bold">¡Error!</span> Informe pendiente por revisión de <span class="font-weight-bold">ASCA</span></p>
+  <h1 class="text-white fw-bold user-select-none" style="font-size: calc(5rem + 4.5vw);">:(</h1>
+</div>
+{% endif %}
+<!-------------------------------------[Head]------------------------------------->
+<div class="{% if not order_obj.technicalspecs.boss %} no-print {% endif %} d-flex flex-row flex-wrap justify-content-between">
+  <div class="d-flex flex-sm-row{% if order_obj.sale_order.plan.company == 'mcl' %}-reverse{% endif %} flex-column{% if not order_obj.sale_order.plan.company == 'crx' %}-reverse{% endif %} user-select-none">
+    <div class="p-1">
+      {% if order_obj.sale_order.plan.company == 'mcl' %}
+        <img alt="Morrocel c.a RIF:J-06000377-6" width="220em" src="{{ ASSETS_ROOT }}/img/logo_mcl.svg" />
+      {% else %}
+        <img alt="Curex c.a RIF:J-00074598-6" width="220em" src="{{ ASSETS_ROOT }}/img/logo_crx.svg" />
+      {% endif %}
+    </div>
+  </div>
+  <div class="d-flex flex-column align-items-end">
+    <p class="text-end m-0 mb-n1 fw-bolder text-xxs">
+      F-ASC-L17
+    </p>
+    <p class="text-end m-0 mb-n1 fw-bolder text-xxs">
+      REV-07
+    </p>
+    <p class="text-end m-0 mb-n1 fw-bolder text-xxs text-uppercase">
+      05/FEB/2021
+    </p>
+  </div>
+  <h3 class="col-12 text-center mb-1 mt-2 fw-bold text-primary" style="line-height: 1;">Certificado de Análisis de Calidad</h3>
+</div>
+<!---------------------------------[Initial Info]--------------------------------->
+<div class="{% if not order_obj.technicalspecs.boss %}no-print {% endif %} d-flex flex-row justify-content-between flex-wrap mt-3 pb-2">
+  <div class="d-flex flex-row overflow-scroll hide-bar me-1">
+    Cliente:&thinsp;<a href="#" class="fw-bold">{{ order_obj.sale_order.plan.client }}</a>
+  </div>
+  <div class="d-flex flex-row overflow-scroll hide-bar me-1">
+    Fecha:&thinsp;<x class="fw-bold text-uppercase text-dark">{{ order_obj.technicalspecs.date|date:"d/b/Y" }}</x>
+  </div>
+</div>
+<hr class="m-0">
+<div class="{% if not order_obj.technicalspecs.boss %}no-print {% endif %} d-flex flex-row justify-content-between flex-wrap py-2">
+  <div class="d-flex flex-row overflow-scroll hide-bar me-1">
+    Producto:&thinsp;<x class="fw-bold text-dark">{{ order_obj.sale_order.plan.product }}</x>
+  </div>
+  
+</div>
+<hr class="m-0">
+<div class="{% if not order_obj.technicalspecs.boss %}no-print {% endif %} d-flex flex-row justify-content-between flex-wrap py-2">
+  <div class="d-flex flex-row me-1">Órden de Producción:&thinsp;<x class="fw-bold text-dark">OP-{{ order_obj.number }}</x></div>
+  <div class="d-flex flex-row me-1">Pedido:&thinsp;<x class="fw-bold text-dark">{{ order_obj.sale_order.number }}</x></div>
+  <div class="d-flex flex-row me-1">Código:&thinsp;<x class="fw-bold text-dark">{{ order_obj.sale_order.plan.gp_code }}</x></div>
+</div>
+
+<!---------------------------------[Product Info]--------------------------------->
+<!-------------------------------------[Plan]-------------------------------------->
+{% if latest_report %}
+  <div class="{% if not order_obj.technicalspecs.boss %}no-print {% endif %} card mx-n1 mx-md-n2 my-3 mb-5 mt-4">
+    <div class="card-header p-0 mt-n4 position-relative mx-2 z-index-2">
+      <div class="bg-primary text-center shadow-primary border-radius-lg ps-3 pt-2 pb-2">
+        <h5 class="text-white font-weight-bolder m-0">Ensayos Realizados</h5>    
+      </div>
+    </div>
+    <div class="card-body shadow mt-n4 border-radius-lg px-md-3 px-2 pb-2">
+      <div class="table-responsive p-0">
+        <table class="table align-items-center text-align-center mb-0">
+          <thead class="align-items-center">
+            <tr>
+              <th class="ps-2">Ensayo</th>
+              <th class="text-center">Método de Ensayo</th>
+              <th class="text-center">Unidad</th>
+              <th class="text-center">Especificación</th>
+              <th class="text-center">Resultados</th>
+            </tr>
+          </thead>
+          <tbody>              
+            {% for essay in latest_report.get_ordered_essays %}
+            {% with main_flc=forloop.counter0 %}
+              {% if essay.essay.method == '031' %}
+                {% if order_obj.sale_order.plan.winding or order_obj.sale_order.plan.winding_description %}
+                <tr class="{% if essay.essay.confidential %}no-print{% endif %}">
+                  <td><p class="fw-bold c m-0">Posición de Embobinado</p></td>
+                  <td class="text-center"> 
+                    ASCA-ME-031
+                  </td>
+                  <td class="text-center">N°</td>
+                  <td style="white-space: normal; text-align: center; max-width: 190px !important;" class="fw-bold text-dark">
+                    {% if order_obj.sale_order.plan.winding %}{{ order_obj.sale_order.plan.winding }}{% endif %}{% if order_obj.sale_order.plan.winding and order_obj.sale_order.plan.winding_description %},&thinsp;{% endif %}
+                    {% if order_obj.sale_order.plan.winding_description %}{{ order_obj.sale_order.plan.winding_description }}{% endif %}
+                  </td>
+                  <td class="fw-bold text-dark text-center">
+                    {% if latest_cutter.winding_position %}
+                    {{ latest_cutter.winding_position }}
+                    {% elif essay.average %}                
+                      {{ essay.average|clear_zeros }}
+                    {% else %}
+                        {{ essay.average_t }}
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endif %}
+              {% elif essay.essay.method == '011' %}
+                <tr class="{% if essay.essay.confidential %}no-print{% endif %}">
+                  <td>
+                    <p class="fw-bold m-0">{{ essay.essay.name }}</p>                          
+                    {% if essay.essay.detail %}
+                      <p class="p-0 m-0 mt-n1 font-weight-bolder text-xs">{{ essay.essay.detail }}</p>
+                    {% endif %}                       
+                  </td>
+                  <td class="text-center"> 
+                    ASCA-ME-{{ essay.essay.method }}
+                  </td>
+                  <td class="text-center">
+                    {{ essay.essay.unit.symbol }}
+                  </td>                                 
+                  <td class="fw-bold text-dark text-center">
+                    {{ essay.plan_delal|default_if_none:'-' }}
+                  </td>
+                  <td class="text-center">
+                  {% for delal in all_delal %}
+                      {% for result in delal.testfileessayresult_set.all %}
+                        <x class="d-none" id="result-{{ main_flc }}-{{ forloop.parentloop.counter0 }}-{{ forloop.counter0 }}">
+                          {{ result.result_p|truncate|swap_comma }}
+                        </x>
+                      {% endfor %}
+                    <p class="fw-bold text-dark m-0 mb-n1">
+                      {{ delal.test_file.boot_l.st_1 }} + {{ delal.test_file.boot_l.st_3 }} = <x>{{ delal.average }}</x>
+                    </p>
+                  {% endfor %}
+                  </td>
+                </tr>
+              {% else %}
+              {% if not essay.essay.method == '012' %}
+                <tr class="{% if essay.essay.confidential %}no-print{% endif %}">
+                  <td>
+                    <div >
+                        <p class="fw-bold m-0">{{ essay.essay.name }}</p>
+                        {% if essay.essay.detail %}
+                        <p class="p-0 m-0 mt-n1 font-weight-bolder text-xs">{{ essay.essay.detail }}</p>
+                        {% endif %}
+                    </div>
+                  </td>
+                  <td class="text-center"> 
+                    ASCA-ME-{{ essay.essay.method }}
+                  </td>
+                  <td class="text-center">
+                    {{ essay.essay.unit.symbol }}
+                  </td>
+                  <td class="fw-bold text-dark text-center"> 
+                    {% if essay.essay.method == '003' %}
+                      <abbr title="Peso total ± 5%">{{ essay.plan_weight|truncate }} ± {{ essay.plan_weight_avg|truncate }}</abbr>
+                    {% elif essay.essay.method == '004' %}
+                    <abbr title="Espesor total ± 5%">{{ essay.plan_thickness|truncate }} ± {{ essay.plan_thickness_avg|truncate }}</abbr>
+                    {% elif essay.essay.method == '029' or essay.essay.method == '005' %}
+                      {{ essay.plan_application }}
+                    {% else %}
+                      {{ essay.plan_spec|default_if_none:'-' }}
+                    {% endif %}
+                  </td>
+                  <td class="fw-bold text-dark text-center">
+                    {% if essay.average %}                
+                      <x id="result-{{ main_flc }}x-{{ forloop.counter0 }}">{{ essay.average|clear_zeros }}</x>
+                    {% else %}
+                        {{ essay.average_t }}
+                    {% endif %}
+                  </td>
+                </tr>
+                
+                {% if essay.essay.method == '004' %}
+                  {% if latest_cutter.w_p %}
+                  <tr class="{% if essay.essay.confidential %}no-print{% endif %}">
+                    <td><p class="fw-bold m-0">Ancho</p></td>
+                    <td class="text-center"> 
+                      ASCA-ME-012
+                    </td>
+                    <td class="text-center">mm</td>
+                    <td class="fw-bold text-dark text-center"> 
+                      {{ essay.plan_cut|default_if_none:'-' }}
+                    </td>
+                    <td class="fw-bold text-dark text-center">
+                      {{ latest_cutter.w_p|truncate }}
+                    </td>
+                  </tr>
+                  {% endif %}
+                {% endif %}
+              {% endif %}
+              
+              {% endif %}
+              {% endwith %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  
+  
+ 
+{% else %}
+<h5 class="fw-bold text-center mb-4">Agregar reporte en el último arranque para mostrar sus especificaciones</h5>
+{% endif %}
+
+
+<!-----------------------------------[Structure]----------------------------------->
+{% if structure_list %}
+<div class="{% if not order_obj.technicalspecs.boss %} no-print {% endif %} card mx-n1 mx-md-n2 my-3 mt-4">
+  <div class="card-header p-0 mt-n4 position-relative mx-2 z-index-2">
+    <div class="bg-primary text-center shadow-primary border-radius-lg ps-3 pt-2 pb-2">
+      <h5 class="text-white font-weight-bolder m-0">Estructura</h5>    
+    </div>
+  </div>
+  <div class="card-body shadow mt-n4 border-radius-lg px-md-3 px-2 pb-2">
+    <div class="table-responsive p-0">
+      <table class="table align-items-center text-align-center mb-0">
+        <thead class="align-items-center">
+          <tr>
+            <th class="col-10" colspan="2">Material</th>
+            <th class="col-1 text-center">Peso (<abbr title="Gramaje / Gramos por metro cuadrado">g/m²</abbr>)</th>
+            <th class="col-1 text-center">Espesor (<abbr title="Micra">μ</abbr>)</th>
+          </tr>
+        </thead>
+        <tbody>    
+          {% for structure in structure_list %}
+          <tr>
+            <td colspan="2">
+              <div class="d-flex flex-column justify-content-between">
+                {% if structure.test_material_check %}
+                  <h6 class="m-0 font-italic"><abbr title="Material de prueba">{{ structure.test_material }}</abbr></h6>
+                {% else %}
+                  <h6 class="m-0">{{ structure.material_type.name }}</h6>
+                {% endif %}
+                {% comment %}
+                {% if structure.description %}
+                <p class="p-0 m-0 mt-n1 font-weight-bolder text-xs">{{ structure.description }}</p>
+                {% endif %}
+                {% endcomment %}
+              </div>
+
+            </td>
+            <td class="st-weight-row text-center" value="{{ structure.weight|swap_comma }}">
+              {{ structure.weight|truncate }}
+            </td>
+            <td class="st-thickn-row text-center" value="{{ structure.thickness|swap_comma }}">
+              {{ structure.thickness|truncate }}
+            </td>
+          </tr>
+          {% endfor %}
+          <tr>
+            <td colspan="2"> 
+              <h6 class="font-weight-bold mb-0">Total</h6>
+            </td>
+            <td class="text-center">
+              <h6 class="font-weight-bold mb-0">
+                <abbr class="text-dark-hover" title="Peso total" id="weight-total">
+                  {{ order_obj.sale_order.plan.weight|truncate }}
+                </abbr>
+              </h6>
+            </td>
+            <td class="text-center">
+              <h6 class="font-weight-bold mb-0">
+                <abbr class="text-dark-hover" title="Espesor total" id="thickn-total">
+                  {{ order_obj.sale_order.plan.thickness|truncate }}
+                </abbr>
+              </h6>
+            </td>
+          </tr>
+        </tbody>
+        
+      </table>
+    </div>
+  </div>
+</div>
+{% if order_obj.technicalspecs.observation.html %}
+  {% if order_obj.technicalspecs.observation.html != '<p><br></p>' %}
+    <h6 class="fw-bold text-primary m-0">Observaciones</h6>
+    <div class="col-12 pb-2">{{ order_obj.technicalspecs.observation.html|safe }}</div>
+  <hr class="mt-n2 mb-2 ">
+  {% endif %}
+{% endif %}
+{% for dispatch in order_obj.technicalspecs.dispatch_set.all %}
+<div class="{% if not order_obj.technicalspecs.boss %}no-print {% endif %}col-12 dispatch-details pt-1" id="content_{{ forloop.counter }}">
+  <div class="d-flex flex-row justify-content-around pb-2">
+    <div class="d-flex flex-column">
+      <p class="text-xs text-center fw-bold m-0">Fecha de Fabricación</p>
+      <x class="fw-bold text-center text-dark text-uppercase">{{ dispatch.f_date|date:"d/b/Y" }}</x></div>
+    <div class="separator"></div>
+    <div class="d-flex flex-column text-center">
+      <p class="text-xs fw-bold m-0">Fecha de vencimiento del producto</p>
+      <x class="fw-bold text-dark text-uppercase">{{ dispatch.e_date|date:"d/b/Y" }}</x></div>
+    <div class="separator"></div>
+    <div class="d-flex flex-column text-center">
+      <p class="text-xs fw-bold m-0">Número de lote</p>
+      <x class="fw-bold text-dark">{{ dispatch.batch_number }}</x></div>
+    <div class="separator"></div>
+    <div class="d-flex flex-column text-center">
+      <p class="text-xs fw-bold m-0">Cantidad (Kg Neto)</p>
+      <x class="fw-bold text-dark">{{ dispatch.quantity }}Kg</x>
+    </div>
+    <a href="#" class="mt-2 auto-printer no-print" id="{{ forloop.counter }}">
+      <i class="fa fa-print" aria-hidden="true"></i>
+    </a>
+  </div>
+  <hr class="mt-0 mb-2">
+</div>
+{% endfor %}
+
+  {% if order_obj.technicalspecs and perms.production.view_technicalspecs %}
+    <div class="{% if not order_obj.technicalspecs.boss %} no-print {% endif %} d-flex flex-row flex-wrap justify-content-between py-3">
+      <div class="col-sm-8">
+        <h5 class="fw-bold text-primary m-0">Realizado por</h5>
+        <p class="text-lg fw-normal p-0 m-0">{{ order_obj.technicalspecs.quality_analist }}</p>
+      </div>
+      <div class="col-sm-4">
+          <h5 class="fw-bold text-primary m-0">Revisado por</h5>
+          <p class="text-lg fw-normal p-0 m-0">{{ order_obj.technicalspecs.boss|default_if_none:'<x class="text-danger">Pendiente por Revisión</x>' }}</p>
+          <hr class="m-0 no-screens">
+      </div>
+    </div>
+  {% elif perms.production.add_technicalspecs and latest_report.boss %}
+    <h5 class="text-center">
+      <a href="/production/{{ order_obj.id }}/techspecs/add">
+        <i class="material-icons" style="vertical-align: middle; font-size: 18px !important;">add_circle</i><b
+        style="vertical-align: text-top;"> Completar Información</b>
+      </a>
+    </h5>
+  {% elif perms.production.add_technicalspecs and not latest_report.boss %}
+    <h5 class="text-center">
+      <b class="text-danger">Último reporte Pendiente por Revisión</b>
+    </h5>
+  {% else %}
+    <h5 class="text-center">
+      <b class="text-danger">Pendiente por Revisión</b>
+    </h5>
+  {% endif %}
+  
+{% endif %}
+
+<script>
+  $(document).ready(function() {
+    $('.auto-printer').click(function() {
+      var id = $(this).attr('id'); // Get the id of the clicked auto-printer button
+      $('.dispatch-details').addClass('no-print'); // Add 'no-print' class to all dispatch-details
+      $('#content_' + id).removeClass('no-print'); // Remove 'no-print' class from the specific content id
+      window.print(); // Replicate the ctrl+p behavior
+    });
+  });
+</script>

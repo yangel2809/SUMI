@@ -1,0 +1,12 @@
+<h5 class="text-white font-weight-bolder text-nowrap pe-3">
+{% if not segment == 'review_sale_orders' %}
+<a class="title-tab text-white {% if tab != 'main' %}faded-title cursor-pointer{% endif %}" value="main">{{ title }}</a>
+{% if perms.sales.view_archive_purchsae_order %} | <a class="title-tab text-white {% if tab != 'archive' %}faded-title cursor-pointer{% endif %}" value="archive">Archivo</a>{% endif %}
+{% comment %}
+{% if perms.sales.view_deleted_sale_order %} | <a class="title-tab text-white {% if tab != 'deleted' %}faded-title cursor-pointer{% endif %}" value="deleted">Papelera</a>{% endif %}
+{% endcomment %}
+{% else %}
+<a class="title-tab text-white {% if tab != 'treview' %}faded-title cursor-pointer{% endif %}" value="treview">Pendientes por Revisión Técnica</a>
+| <a class="title-tab text-white {% if tab != 'rejected' %}faded-title cursor-pointer{% endif %}" value="rejected">Rechazados</a>
+{% endif %}
+</h5>

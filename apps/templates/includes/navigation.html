@@ -1,0 +1,73 @@
+<!-- Navbar -->
+<nav class="navbar navbar-main navbar-expand-lg pb-0 mt-0 px-0 px-sm-2 mx-sm-3 shadow-none border-radius-xl" id="navbarBlur"
+  navbar-scroll="true" style="user-select: none;">
+  <div class="container-fluid pt-0 px-3">
+    
+    <div class="collapse navbar-collapse me-sm-0 me-1" id="navbar">
+      <nav class="pt-2">
+      <h2 class="mb-0 mb-sm-1">
+        {% if back  %}
+        <a class="align-bottom pt-4 text-body cursor-pointer" href="{{ back }}" onClick="{% if back == True %}window.history.back();return false;{% endif %}" id="back_button"><i
+          class="material-symbols-rounded" style="font-size:32px; vertical-align:middle;">arrow_back_ios</i>
+        </a>
+        {% endif %}
+      </h2>
+    </nav>
+    
+      <div class="ms-md-auto pe-md-3 d-flex align-items-center"></div>
+      
+    
+      <ul class="navbar-nav  justify-content-end">
+        {% if search %}
+          <div class="ms-md-auto pe-md d-flex align-items-center">
+            <div class="input-group input-group-outline" style="flex-direction: row-reverse">
+              <i class="fas fa-search position-absolute m-2 p-1" ></i>
+              <input type="text" placeholder="Buscar..." class="form-control" autocomplete="off" id="buscador" style="border: 2px solid #7b809a !important; border-radius: 1em !important; padding-right: 2.5em !important; color: #c3c3c3"> 
+            </div>
+          </div>
+        {% endif %} 
+
+        {% if plan_details %}
+          {% include 'includes/plan-actions.html' %}
+        {% endif %}
+
+        {% if test_request_obj and not "edit" in request.get_full_path %}
+          {% include 'includes/test_req-actions.html' %}
+        {% endif %}
+
+        {% if detail == 'production' %}
+          {% include 'includes/prod-actions.html' %}
+        {% endif %}
+
+        {% if order_obj %}
+          <li class="nav-item mt-3 ms-1 mb-2">
+            <a class="a-deaf" title="Ver Plan de Calidad" href="{% url 'plan_view' order_obj.sale_order.plan.id %}" target="_blank">
+              <i class="material-icons" style="font-size:28px;">description</i>
+            </a>
+          </li>
+        {% endif %}
+
+        {% if detail == 'sale_order' %}
+          {% include 'includes/sale_order-actions.html' %}
+        {% endif %}
+        
+        <li class="nav-item d-xl-none ps-2 d-flex align-items-center">
+          <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
+            <div class="sidenav-toggler-inner">
+              <i class="sidenav-toggler-line"></i>
+              <i class="sidenav-toggler-line"></i>
+              <i class="sidenav-toggler-line"></i>
+            </div>
+          </a>
+        </li>
+        <!--<li class="nav-item d-flex align-items-center">
+          <a href="{% url 'logout' %}" class="nav-link text-body font-weight-bold px-0">
+            <i class="fa fa-sign-out me-sm-1"></i>
+            <span class="d-sm-inline d-none">Cerrar sesión</span>
+          </a>
+        </li>-->
+      </ul>
+    </div>
+  </div>
+</nav>
+<!-- End Navbar -->

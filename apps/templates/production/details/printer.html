@@ -1,0 +1,360 @@
+{% load tz %}
+{% load home_tags %}
+<div class="d-flex flex-row flex-wrap justify-content-between px-1 px-md-3">
+  <div class="d-flex flex-sm-row{% if order_obj.sale_order.plan.company == 'mcl' %}-reverse{% endif %} flex-column{% if not order_obj.sale_order.plan.company == 'crx' %}-reverse{% endif %} user-select-none">
+    <div class="p-1">
+      {% if order_obj.sale_order.plan.company == 'mcl' %}
+        <img alt="Morrocel c.a RIF:J-06000377-6" width="220em" src="{{ ASSETS_ROOT }}/img/logo_mcl.svg" />
+      {% else %}
+        <img alt="Curex c.a RIF:J-00074598-6" width="220em" src="{{ ASSETS_ROOT }}/img/logo_crx.svg" />
+      {% endif %}
+    </div>
+  </div>
+  <div class="d-flex flex-column align-items-end">
+    <p class="text-end m-0 mb-n1 fw-bolder text-xxs">
+      F-ASC-L02
+    </p>
+    <p class="text-end m-0 mb-n1 fw-bolder text-xxs">
+      REV-09
+    </p>
+    <p class="text-end m-0 mb-n1 fw-bolder text-xxs text-uppercase">
+      30/NOV/2017
+    </p>
+  </div>
+  <h3 class="col-12 text-center mb-1 mt-2 fw-bold text-primary" style="line-height: 1;">Control: Arranque de Producción Impresoras</h3>
+</div>
+<div class="row px-1 px-md-3">
+  <div class="d-flex flex-row flex-wrap justify-content-lg-between gap-3 py-2">
+    <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+      <x class="m-0">Máquina impresora:&thinsp;</x><x class="text-dark fw-bold">{{ printer_boot_obj.printer }}</x>
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+      <x class="m-0">Fecha y hora:&thinsp;</x><x class="text-dark fw-bold"><abbr title="Formato 24 Horas">{{ printer_boot_obj.date_time }}</abbr></x>
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+      <x class="m-0">Turno:&thinsp;</x><x class="text-dark fw-bold">{{ printer_boot_obj.turn }}</x>
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+      <x class="m-0">Pedido N°:&thinsp;</x><x class="text-dark fw-bold">{{ order_obj.sale_order.number }}</x>
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+      <x class="m-0">Orden de produción:&thinsp;</x>
+      <x class="text-dark fw-bold">
+          OP-{{ order_obj.number }}</x>
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+      <x class="m-0">Cliente:&thinsp;</x><x class="text-dark fw-bold">{{ order_obj.sale_order.plan.client }}</x>
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+      <x class="m-0">Producto:&thinsp;</x><x class="text-dark fw-bold">{{ order_obj.sale_order.plan.product }}</x>
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+      <x class="m-0">Código:&thinsp;</x><x class="text-dark fw-bold">{{ order_obj.sale_order.plan.gp_code }}</x>
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+      <x class="m-0">Velocidad de Máquina:&thinsp;</x><x class="text-dark fw-bold">{{ printer_boot_obj.machine_speed|truncate|swap_comma }}m/min</x>
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar p-0 m-0">
+      <x class="mb-0">Tratamiento corona:&thinsp;</x><x class="text-dark fw-bold">{% if printer_boot_obj.check_crown_treatment %}SÍ{% else %}NO{% endif %}</x>
+    </div>
+  </div>
+  <hr>
+  <!--------------------------------------------------Sustrate-------------------------------------------------->
+  <h5 class="fw-bold text-md-center text-primary mb-2">Sustrato</h5>
+  {% if sustrate %}
+    <div class="d-flex flex-row flex-wrap justify-content-md-center justify-content-lg-between gap-3 pb-2">
+      <div class="d-flex flex-row overflow-scroll hide-bar">
+        Material:&thinsp;<x class="mb-0 fw-bold text-dark">{{ sustrate.material_type }}</x>
+      </div>
+      <div class="d-flex flex-row overflow-scroll hide-bar">
+        Proveedor:&thinsp;<x class="mb-0 fw-bold text-dark">{{ printer_boot_obj.provider }}</x>
+      </div>
+      
+      <div class="d-flex flex-row overflow-scroll hide-bar">
+        Gramaje:&thinsp;<x class="mb-0 fw-bold text-dark">{{ sustrate.weight|truncate|swap_comma }}g/m²</x>
+      </div>
+      <div class="d-flex flex-row overflow-scroll hide-bar">
+        Espesor:&thinsp;<x class="mb-0 fw-bold text-dark">{{ sustrate.thickness|truncate|swap_comma }}µ</x>
+      </div>
+      <div class="d-flex flex-row overflow-scroll hide-bar">
+        Ancho:&thinsp;<x class="mb-0 fw-bold text-dark">{{ printer_boot_obj.sustrate_width }}mm</x>
+      </div>
+      {% if printer_boot_obj.crown_treatment_side %}
+      <div class="d-flex flex-row overflow-scroll hide-bar">
+        Lado Tratmiento Corona:&thinsp;<x class="mb-0 fw-bold text-dark">
+          {% if printer_boot_obj.crown_treatment_side == "e" %}
+          Externo
+          {% endif %}
+          {% if printer_boot_obj.crown_treatment_side == "i" %}
+          Interno
+          {% endif %}
+        </x>
+      </div>
+      {% endif %}
+      {% if printer_boot_obj.surface_tension %}
+      <div class="d-flex flex-row overflow-scroll hide-bar">
+        Tensión Superficial:&thinsp;<x class="mb-0 fw-bold text-dark">{{ printer_boot_obj.surface_tension }}din/cm</x>
+      </div>
+      {% endif %}
+    </div>
+  {% else %}
+  <p class="text-md-center m-0 text-danger">Error al seleccionar sutrato, verifique el formulario de la solicitud de prueba</p>
+  {% endif %}
+  <hr>
+  <!---------------------------------------------------Colors--------------------------------------------------->
+  <h5 class="fw-bold text-center text-primary mb-2">Colores por estaciones de trabajo</h5>
+  <br>
+  <div class="d-flex flex-row flex-wrap justify-content-center gap-3 pb-2">
+    <div class="d-flex flex-row overflow-scroll hide-bar pe-1">
+      <x class="mb-0">1:&thinsp;</x>{% if printer_boot_obj.sta_01 != "-" %}<x class="fw-bold text-dark">{{ printer_boot_obj.sta_01|default_if_none:"-" }}</x>{% else %}<x class="fst-italic">-</x>{% endif %}
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar pe-1">
+      <x class="mb-0">2:&thinsp;</x>{% if printer_boot_obj.sta_02 != "-" %}<x class="fw-bold text-dark">{{ printer_boot_obj.sta_02|default_if_none:"-" }}</x>{% else %}<x class="fst-italic">-</x>{% endif %}
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar pe-1">
+      <x class="mb-0">3:&thinsp;</x>{% if printer_boot_obj.sta_03 != "-" %}<x class="fw-bold text-dark">{{ printer_boot_obj.sta_03|default_if_none:"-" }}</x>{% else %}<x class="fst-italic">-</x>{% endif %}
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar pe-1">
+      <x class="mb-0">4:&thinsp;</x>{% if printer_boot_obj.sta_04 != "-" %}<x class="fw-bold text-dark">{{ printer_boot_obj.sta_04|default_if_none:"-" }}</x>{% else %}<x class="fst-italic">-</x>{% endif %}
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar pe-1">
+      <x class="mb-0">5:&thinsp;</x>{% if printer_boot_obj.sta_05 != "-" %}<x class="fw-bold text-dark">{{ printer_boot_obj.sta_05|default_if_none:"-" }}</x>{% else %}<x class="fst-italic">-</x>{% endif %}
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar pe-1">
+      <x class="mb-0">6:&thinsp;</x>{% if printer_boot_obj.sta_06 != "-" %}<x class="fw-bold text-dark">{{ printer_boot_obj.sta_06|default_if_none:"-" }}</x>{% else %}<x class="fst-italic">-</x>{% endif %}
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar pe-1">
+      <x class="mb-0">7:&thinsp;</x>{% if printer_boot_obj.sta_07 != "-" %}<x class="fw-bold text-dark">{{ printer_boot_obj.sta_07|default_if_none:"-" }}</x>{% else %}<x class="fst-italic">-</x>{% endif %}
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar pe-1">
+      <x class="mb-0">8:&thinsp;</x>{% if printer_boot_obj.sta_08 != "-" %}<x class="fw-bold text-dark">{{ printer_boot_obj.sta_08|default_if_none:"-" }}</x>{% else %}<x class="fst-italic">-</x>{% endif %}
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar pe-1">
+      <x class="mb-0">9:&thinsp;</x>{% if printer_boot_obj.sta_09 != "-" %}<x class="fw-bold text-dark">{{ printer_boot_obj.sta_09|default_if_none:"-" }}</x>{% else %}<x class="fst-italic">-</x>{% endif %}
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar pe-1">
+      <x class="mb-0">10:&thinsp;</x>{% if printer_boot_obj.sta_10 != "-" %}<x class="fw-bold text-dark">{{ printer_boot_obj.sta_10|default_if_none:"-" }}</x>{% else %}<x class="fst-italic">-</x>{% endif %}
+    </div>
+  </div>
+  <hr>
+  <!----------------------------------------------------Sample analysis---------------------------------------------------->
+  <h5 class="fw-bold text-primary text-sm-center m-0">Analisis de muestra</h5>
+  <p class="text-sm-center m-0 fst-italic text-danger">¡IMPORTANTE! PARA VERIFICAR LA IMPRESIÓN ES OBLIGATORIO TENER:</p>
+  <div class="d-flex justify-content-sm-center">
+    <div class="d-inline-flex flex-column">
+    <div class="d-flex flex-row justify-content-between">
+      <x class="mb-2">Estándar de color o Muestra aprobada y firmada por el cliente:</x><span class="dotted-separator"></span><x class="fw-bold text-dark">{{ printer_boot_obj.standar }}</x>
+    </div>
+    <div class="d-flex flex-row justify-content-between">
+      <x class="mb-2">Arte aprobado y firmdo por le cliente:</x><span class="dotted-separator"></span><x class="fw-bold text-dark">{{ printer_boot_obj.art }}</x>
+    </div>
+    <div class="d-flex flex-row justify-content-between">
+      <x class="mb-2">Pre impresión del Trabajo aprobada por Gestión de Calidad:</x><span class="dotted-separator"></span><x class="fw-bold text-dark">{{ printer_boot_obj.pre_print }}</x>
+    </div>
+    <div class="d-flex flex-row justify-content-between">
+      <x class="mb-2">Carpeta de desarrollo de Colores Flexo-Proof (Sólo para trabajos nuevos):</x><span class="dotted-separator"></span><x class="fw-bold text-dark">{{ printer_boot_obj.develop_folder }}</x>
+    </div>
+    </div>
+  </div>
+  <hr class="mt-2">
+  <h5 class="fw-bold text-primary text-sm-center m-0">Control de Impresión</h5>
+  <div class="col-sm-6 col-12">
+    <div class="d-inline-flex flex-column">
+      <div class="col-12 justify-content-between d-flex mb-sm-n1 mb-1">
+        <x class="mb-0 fw-bold">Registro:</x><span class="dotted-separator"></span><x class="text-uppercase text-dark fw-bold">
+          <abbr title="
+          {% if printer_boot_obj.register == 'na' %}No Aplica
+          {% elif printer_boot_obj.register == 'de' %}Deficiente
+          {% elif printer_boot_obj.register == 'ac' %}Aceptado
+          {% else %}Aceptado con Desviación
+          {% endif %}
+          ">{{ printer_boot_obj.register }}<!--Change this please-->
+        </abbr>
+        </x>
+      </div>
+      <div class="col-12 justify-content-between d-flex mb-sm-n1 mb-1">
+        <x class="mb-0 fw-bold">Textos:</x><span class="dotted-separator"></span><x class="text-uppercase text-dark fw-bold">
+          <abbr title="
+          {% if printer_boot_obj.text == 'na' %}No Aplica
+          {% elif printer_boot_obj.text == 'de' %}Deficiente
+          {% elif printer_boot_obj.text == 'ac' %}Aceptado
+          {% else %}Aceptado con Desviación
+          {% endif %}
+          ">{{ printer_boot_obj.text }}<!--Change this please-->
+          </abbr>
+        </x>
+      </div>
+      <div class="col-12 justify-content-between d-flex mb-sm-n1 mb-1">
+        <x class="mb-0 fw-bold">Dimensiones:</x><span class="dotted-separator"></span><x class="text-uppercase text-dark fw-bold">
+          <abbr title="
+          {% if printer_boot_obj.dimensions == 'na' %}No Aplica
+          {% elif printer_boot_obj.dimensions == 'de' %}Deficiente
+          {% elif printer_boot_obj.dimensions == 'ac' %}Aceptado
+          {% else %}Aceptado con Desviación
+          {% endif %}
+          ">{{ printer_boot_obj.dimensions }}<!--Change this please-->
+          </abbr>
+        </x>
+      </div>
+      <div class="col-12 justify-content-between d-flex mb-sm-n1 mb-1">
+        <x class="mb-0 fw-bold">Guia de corte:</x><span class="dotted-separator"></span><x class="text-uppercase text-dark fw-bold">
+          <abbr title="
+          {% if printer_boot_obj.cutting_guide == 'na' %}No Aplica
+          {% elif printer_boot_obj.cutting_guide == 'de' %}Deficiente
+          {% elif printer_boot_obj.cutting_guide == 'ac' %}Aceptado
+          {% else %}Aceptado con Desviación
+          {% endif %}
+          ">{{ printer_boot_obj.cutting_guide }}<!--Change this please-->
+          </abbr>
+        </x>
+      </div>
+      <div class="col-12 justify-content-between d-flex mb-sm-n1 mb-1">
+        <x class="mb-0 fw-bold">Fotocelda:</x><span class="dotted-separator"></span><x class="text-uppercase text-dark fw-bold">
+          <abbr title="
+          {% if printer_boot_obj.photocell == 'na' %}No Aplica
+          {% elif printer_boot_obj.photocell == 'de' %}Deficiente
+          {% elif printer_boot_obj.photocell == 'ac' %}Aceptado
+          {% else %}Aceptado con Desviación
+          {% endif %}
+          ">{{ printer_boot_obj.photocell }}<!--Change this please-->
+          </abbr>
+        </x>
+      </div>
+      <div class="col-12 justify-content-between d-flex mb-sm-0 mb-1">
+        <x class="mb-0 fw-bold">Código de barra:</x><span class="dotted-separator"></span><x class="text-uppercase text-dark fw-bold">
+          <abbr title="
+          {% if printer_boot_obj.barcode == 'na' %}No Aplica
+          {% elif printer_boot_obj.barcode == 'de' %}Deficiente
+          {% elif printer_boot_obj.barcode == 'ac' %}Aceptado
+          {% else %}Aceptado con Desviación
+          {% endif %}
+          ">{{ printer_boot_obj.barcode }}<!--Change this please-->
+          </abbr>
+        </x>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-12">
+    {% if printer_boot_obj.develop_result %}
+    <div class="col-12 mb-sm-2 mb-1">
+      <x class="fw-bold">Desarrollo:&thinsp;<x class="text-dark">{{ printer_boot_obj.develop_result|truncate|swap_comma }}{{ printer_boot_obj.develop_unit|default_if_none:"" }}</x></x>
+      <p class="text-sm fw-normal p-0 m-0 mt-n1">Especificación:&thinsp;{{ printer_boot_obj.develop }}{{ printer_boot_obj.develop_unit|default_if_none:"" }}</p>
+    </div>
+    {% endif %}
+    {% if printer_boot_obj.cut_width_result %}
+    <div class="col-12 mb-sm-2 mb-1">
+      <x class="fw-bold">Ancho de Corte:&thinsp;<x class="text-dark">{{ printer_boot_obj.cut_width_result|truncate|swap_comma }}mm</x></x>
+      <p class="text-sm fw-normal p-0 m-0 mt-n1">Especificación: {{ order_obj.sale_order.plan.width_bobbin|default_if_none:"" }}</p>
+    </div>
+    {% endif %}
+    <div class="col-12 mb-sm-2 mb-1">
+      <x class="mb-0 fw-bold">Diseño:&thinsp;<x class="text-dark">
+        {% if printer_boot_obj.design %}
+          {{ printer_boot_obj.design }}
+        {% else %}
+        NINGUNO
+        {% endif %}
+        </x>
+      </x>
+    </div>
+  </div>
+  <div class="col-6 py-2">
+    <x class="mb-0 text-primary fw-bold">Embobinado en Máquina:</x>
+    <p class="fw-bold m-0">
+      {% if printer_boot_obj.machine_winding %}{{ printer_boot_obj.machine_winding }}{% endif %}{% if printer_boot_obj.machine_winding and printer_boot_obj.winding_description %},&thinsp;{% endif %}
+      {% if printer_boot_obj.winding_description %}{{ printer_boot_obj.winding_description }}{% endif %} 
+    </p>
+  </div>
+  <div class="col-6 py-2">
+    <x class="mb-0 text-primary fw-bold">Embobinado al Cliente:</x>
+    <p class="fw-bold m-0">
+      {% if order_obj.sale_order.plan.winding %}{{ order_obj.sale_order.plan.winding }}{% endif %}{% if order_obj.sale_order.plan.winding and order_obj.sale_order.plan.winding_description %},{% endif %}
+      {% if order_obj.sale_order.plan.winding_description %}{{ order_obj.sale_order.plan.winding_description }}{% endif %}
+    </p>
+  </div>
+  <hr class="mt-2 mb-3">
+  <h6 class="fw-bold text-primary m-0 text-md-center text-lg-start">Repetición:&thinsp;</h6>
+
+  <div class="d-flex flex-row flex-wrap justify-content-md-center justify-content-lg-between gap-3 pb-3">
+    <div class="d-flex flex-row overflow-scroll hide-bar">
+      Especificación:&thinsp;<x class="mb-0 fw-bold text-dark">{{ order_obj.sale_order.plan.repetition|default_if_none:"" }}</x>
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar">
+      A, Izquierda:&thinsp;<x class="mb-0 fw-bold text-dark">{{ printer_boot_obj.r_left|truncate|swap_comma|suffix:'mm'|default_if_none:'-' }}</x>
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar">
+      C, Centro:&thinsp;<x class="mb-0 fw-bold text-dark">{{ printer_boot_obj.r_center|truncate|swap_comma|suffix:'mm'|default_if_none:'-' }}</x>
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar">
+      B, Derecha:&thinsp;<x class="mb-0 fw-bold text-dark">{{ printer_boot_obj.r_right|truncate|swap_comma|suffix:'mm'|default_if_none:'-' }}</x>
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar">
+      <x class="fst-underline">Promedio</x>:&thinsp;<x class="mb-0 fw-bold text-dark">{{ printer_boot_obj.r_average|truncate|swap_comma|suffix:'mm'|default_if_none:'-' }}</x>
+    </div>
+  </div>
+  <hr>
+  <h6 class="fw-bold text-primary m-0 text-md-center text-lg-start">Control de Tintas</h6>
+  <div class="d-flex flex-row flex-wrap justify-content-md-center justify-content-lg-between gap-3 pb-3">
+    <div class="d-flex flex-row overflow-scroll hide-bar">
+      Tonos según estándar de color:&thinsp;<x class="fw-bold text-dark text-uppercase">{{ printer_boot_obj.color_standar }}</x>
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar">
+      Anclaje:&thinsp;<x class="fw-bold text-dark text-uppercase">
+        <abbr title="        
+        {% if printer_boot_obj.anchorage == 'ac' %}Aceptado
+        {% else %}Deficiente
+        {% endif %}
+        ">{{ printer_boot_obj.anchorage }}</x>
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar">
+      Frote:&thinsp;<x class="fw-bold text-dark text-uppercase">
+        <abbr title="
+        {% if printer_boot_obj.rub == 'ac' %}Aceptado
+        {% else %}Deficiente
+        {% endif %}
+        ">{{ printer_boot_obj.rub }}</x>
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar">
+      Resistencia Térmica:&thinsp;<x class="fw-bold text-dark text-uppercase">
+        <abbr title="
+        {% if printer_boot_obj.ther_resistance == 'na' %}No Aplica
+        {% elif printer_boot_obj.ther_resistance == 'ac' %}Aceptado
+        {% else %}Deficiente
+        {% endif %}
+        ">{{ printer_boot_obj.ther_resistance }}</x>
+    </div>
+    <div class="d-flex flex-row overflow-scroll hide-bar">
+      Resistencia al Alcali:&thinsp;<x class="fw-bold text-dark text-uppercase">
+        <abbr title="
+        {% if printer_boot_obj.anchorage_resistance == 'na' %}No Aplica
+        {% elif printer_boot_obj.anchorage_resistance == 'ac' %}Aceptado
+        {% else %}Deficiente
+        {% endif %}
+        ">{{ printer_boot_obj.anchorage_resistance }}</x>
+    </div>
+  </div>
+  <hr>
+  {% if printer_boot_obj.observation.html %}
+    {% if printer_boot_obj.observation.html != '<p><br></p>' %}
+      <h6 class="fw-bold text-primary m-0">Observaciones</h6>
+      <br>
+      <div class="col-12 pb-2">{{ printer_boot_obj.observation.html|safe }}</div>
+    {% endif %}
+  {% endif %}
+  {% comment %}
+  <div class="col-3 pb-2">
+    <x class="mb-0 fw-bold">Diagrama de corte:&thinsp;</x>
+    <div class="px-1 p-0 form-check">{{ printer_boot_obj.cut_diagram }}</div>
+  </div>
+  {% endcomment %}
+  <div class="d-flex flex-row flex-wrap justify-content-between gap-3 pb-3">
+    <div>
+      <h5 class="fw-bold text-primary m-0">Por Aseguramiento de la Calidad</h5>
+      <p class="text-lg fw-normal p-0 m-0">{{ printer_boot_obj.quality_analist }}</p>
+    </div>
+    <div>
+      <h5 class="fw-bold text-primary m-0">Por Producción</h5>
+      <p class="text-lg fw-normal text-sm-end p-0 m-0">{{ printer_boot_obj.production_operator }}</p>
+    </div>
+  </div>
+</div>

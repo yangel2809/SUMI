@@ -1,0 +1,73 @@
+{% if objects %}
+<table class="table table-hover align-items-center mb-0">
+  {% load home_tags %} 
+  <thead>                
+    <tr>
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder">nombre</th>
+      {% if perms.home.change_materialtype or perms.home.delete_materialtype %}
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center" style="user-select: none">editar</th>
+      {% endif %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for material in objects %}
+    <tr>
+      <td class="ps-4 text-dark fw-bold">
+        <a href="{% url 'materials' %}?material_type={{ material.id }}">
+          {{ material.name }}
+        </a>                 
+      </td>
+      {% if perms.home.change_materialtype or perms.home.delete_materialtype %}
+      <td class="text-center icon-container">
+
+        {% if perms.home.change_materialtype %}          
+        <a href="{% url 'edit_material_type' material.id %}{% if '?' in request.get_full_path %}?next=/materials/types/{{ request.GET | query_encode }}{% endif %}" class="text-primary font-weight-bold text-xs" style="user-select: none"
+          title="Editar">
+          <i class="material-icons">drive_file_rename_outline</i>
+        </a>
+        {% endif %}
+
+        {% if perms.home.delete_materialtype %}
+        <!-- Button trigger modal -->
+        <a class="font-weight-bold" data-bs-toggle="modal" data-bs-target="#id-{{ material.id }}"
+          style="user-select: none; cursor: pointer !important;" title="Eliminar">
+          <i class="material-icons">delete</i>
+        </a>
+        
+        <!-- Modal -->
+        <div class="modal fade" id="id-{{ material.id }}" tabindex="-1"
+          aria-labelledby="exampleModalLabel" aria-hidden="true" style="user-select: none;">
+          <div class="modal-dialog">
+            <div class="modal-content px-3">
+              <div class="modal-header px-4 mx-n3" style="background-color: var(--mc-color) !important;">
+                <h4 class="modal-title font-weight-bolder text-white" id="exampleModalLabel">¡Advertencia!
+                </h4>
+
+              </div>
+              <div class="modal-body text-start px-1">
+                <p class="mb-0 font-weight-bold" style="line-height: 1.25; font-weight: 500 !important;">
+                  ¿Seguro que desea eliminar el Tipo de Material <b style="color: var(--mc-color)">{{ material.name }}</b>?</p>
+                <p class="mb-0 text-xs">No es posible eliminar Tipos de Materiales presentes en Planes de Calidad</p>
+              </div>
+              <div class="modal-footer text-center justify-content-center py-2">
+                <form method="POST" action="{% url 'delete_material_type' material.id %}{% if '?' in request.get_full_path %}?next=/materials/types/{{ request.GET | query_encode }}{% endif %}">
+                  {% csrf_token %}
+                  <button type="button" class="m-0 btn btn-secondary"
+                    data-bs-dismiss="modal">Cancelar</button>
+                  <button type="submit" class="m-0 btn btn-danger">Confirmar</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+      </td>
+      {% endif %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+  {% include 'includes/no-table-results.html' %}              
+{% endif %}

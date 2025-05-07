@@ -1,0 +1,16 @@
+iniciar entorno virtual-----
+
+>env\Scripts\activate.bat
+
+más infrmación: https://docs.python.org/es/3/library/venv.html
+
+
+iniciar servicio------------
+
+windows
+>py manage.py runserver 192.168.5.202:9000 (ip_local:puerto)
+
+linux
+$ python3 manage.py runserver 192.168.0.0:0000 (ip_local:puerto)
+
+más información: https://docs.djangoproject.com/es/4.1/ref/django-admin/#runserver

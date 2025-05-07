@@ -1,0 +1,159 @@
+{% load home_tags %}
+{% if objects %}
+<i class="hidden" id="tab" value="{{ tab }}"></i>
+<table class="table table-hover align-items-center mb-0">
+  <thead>
+    <tr>
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Pedido N°</th>
+      {% comment %}
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">Órden N°</th>
+      {% endcomment %}
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 px-2">Producto</th>
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 px-2">Cliente</th>
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">Fecha</th>
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">origen</th>
+      {% if tab == 'main' %}
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">estado</th>
+      {% endif %}
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">Solicitado</th>
+      {% if not segment == 'review_sale_orders' %}
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">Despachado</th>
+      {% endif %}
+      {% if perms.sales.change_saleorder or perms.sales.delete_saleorder %}
+        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="user-select: none">Editar</th>
+      {% elif perms.sales.view_saleorderreview and segment == 'review_sale_orders' %}
+        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="user-select: none">revisar</th>
+      {% endif %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for sale_order in objects %}
+    <tr class="{% if forloop.last %}no-border{% endif %} table-row" pid="{{ sale_order.id }}">
+      <td class="ps-4">
+        <a class="fw-bolder font-monospace" href="{% url 'sale_order_view' sale_order.id %}">
+          {{ sale_order.request_number }}
+        </a>
+      </td>
+      <td class="text-dark">
+        {{ sale_order.plan }}
+      </td>
+      <td class="fw-bold">
+        <h6 class="mb-0 fw-bold text-xs">{{ sale_order.plan.client.name }}</h6>
+      </td>
+      <td class="text-center text-xs fw-bold text-uppercase">
+        {{ sale_order.request_date|date:"d/b/Y" }}
+      </td>
+      <td class="text-dark fw-bold text-xs text-center">
+        {{ sale_order.get_origin_display }}
+      </td>
+      {% if tab == 'main' %}
+      <td class="text-center user-select-none" id="status-{{ sale_order.id }}">
+        {% if not sale_order.pre_print_ready %}
+          {% include 'sales/formsets/sale-status.html' with sale_order=sale_order %}
+        {% else %}
+          {% include 'includes/status-icon.html' with stat=sale_order.status %}
+        {% endif %}
+      </td>
+      {% endif %}
+      <td class="text-center fw-bold ">
+        <h6 class="mb-0 fw-bold ">{{ sale_order.quantity }}Kg</h6>
+      </td>
+      {% if not segment == 'review_sale_orders' %}
+      <td class="text-center fw-bold ">
+        <h6 class="mb-0 fw-bold ">{{ sale_order.dispatched_quantity }}Kg</h6>
+      </td>
+      {% endif %}
+      
+      
+      {% if perms.sales.change_saleorder or perms.sales.delete_saleorder or perms.sales.view_saleorderreview %}
+      <td class="text-center" style="user-select: none;">
+
+        {% if perms.sales.change_saleorder and not sale_order.archived %}
+        <a href="{% url 'sale_order_edit' sale_order.id %}" class="text-primary" data-toggle="tooltip"
+          title="Editar">
+          <i class="material-icons">drive_file_rename_outline</i>
+        </a>
+        {% endif %}
+        
+
+        {% if perms.sales.add_saleorderreview and not sale_order.treview and not sale_order.treview.approved and not sale_order.archived %}
+          <!-- Button trigger modal -->
+          <a class="text-info" data-bs-toggle="modal" data-bs-target="#modal-id-{{ forloop.counter0 }}"
+            style="user-select: none; cursor: pointer !important;" title="Revisar">
+            <i class="material-icons">rule</i>
+          </a>
+          <!-- Modal -->
+          {% include 'sales/modals/treview.html' with counter=forloop.counter0 sale_order=sale_order %}
+        {% elif perms.sales.view_saleorderreview and not sale_order.archived and not sale_order.treview.approved and not tab == 'treview' %}
+          <a class="text-info" data-bs-toggle="modal" data-bs-target="#modal-id-{{ forloop.counter0 }}-detail"
+            style="user-select: none; cursor: pointer !important;" title="Revisar">
+            <i class="material-icons">info</i>
+          </a> 
+          {% include 'sales/modals/treview-detail.html' with counter=forloop.counter0 sale_order=sale_order %}
+        {% endif %}
+        
+        {% if perms.sales.delete_saleorderreview and sale_order.treview and not sale_order.archived %}
+        <a class="text-danger" data-bs-toggle="modal" data-bs-target="#modal-id-{{ forloop.counter0 }}-return"
+        style="user-select: none; cursor: pointer !important;" title="Deshacer revisión">
+          <i class="material-icons">repartition</i>
+        </a> 
+        {% include 'sales/modals/treview-undo.html' with counter=forloop.counter0 sale_order=sale_order %}
+        {% endif %}
+
+        {% if perms.sales.archive_purchsae_order %}
+          {% if not sale_order.archived %}
+            <a class="a-deaf font-weight-bold text-xs cursor-pointer" title="Archivar" href="{% url 'sale_order_archive' sale_order.id %}">
+              <i class="material-icons">archive</i>
+            </a>
+          {% else %}
+            <a class="text-primary font-weight-bold text-xs cursor-pointer" title="Desarchivar" href="{% url 'sale_order_unarchive' sale_order.id %}">
+              <i class="material-icons">unarchive</i>
+            </a>
+          {% endif %}
+        {% endif %}
+        
+        {% if perms.sales.delete_saleorder %}
+        <!-- Button trigger modal -->
+        <a class="" data-bs-toggle="modal" data-bs-target="#id-{{ sale_order.id }}"
+          style="user-select: none; cursor: pointer !important;" title="Eliminar">
+          <i class="material-icons">delete</i>
+        </a>  
+        <!-- Modal -->
+        <div class="modal fade" id="id-{{ sale_order.id }}" tabindex="-1" aria-labelledby="exampleModalLabel"
+          aria-hidden="true" style="user-select: none;">
+          <div class="modal-dialog">
+            <div class="modal-content px-3">
+              <div class="bg-primary modal-header px-4 mx-n3">
+                <h4 class="modal-title font-weight-bolder text-white" id="exampleModalLabel">¡Advertencia!</h4>
+              </div>
+              <form method="POST" action="{% url 'sale_order_delete' sale_order.id %}">
+                {% csrf_token %}
+                <div class="modal-body text-start px-1">
+                  <p class="mb-1 font-weight-bold" style="line-height: 1.25;">
+                    ¿Seguro que desea eliminar el pedido?</p>
+                  <p class="mb-n1 text-xs">Esta acción no puede deshacerse</p>
+                </div>
+                <div class="modal-footer text-center justify-content-center py-2">
+                  <button type="button" class="m-0 mx-1 btn btn-secondary"
+                  data-bs-dismiss="modal">Cancelar</button>
+                  <button type="submit" class="m-0 mx-1 btn btn-danger">Confirmar</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+      </td>
+      {% endif %}
+
+    </tr>
+    {% endfor %}
+    <script>
+      
+    </script>
+  </tbody>
+</table>
+{% else %}
+{% include 'includes/no-table-results.html' %}
+{% endif %}

@@ -1,0 +1,10 @@
+<abbr title="{{ stat.message }}" 
+  class="text-{{ stat.color }} {{ stat.code }}">
+  
+  {% if stat.set == 'fas' %}
+  <i class="fa-solid fa-{{ stat.icon }} fa-lg" aria-hidden="true" {% if stat.mcr %} style="margin-left: .22em;" {% endif %}></i>
+  {% else %}
+  <i class="material-symbols-rounded list-icon">{{ stat.icon }}</i>
+  {% endif %}
+  
+</abbr>

@@ -1,0 +1,59 @@
+{% load tz %}
+{% load home_tags %}
+
+<!---------------------------------[Content Start]--------------------------------->
+{% if order_obj.sale_order.plan.company == 'mcl' %}
+<style>:root {--mc-color: #946037;--mc-selection: #ad7e5a;--mc-shadow-color: #94603780;--mc-calendar-today: #94603780;--critical-color: #94603769;--mc-hover-color: #94603759;}</style>
+<script>$('meta[name="theme-color"]').attr('content', '#946037')</script>
+{% endif %}
+<!-------------------------------------[Head]------------------------------------->
+<div class="d-flex flex-row flex-wrap justify-content-between">
+    <div class="d-flex flex-column ">
+        <p class="text-end m-0 mb-n1 fw-bolder text-xxs">
+        </p>
+        <p class="text-end m-0 mb-n1 fw-bolder text-xxs">
+        </p>
+        <p class="text-end m-0 mb-n1 fw-bolder text-xxs text-uppercase">
+        </p>
+        <h4 class="col-12 pt-2 text-center mb-1 mt-2 fw-bold text-primary" style="line-height: 1;">Expediente de Producción</h4>
+    </div>
+    <div class="d-flex align-items-end flex-sm-row{% if order_obj.sale_order.plan.company == 'mcl' %}-reverse{% endif %} flex-column{% if not order_obj.sale_order.plan.company == 'crx' %}-reverse{% endif %} user-select-none">
+      <div class="p-1">
+        {% if order_obj.sale_order.plan.company == 'mcl' %}
+          <img alt="Morrocel c.a RIF:J-06000377-6" width="220em" src="{{ ASSETS_ROOT }}/img/logo_mcl.svg" />
+        {% else %}
+          <img alt="Curex c.a RIF:J-00074598-6" width="220em" src="{{ ASSETS_ROOT }}/img/logo_crx.svg" />
+        {% endif %}
+      </div>
+    </div>
+</div>
+<!---------------------------------[Product Info]--------------------------------->
+<div class="d-flex flex-row flex-wrap justify-content-between mt-3">
+  <div class="d-flex flex-row overflow-scroll hide-bar me-1">
+    
+    Cliente:&thinsp;<x class="fw-bold text-dark">{{ order_obj.sale_order.plan.client }}</x>
+  </div>
+  <div class="d-flex flex-row overflow-scroll hide-bar me-1">
+    Producto:&thinsp;<x class="fw-bold text-dark">{{ order_obj.sale_order.plan.product }}</x>
+  </div>
+  <div class="d-flex flex-row overflow-scroll hide-bar me-1">
+    Plan:&thinsp;<x class="fw-bold text-dark">PC-ASC-{{ order_obj.sale_order.plan.pc }}</x>
+  </div>
+</div>
+<hr class="my-1">
+<!---------------------------------[Initial Info]--------------------------------->
+<div class="d-flex flex-row justify-content-between flex-wrap pb-1">
+  <div class="d-flex flex-row me-1">Fecha:&thinsp;<abbr title="{{ order_obj.date|date:'l - ' }}{{ order_obj.date }}" class="fw-bold text-dark-hover">{{ order_obj.date|date:"d/m/Y" }}</abbr></div>
+  <div class="d-flex flex-row me-1">N°:&thinsp;<x class="fw-bold text-dark">OP-{{ order_obj.number }}</x></div>
+  
+  <div class="d-flex flex-row me-1 justify-content-end" >
+    Empresa:&thinsp;
+    {% if order_obj.sale_order.plan.company == 'crx' %}
+    <x style="color: #fe5000 !important;" class="fw-bold" >Curex</x>              
+    {% elif order_obj.sale_order.plan.company == 'mcl' %}
+    <x style="color: #946037 !important;" class="fw-bold">Morrocel</x>
+    {% else %}
+    <x class="mb-0 fw-bold font-italic">Por definir</x>
+    {% endif %}
+  </div>
+</div>

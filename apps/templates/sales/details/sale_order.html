@@ -1,0 +1,265 @@
+{% load home_tags %}
+<style>
+    label {
+      margin: 0 !important;
+      font-weight: bold !important;
+      color: var(--bs-dark);
+    }
+  </style>
+<div class="row mx-3 mb-2">
+  <div class="col ps-0 text-start" style="user-select: none;">
+    {% if plan.company == 'mcl' %}
+    <style>
+      :root {
+        --mc-color: #946037;
+        --mc-selection: #ad7e5a;
+        --mc-shadow-color: #94603780;
+        --mc-calendar-today: #94603780;
+        --critical-color: #94603769;
+        --mc-hover-color: #94603759;
+      }
+    </style>
+    <img alt="Morrocel c.a RIF:J-06000377-6" width="110%" src="{{ ASSETS_ROOT }}/img/logo_mcl.svg" />
+    {% else %}
+    <img alt="Curex c.a RIF:J-00074598-6" width="110%" src="{{ ASSETS_ROOT }}/img/logo_crx.svg" />
+    {% endif %}
+  </div>
+  <div class="d-md-block d-none col-5 col-md-6 col-xxl-7 px-3 px-xxl-4 text-align-center text-center text-wrap-balance">
+    <h4 class="font-weight-bolder mb-0 text-primary" style="line-height: 1;">Pedido de Compra</h4>
+  </div>
+  <div class="col-md col-4">
+    <div class="row justify-content-end font-weight-bolder  text-end lh-1 text-xxs pe-1">
+      F-VTAS-01
+    </div>
+    <div class="row justify-content-end font-weight-bolder text-end lh-1 text-xxs pe-1">
+      REV-05
+    </div>
+    <div class="row justify-content-end font-weight-bolder text-end lh-1 text-xxs text-uppercase pe-1">
+      01/MAY/2024
+    </div>
+  </div>
+</div>
+<div class="row mt-3 mb-1 mx-3 d-block d-md-none">
+  <h6 class="p-0 m-0 text-primary" style="font-weight: 900; line-height: 1; font-size: large;">Pedido de Compra</h6>
+</div>
+<div class="d-flex m-0 g-2 flex-row flex-wrap gap-3 px-3 pt-md-0 pt-2 sale_order-group justify-content-center">
+  <div class="flex-grow-1">
+    <label>Pedido N°</label>
+    <div class="user-select-all">{{ sale_order.request_number }}</div>
+  </div>
+  <div class="flex-grow-1">
+    <label>Fecha de Pedido</label>
+    <div class="user-select-all">{{ sale_order.request_date|default_if_none:'-' }}</div>
+  </div>
+  <div class="flex-grow-1">
+    <label>Órden de compra N°</label>
+    <div class="user-select-all">{{ sale_order.number }}</div>
+  </div>
+  <div class="flex-grow-1">
+    <label>Fecha de Órden de compra</label>
+    <div class="user-select-all">{{ sale_order.number_date|default_if_none:'-' }}</div>
+  </div>
+  <div class="flex-shrink-1">
+    <label>Origen</label>
+    <div class="user-select-all">{{ sale_order.get_origin_display }}
+    </div>
+  </div>
+</div>
+<hr class="mt-2 mx-3">
+<div class="row mx-3 mt-1 pb-1 font-weight-bolder align-items-middle">
+  <div class="col-8 ps-0 pb-0">
+    <h6 class="p-0 mb-2" style="line-height: 1; font-size: large;">
+      Producto: <x class="fw-bold text-primary user-select-all">{{ plan.product }}</x>
+    </h6>
+    <h6 class="font-weight-normal m-0" style="line-height: 1;">Cliente:
+      <a class="text-dark user-select-all font-weight-bolder">
+        {{ plan.client }}</a>
+    </h6>
+    <h6 class="font-weight-normal text-xs m-0" >RIF:
+      <a class="text-dark user-select-all font-weight-bolder">
+        {{ plan.client.rif_type }}-{{ plan.client.rif_num }}
+      </a>
+    </h6>
+  </div>
+  <div class="col-4 p-0 text-xs font-weight-bold text-end text-xs">
+    <div>Código GP: <x class="text-monospace user-select-all">{{ plan.gp_code }}</x>
+    </div>
+    <div>Código: <x class="text-monospace user-select-all">{{ plan.code }}</x>
+    </div>
+    <div>Plan: {% if plan.disincorporated == False %}<a href="{% url 'plan_view' plan.pk %}" class="text-monospace user-select-all">PC-ASC-{{ plan.pc }}</a>{% else %}<x class="text-monospace">PC-ASC-{{ plan.pc }}</x>{% endif %}
+    </div>
+  </div>
+</div>
+<div class="card mx-md-2 mx-1 mt-4 pt-2">
+  <div class="card-header p-0 mt-n4 position-relative mx-2 z-index-2">
+    <div class="bg-primary text-center shadow-primary border-radius-lg ps-3 pt-2 pb-2">
+      <h5 class="text-white font-weight-bolder m-0">Estructura</h5>
+    </div>
+  </div>
+  <div class="card-body shadow mt-n4 border-radius-lg px-md-3 px-2 pb-2">
+    <div class="table-responsive p-0">
+      <table class="table align-items-center text-align-center mb-0" style="user-select: all;">
+        <thead class="align-items-center">
+          <tr>
+            <th>Material</th>
+            <th class="text-center px-2">Peso <abbr class="d-none d-md-inline"
+                title="Gramaje / Gramos por metro cuadrado">(g/m²)</abbr>
+            </th>
+            <th class="text-center px-2">Espesor <abbr class="d-none d-md-inline" title="Micra">(μ)</abbr>
+            </th>
+          </tr>
+        </thead>
+        <tbody style="overflow: hidden;">
+          {% for structure in structures.all %}
+          <tr>
+            <td>
+              <div class="col">
+                <div class="row ">
+                  <h6 class="mt-n1 mb-n1 lh-1">{{ structure.material_type.name }}</h6>
+                </div>
+            </td>
+            <td class="st-weight-row text-center" value="{{ structure.weight|swap_comma }}">
+              {{ structure.weight|truncate }}
+            </td>
+            <td class="st-thickn-row text-center" value="{{ structure.thickness|swap_comma }}">
+              {{ structure.thickness|truncate }}
+            </td>
+          </tr>
+          {% endfor %}
+          <tr>
+            <td colspan="1">
+              <h5 class="font-weight-bold mb-0">Total</h5>
+            </td>
+            <td class="text-center">
+              <h5 class="font-weight-bold mb-0">
+                <abbr class="text-dark-hover" title="Peso total">
+                    {{ plan.weight|truncate }}
+                </abbr>
+              </h5>
+            </td>
+            <td class="text-center">
+              <h5 class="font-weight-bold mb-0">
+                <abbr class="text-dark-hover" title="Espesor total">
+                    {{ plan.thickness|truncate }}
+                </abbr>
+              </h5>
+            </td>
+          </tr>
+        </tbody>
+        
+      </table>
+    </div>
+  </div>
+</div>
+<div class="d-flex flex-wrap">
+  <div class="flex-grow-1 p-3" style="border-right: #7b809a 1px !important;">
+    <h5 class="text-primary text-center font-weight-bold">Condiciones de Despacho</h5>
+    <div class="d-flex flex-row gap-3 justify-content-between">
+      {% if sale_order.plan.repetition %}
+        <div>
+          <h6 class="mb-0 text-dark fw-bold">Repetición</h6>
+          <div>{{ sale_order.plan.repetition }}</div>
+        </div>
+      {% endif %}
+      {% if sale_order.plan.winding_literal %}
+        <div>
+          <h6 class="mb-0 text-dark fw-bold">Embobinado</h6>
+          <div>{{ sale_order.plan.winding_literal }}</div>
+        </div>
+      {% endif %}
+      {% if sale_order.plan.width_bobbin %}
+        <div>
+          <h6 class="mb-0 text-dark fw-bold">Ancho</h6>
+          <div>{{ sale_order.plan.width_bobbin }}</div>
+        </div>
+      {% endif %}
+    
+      {% if sale_order.bob_or_ream %}
+        <div>
+          <h6 class="mb-0 text-dark fw-bold">En</h6>
+          <div>{{ sale_order.bob_or_ream }}s</div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+  <div class="col-1"></div>
+  <div class="flex-grow-1 p-3">
+    <h5 class="text-primary text-center font-weight-bold">Cantidad a Producir</h5>
+    <div class="d-flex flex-row gap-3 justify-content-between">
+      {% if perms.sales.view_sale_order_confidential %}
+      <div class="flex-shrink-1 no-print" id="price_tag">
+        <h6 class="mb-0 text-dark fw-bold">Precio <x class="no-print cursor-pointer user-select-none" id="print-toggler"><i class="fa fa-print" aria-hidden="true"></i></x></h6>
+        <div>{{ sale_order.price }}{{ sale_order.currency }}</div>
+      </div>
+      <script>
+        $('#print-toggler').on('click', function(){
+          $(this).toggleClass('text-primary')
+          $('#price_tag').toggleClass('no-print')
+        })
+      </script>
+      {% endif %}
+      <div class="flex-shrink-1">
+        <h6 class="mb-0 text-dark fw-bold">Cantidad</h6>
+        <div>{{ sale_order.quantity }}{{ sale_order.unit }}</div>
+      </div>
+      <div class="flex-shrink-1">
+        <h6 class="mb-0 text-dark fw-bold">Tolerancia</h6>
+        <div>{{ sale_order.tolerance }}%</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!---------------------------------------------------INLINE FORMSET-------------------------------------------------->
+<p class="text-bold text-center pt-3 mb-0 pe-2">
+  <h5 class="text-primary text-center fw-bold">Fechas de Entrega</h5>
+</p>
+<div class="table-responsive p-0 px-3" style="overflow-y: hidden;">
+  <table class="table align-items-center justify-content-center mb-0">
+    <thead>
+      <tr>
+        <th class="p-0 text-center text-dark" style="font-size: 13px;">Cantidad</th>
+        <th class="p-0 text-center text-dark" style="font-size: 13px;">Fecha</th>
+      </tr>
+    </thead>
+    <tbody id="dd_formset">
+      {% for dd in sale_order.deliverydate_set.all %}
+      <tr>
+        <td class="text-center col-6">
+          <div class="">{{ dd.quantity }}{{ sale_order.unit }}</div>
+        </td>
+        <td class="text-center col-6">
+          <div class="">{{ dd.delivery_date }}</div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<div class="px-3">
+  <label class="mb-0" >Dirección de Entrega</label>
+  <div>{{ sale_order.delivery_address }}</div>
+</div>
+<!------------------------------------------------------------------------------------------------------------------->
+{% if sale_order.observation.html %}
+{% if sale_order.observation.html != '<p><br></p>' %}
+<p class="text-bold text-primary text-center pt-2 m-0">Obsevación</p>
+<div class="px-3 mx-0 {% if sale_order.observation.errors %}quill-error-outline{% endif %}">
+  {{ sale_order.observation.html|safe }}
+</div>
+{% endif %}
+{% endif %}
+<div class="d-flex m-0 g-2 flex-row 2 justify-content-between gap-2 px-3 py-2">
+  <div class="flex-shrink-1">
+    <h6 class="fw-bold text-primary m-0">Representante</h6>
+    <div>{{ sale_order.representative.name|default_if_none:'-' }}</div>
+  </div>
+  <div class="flex-shrink-1">
+    <h6 class="fw-bold text-primary m-0">Elaborado por</h6>
+    <div>{{ sale_order.elaborator|default_if_none:'-' }}</div>
+  </div>
+  <div class="flex-shrink-1">
+    <h6 class="fw-bold text-primary m-0">Aprobado por</h6>
+    <div>{{ sale_order.approver|default_if_none:'-' }}</div>
+  </div>
+</div>

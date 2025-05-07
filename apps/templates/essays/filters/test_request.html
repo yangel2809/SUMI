@@ -1,0 +1,15 @@
+<form class="form" id="filter" action="" method="GET">
+  <table class="table m-0">
+    <tbody>
+      <tr class="search-bar-toggle" style="user-select: none;" id="expand-collapse-search">
+        <th class="col-{% if segment == 'test_request' %}3{% else %}4{% endif %} py-1 px-1 ps-3"> {{test_request_filter.form.product}} </th>            
+        <th class="col-3 py-1 px-1"> {{test_request_filter.form.client}} </th>        
+        {% if segment == 'test_request' %}
+        <th class="col-2 py-1 px-1"> {{test_request_filter.form.production_order}} </th>
+        {% endif %}
+        <th class="col-{% if segment == 'test_request' %}2{% else %}3{% endif %} py-1 px-1"> {{test_request_filter.form.number}} </th>
+        <th class="col-2 py-1 px-1 pe-3"> {{test_request_filter.form.date}} </th>
+      </tr>
+    </tbody>
+  </table>
+</form>

@@ -1,0 +1,95 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Template {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+<link href="{{ ASSETS_ROOT }}/css/plan-form.css" rel="stylesheet" />
+<div class="container pt-1 pb-3">
+  <div class="row min-vh-80 justify-content-center h-100 user-select-none">
+    <div class="container col-12 col-sm-10 col-md-8 col-lg-6" >
+      <div class="card justify-content-center mt-4">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2" style="user-select: none">
+          <div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2">
+            <div class="mt-2 justify-content-center">
+              <h5 class="text-white text-center font-weight-bolder me-3">{% if 'edit' in request.get_full_path %}Editar {% else %}Agregar {% endif %}Cliente</h5>
+            </div>
+          </div>
+        </div>
+        <div class="card-body container justify-content-center px-0 pb-2">
+          <div class="form-group justify-content-center d-flex input-group input-group-outline px-lg-6 px-sm-4 px-3">
+            <form class="flex-grow-1" method="POST" id="main-form">
+
+              {% csrf_token %}
+                <div class="{% if form.name.errors %}border-error{% endif %} mb-2">
+                  <label class="mb-0" for="name">Nombre</label>
+                  {{ form.name }}
+                </div>
+                
+                <label class="mb-0">RIF</label>
+                <div class="d-flex flex-row mb-2">
+                  <div class="col-2 {% if form.rif_type.errors %}border-error{% endif %}">{{ form.rif_type }}</div>
+                  <div class="flex-grow-1 {% if form.rif_num.errors or form.rif_type.errors %}border-error{% endif %}">{{ form.rif_num }}</div>
+                </div>
+                  
+                {% include 'home/formsets/client_formset.html' %}
+
+                {% if form.rif_num.errors %}
+                <p class="mb-1 text-center text-danger font-weight-bold">Sólo se admite el formato "00000000-0"</p>
+                {% endif %}
+                {% if form.rif_type.errors %}
+                <p class="mb-1 text-center text-danger font-weight-bold">RIF ya existe{% if available_client %}{{ available_client }}{% else %} - ERROR, tome una foto de esta pantalla y comuníquese con soporte{% endif %}</p>
+                {% endif %}
+                {% if form.name.errors %}
+                <p class="mb-1 text-center text-danger font-weight-bold">Cliente ya existe</p>
+                {% endif %}
+                <div class="text-center my-3">
+                  <button type="submit" class="btn btn-primary mx-1 my-0">Guardar</button>
+                  <a href="/clients">
+                    <button type="button" class="btn btn-secondary mx-1 my-0">Cancelar</button>
+                  </a>
+                </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  $('#main-form').on('submit', function() {
+    $(this).find('button[type="submit"]').prop('disabled', true);
+  });
+  $('#rif_type').select2({
+    minimumResultsForSearch: Infinity,
+    placeholder: '-',
+    width: '100%',
+    selectionCssClass: ':all:',
+    dropdownCssClass: ':all:'
+  });
+
+  $('#add_form').click(function () {
+    var dform_idx = parseInt($('#id_adresses-TOTAL_FORMS').val());
+    $('#formset_field').append($('#empty_formset').html().replace(/__prefix__/g, dform_idx));
+    $('#id_adresses-TOTAL_FORMS').val(parseInt(dform_idx) + 1);
+  });
+
+  $('#remove_form').click(function () {
+    var form_idx = parseInt($('#id_adresses-TOTAL_FORMS').val());
+
+    if (form_idx > form_minlimit) {
+      form_idx = form_idx - 1;
+      $('#form-row-' + form_idx).remove();
+      $('#id_adresses-TOTAL_FORMS').val(parseInt(form_idx));
+      max_sindex = parseInt(form_idx) - 1;
+
+    }
+  });
+
+
+  let form_minlimit = parseInt($('#id_adresses-TOTAL_FORMS').val());
+</script>
+
+{% endblock content %}

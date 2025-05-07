@@ -1,0 +1,1553 @@
+[
+  {
+    "model": "auth.group",
+    "pk": 1,
+    "fields": {
+      "name": "ASCA",
+      "permissions": [
+        25,
+        26,
+        27,
+        28,
+        29,         
+        30,         
+        31,         
+        32,         
+        33,         
+        34,         
+        35,         
+        36,         
+        37,         
+        38,         
+        39,         
+        40,         
+        41,         
+        42,         
+        43,         
+        44,         
+        45,         
+        46,         
+        47,         
+        48,         
+        49,       
+        53,         
+        54,         
+        55,         
+        56,         
+        57,         
+        58,         
+        59,         
+        60,         
+        61,         
+        62,         
+        63,         
+        64,         
+        65,         
+        66,         
+        67,         
+        68  
+      ]
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 2,
+    "fields": {
+      "name": "IDAT",
+      "permissions": [
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        48,
+        50,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68
+      ]
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$390000$mlTrKplN4dVEk0sEMZd1BG$UvdVjy1g0zQ+6VAVuWs+alal2cfdtsns+70EbtJ6TS4=",
+      "last_login": "2023-02-09T13:45:18.574Z",
+      "is_superuser": true,
+      "username": "Admin",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2023-02-04T02:57:51.399Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 2,
+    "fields": {
+      "password": "pbkdf2_sha256$390000$epGfnjDkReOyfhhSz59IVI$wbRuqN1wou2/AUR8HViWZSCQp2h3uwK0lAdKrGyhd20=",
+      "last_login": "2023-02-09T12:00:01Z",
+      "is_superuser": false,
+      "username": "ASCA",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2023-02-04T21:55:16Z",
+      "groups": [],
+      "user_permissions": [
+        28,
+        48
+      ]
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 3,
+    "fields": {
+      "password": "pbkdf2_sha256$390000$lQKm1JfTKZjRTqBaYnTrTx$j5lMAR/nhwoA00MMCxKOax9GuOALyb1Pz1tZ6QCVeXw=",
+      "last_login": "2023-02-08T20:31:14.720Z",
+      "is_superuser": false,
+      "username": "IDAT-Crear",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2023-02-08T14:22:19Z",
+      "groups": [
+        2
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 4,
+    "fields": {
+      "password": "pbkdf2_sha256$390000$DRDLM1167m5KqFaJtJRv55$RD3z4LvdRfK4G4xhZ/ztwf1sSEWewNVc0r08Qw+U2Mk=",
+      "last_login": "2023-02-08T15:03:54.042Z",
+      "is_superuser": false,
+      "username": "IDAT-Aprobar",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2023-02-08T14:22:50Z",
+      "groups": [
+        2
+      ],
+      "user_permissions": [
+        49,        
+        51,
+        52
+      ]
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 5,
+    "fields": {
+      "password": "pbkdf2_sha256$390000$ZP8OwNiZWWC02WjGBqTb6X$xgGgBahGe0k8qq85woBHUcDNF9PlOTJUJQyKbuYkLMI=",
+      "last_login": "2023-02-08T15:30:42.437Z",
+      "is_superuser": false,
+      "username": "Jefe-ASCA",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2023-02-08T14:23:46Z",
+      "groups": [
+        1
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 6,
+    "fields": {
+      "password": "pbkdf2_sha256$390000$qU8K9ICAgxKasqepiFTnPq$dEh+APlT/dIsz6ZKKE4Y5B81WtYLp1yms++FN2X6tUk=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "Gerente-ASCA",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2023-02-08T14:24:00Z",
+      "groups": [
+        1
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 7,
+    "fields": {
+      "password": "pbkdf2_sha256$390000$TGe8lM7jPcZjI60E5Yx1Lg$AfUPQdf1RwGT/QSsxl7x8A413ukcNNpBV7zGEqBcfM0=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "Pasante",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_staff": false,
+      "is_active": false,
+      "date_joined": "2023-02-08T14:24:00Z",
+      "groups": [],
+      "user_permissions": [
+        25,
+        28,
+        32,
+        37,
+        40,
+        41,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        53,
+        56
+      ]
+    }
+  },
+  {
+    "model": "home.plan",
+    "pk": 1,
+    "fields": {
+      "pc": "M01.01",
+      "revission": 4,
+      "rev_date": "2023-03-01",
+      "format": 1,
+      "client": 1,
+      "product": "Laminación Impresa Flips Chocolate 120g",
+      "gp_code": "TMARFC040A001",
+      "code": "0141.040.3957",
+      "continuation": "PASO Nº 1: Máquina Impresora Novoflex: Ensayos realizados: Al momento de arranque: 1-2-3-4-11-12-13. Impresión al reverso sobre el BOPP Mate. Control de impresión: TONOS, Registro, textos (permiso sanitario, tabla nutricional, instrucciones de manejo, CPE),dimensiones: guía de corte, dimensiones de fotocelda 15 mm x5 mm, código de barra, repetición: 220 mm, desarrollo: 660 mm, ancho de corte: 324 mm, ancho útil de impresión : 648 mm, diseño (comparación con el Arte), apariencia de la impresión (registros, porosidad, trapping, exceso de presión, degrades, tramas, secamiento de velos,etc.), anclaje. Debe elaborarse Diagrama de Corte en la muestra de Arranque.Durante el Control dela Producción: 1- 2-3- 4. (El analisis 4 se debe hacer mínimo una vez por turno de trabajo) -11-12-13.\r\n\r\nPASO Nº 2: Máquina Varicoater LF: Laminación BOPP mate impreso con el BOPP metalizado por la cara metalizada. Al momento de arranque debe indicarse a producción el sentido de la laminación y muy importante informarla aplicación de adhesivo. Ensayos realizados: Al momento de arranque: 1-2-3-5-6 (realizando el ensayo de curado acelerado en la estufa)10-11-12-13. A las 24 horas después de haber curado el adhesivo: 1-2-3-6-7-8-9-10-11-12-13. (Los análisis N° 7-8-9-10 pueden realizarán de manera intercalada). IMPORTANTE: Al momento de verificarse el ensayo Nº 8 (sellado), se debe evaluar nuevamente el ensayo N°6, para verificar que no hay degradación del adhesivo al aplicarse el termosellado. El ensayo 14 (Solvente Residual) se deberá realizar mínimo 2 veces por año por requerimientos del cliente. El ensayo 15 y 16 se realizará cuando se inicie un nuevo desarrollo o cuando se genere una modificación de la estructura. Importante: Siempre deben ser analizadas la primera y la última bobina de la producción. \r\n\r\nPASO Nº 3: Máquina Cortadora: Corte al ancho requerido. Distancia del borde a la fotocélula: 0 [mm]. Ensayos realizados: Al momento de arranque: 1-2-3-11-12-13. Inspección visual de la bobina: Apariencia, Tensión, bordes, refilado. Embalaje correcto, diámetro externo, diámetro de core. Análisis organoléptico (olor). Durante el Control de la Producción: Inspección individual a cada corte: Ensayos realizados: 1-2-3-11-12-13.",
+      "dispatch_conditions": "• Se despacha en bobinas de ancho 324mm ± 1 mm\r\n• Core3”/Diámetro externo: Peso de Bobina 38 kg máximo.\r\n• Posición de embobinado: 2 Electrónico lado izquierdo.\r\n• Máximo dos (02) empates por bobina, el 10 % del total por lote; empates dispuestos transversalmente a registro de color: Negro señalizado con banderilla. Irádispuesto por lado de impresión del empaque (cara externa)\r\n• Embalaje individual de cada bobina con suficiente súper strech, protector de papel entre la paleta y la primera camada. Paleta con super strech.\r\n• Dimensión de la Paleta: Ancho: 1m. Largo: 1m. Son cuatro (04) camadas por paleta.",
+      "elaborator": "Julio Pino, Jefe Aseguramiento de la Calidad",
+      "reviewer": "Jhonnathan Gomez, Gerente Aseguramiento de la Calidad",
+      "observation": "",
+      "archived": false,
+      "date_created": "2023-02-01"
+    }
+  },
+  {
+    "model": "home.client",
+    "pk": 1,
+    "fields": {
+      "name": "Alfonzo Rivas & CIA, C.A.",
+      "rif_type": "J",
+      "rif_num": "00031531-0"
+    }
+  },
+  {
+    "model": "home.client",
+    "pk": 2,
+    "fields": {
+      "name": "Inversiones Torrefacción del Café, C.A.",
+      "rif_type": "J",
+      "rif_num": "40032352-5"
+    }
+  },
+  {
+    "model": "home.format",
+    "pk": 1,
+    "fields": {
+      "name": "F-ASC-L58",
+      "revission": 7,
+      "rev_date": "2023-03-01"
+    }
+  },
+  {
+    "model": "home.format",
+    "pk": 2,
+    "fields": {
+      "name": "F-ASC-L58",
+      "revission": 6,
+      "rev_date": "2021-02-01"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 1,
+    "fields": {
+      "name": "Teleplastic C.A"
+      }
+  },
+  {
+    "model": "home.provider",
+    "pk": 2,
+    "fields": {
+      "name": "Biofilm"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 3,
+    "fields": {
+      "name": "OPP Film"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 4,
+    "fields": {
+      "name": "Rohm And Haas"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 5,
+    "fields": {
+      "name": "HB Fuller"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 6,
+    "fields": {
+      "name": "Barnivenca"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 7,
+    "fields": {
+      "name": "Cabeoli"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 8,
+    "fields": {
+      "name": "Curex C.A"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 9,
+    "fields": {
+      "name": "Tintas Multigráficas"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 10,
+    "fields": {
+      "name": "Hartmann"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 11,
+    "fields": {
+      "name": "Favika"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 12,
+    "fields": {
+      "name": "Retana (Dingsheng)"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 13,
+    "fields": {
+      "name": "Cartonal Italia (Dingsheng)"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 14,
+    "fields": {
+      "name": "Alucasa"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 15,
+    "fields": {
+      "name": "Polinter"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 16,
+    "fields": {
+      "name": "Dow-Chemical"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 17,
+    "fields": {
+      "name": "Henkel"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 18,
+    "fields": {
+      "name": "Exxon Mobil"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 19,
+    "fields": {
+      "name": "Montanche International"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 20,
+    "fields": {
+      "name": "Dingsheng"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 21,
+    "fields": {
+      "name": "Xiamen Shengmao"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 22,
+    "fields": {
+      "name": "Dupont"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 23,
+    "fields": {
+      "name": "Plásticos de Empaque"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 24,
+    "fields": {
+      "name": "Fábrica Siplas"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 25,
+    "fields": {
+      "name": "Venefoil"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 26,
+    "fields": {
+      "name": "Edil"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 27,
+    "fields": {
+      "name": "Foilca"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 28,
+    "fields": {
+      "name": "Manpa"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 29,
+    "fields": {
+      "name": "Dipalca"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 30,
+    "fields": {
+      "name": "Invepal"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 31,
+    "fields": {
+      "name": "Favemca"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 32,
+    "fields": {
+      "name": "BOPP Chile"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 33,
+    "fields": {
+      "name": "Hidroaluminium"
+    }
+  },
+  {
+    "model": "home.provider",
+    "pk": 34,
+    "fields": {
+      "name": "Alunasa"
+    }
+  },
+  {
+    "model": "home.material",
+    "pk": 1,
+    "fields": {
+      "material_type": 1,
+      "provider": 1,
+      "name": "OCTS"
+    }
+  },
+  {
+    "model": "home.material",
+    "pk": 2,
+    "fields": {
+      "material_type": 1,
+      "provider": 1,
+      "name": "OCTR"
+    }
+  },
+  {
+    "model": "home.material",
+    "pk": 3,
+    "fields": {
+      "material_type": 1,
+      "provider": 1,
+      "name": "OCTP"
+    }
+  },
+  {
+    "model": "home.material",
+    "pk": 4,
+    "fields": {
+      "material_type": 2,
+      "provider": 1,
+      "name": "OCTH"
+    }
+  },
+  {
+    "model": "home.material",
+    "pk": 5,
+    "fields": {
+      "material_type": 2,
+      "provider": 3,
+      "name": "SD"
+    }
+  },
+  {
+    "model": "home.material",
+    "pk": 6,
+    "fields": {
+      "material_type": 4,
+      "provider": 4,
+      "name": "FLEXTRA SL 332 DR"
+    }
+  },
+  {
+    "model": "home.material",
+    "pk": 7,
+    "fields": {
+      "material_type": 4,
+      "provider": 4,
+      "name": "FLEXTRA SL 342 DR"
+    }
+  },
+  {
+    "model": "home.material",
+    "pk": 8,
+    "fields": {
+      "material_type": 4,
+      "provider": 3,
+      "name": "MORE FREE M970"
+    }
+  },
+  {
+    "model": "home.material",
+    "pk": 9,
+    "fields": {
+      "material_type": 3,
+      "provider": 7,
+      "name": "Tintas"
+    }
+  },
+  {
+    "model": "home.material",
+    "pk": 10,
+    "fields": {
+      "material_type": 3,
+      "provider": 6,
+      "name": "Tintas"
+    }
+  },
+  {
+    "model": "home.material",
+    "pk": 11,
+    "fields": {
+      "material_type": 3,
+      "provider": 5,
+      "name": "Tintas"
+    }
+  },
+  {
+    "model": "home.material",
+    "pk": 12,
+    "fields": {
+      "material_type": 3,
+      "provider": 8,
+      "name": "Tintas"
+    }
+  },
+  {
+    "model": "home.material",
+    "pk": 14,
+    "fields": {
+      "material_type": 5,
+      "provider": 2,
+      "name": "BIOALUMIN SI"
+    }
+  },
+  {
+    "model": "home.material",
+    "pk": 15,
+    "fields": {
+      "material_type": 5,
+      "provider": 3,
+      "name": "ML"
+    }
+  },
+  {
+    "model": "home.material",
+    "pk": 16,
+    "fields": {
+      "material_type": 5,
+      "provider": 1,
+      "name": "MOCT"
+    }
+  },
+  {
+    "model": "home.material",
+    "pk": 17,
+    "fields": {
+      "material_type": 3,
+      "provider": 9,
+      "name": "Tintas"
+    }
+  },
+  {
+    "model": "home.material",
+    "pk": 18,
+    "fields": {
+      "material_type": 2,
+      "provider": 2,
+      "name": "BIOMATE TSI"
+    }
+  },
+  {
+    "model": "home.material",
+    "pk": 19,
+    "fields": {
+      "material_type": 8,
+      "provider": 14,
+      "name": "Aluminio"
+    }
+  },
+  {
+    "model": "home.material",
+    "pk": 20,
+    "fields": {
+      "material_type": 8,
+      "provider": 20,
+      "name": "Aluminio"
+    }
+  },
+  {
+    "model": "home.material",
+    "pk": 22,
+    "fields": {
+      "material_type": 8,
+      "provider": 21,
+      "name": "Aluminio"
+    }
+  },
+  {
+    "model": "home.material",
+    "pk": 23,
+    "fields": {
+      "material_type": 6,
+      "provider": 15,
+      "name": "PEBD LA 903"
+    }
+  },
+  {
+    "model": "home.material",
+    "pk": 24,
+    "fields": {
+      "material_type": 6,
+      "provider": 16,
+      "name": "SD 722"
+    }
+  },
+  {
+    "model": "home.material",
+    "pk": 25,
+    "fields": {
+      "material_type": 6,
+      "provider": 18,
+      "name": "LD 200.48"
+    }
+  },
+  {
+    "model": "home.material",
+    "pk": 26,
+    "fields": {
+      "material_type": 10,
+      "provider": 22,
+      "name": "Resina Mezcla"
+    }
+  },
+  {
+    "model": "home.material",
+    "pk": 26,
+    "fields": {
+      "material_type": 10,
+      "provider": 15,
+      "name": "Resina Mezcla"
+    }
+  },
+  {
+    "model": "home.material",
+    "pk": 27,
+    "fields": {
+      "material_type": 10,
+      "provider": 33,
+      "name": "Aluminio"
+    }
+  },
+  {
+    "model": "home.material",
+    "pk": 28,
+    "fields": {
+      "material_type": 10,
+      "provider": 34,
+      "name": "Aluminio"
+    }
+  },
+  {
+    "model": "home.materialtype",
+    "pk": 1,
+    "fields": {
+      "name": "BOPP Transparente"
+    }
+  },
+  {
+    "model": "home.materialtype",
+    "pk": 2,
+    "fields": {
+      "name": "BOPP Mate"
+    }
+  },
+  {
+    "model": "home.materialtype",
+    "pk": 3,
+    "fields": {
+      "name": "Tintas"
+    }
+  },
+  {
+    "model": "home.materialtype",
+    "pk": 4,
+    "fields": {
+      "name": "Adhesivo"
+    }
+  },
+  {
+    "model": "home.materialtype",
+    "pk": 5,
+    "fields": {
+      "name": "BOPP Metalizado"
+    }
+  },
+  {
+    "model": "home.materialtype",
+    "pk": 6,
+    "fields": {
+      "name": "Resina"
+    }
+  },
+  {
+    "model": "home.materialtype",
+    "pk": 7,
+    "fields": {
+      "name": "Silicona"
+    }
+  },
+  {
+    "model": "home.materialtype",
+    "pk": 8,
+    "fields": {
+      "name": "Aluminio"
+    }
+  },
+  {
+    "model": "home.materialtype",
+    "pk": 9,
+    "fields": {
+      "name": "Resina PEBD"
+    }
+  },
+  {
+    "model": "home.materialtype",
+    "pk": 10,
+    "fields": {
+      "name": "Resina Mezcla"
+    }
+  },
+  {
+    "model": "home.materialtype",
+    "pk": 11,
+    "fields": {
+      "name": "Laca"
+    }
+  },
+  {
+    "model": "home.materialtype",
+    "pk": 12,
+    "fields": {
+      "name": "Laca Nitro"
+    }
+  },
+  {
+    "model": "home.materialtype",
+    "pk": 13,
+    "fields": {
+      "name": "Barniz"
+    }
+  },
+  {
+    "model": "home.materialtype",
+    "pk": 14,
+    "fields": {
+      "name": "Primer"
+    }
+  },
+  {
+    "model": "home.materialtype",
+    "pk": 15,
+    "fields": {
+      "name": "Papel Blanco"
+    }
+  },
+  {
+    "model": "home.materialtype",
+    "pk": 16,
+    "fields": {
+      "name": "Film PE Transparente"
+    }
+  },
+  {
+    "model": "home.materialtype",
+    "pk": 17,
+    "fields": {
+      "name": "Film PP Transparente"
+    }
+  },
+  {
+    "model": "home.structure",
+    "pk": 3,
+    "fields": {
+      "plan": 1,
+      "material_type": 2,
+      "weight": 18.0,
+      "thickness": 20.0,
+      "archived": false,
+      "material": [
+        4
+      ]
+    }
+  },
+  {
+    "model": "home.structure",
+    "pk": 5,
+    "fields": {
+      "plan": 1,
+      "material_type": 3,
+      "weight": 2.0,
+      "thickness": 2.0,
+      "archived": false,
+      "material": [
+        9,
+        10,
+        11,
+        12
+      ]
+    }
+  },
+  {
+    "model": "home.structure",
+    "pk": 6,
+    "fields": {
+      "plan": 1,
+      "material_type": 4,
+      "weight": 2.0,
+      "thickness": 3.0,
+      "archived": false,
+      "material": [
+        6,
+        7,
+        8
+      ]
+    }
+  },
+  {
+    "model": "home.structure",
+    "pk": 11,
+    "fields": {
+      "plan": 1,
+      "material_type": 5,
+      "weight": 18.0,
+      "thickness": 20.0,
+      "archived": false,
+      "material": [
+        14,
+        15,
+        16
+      ]
+    }
+  },
+  {
+    "model": "home.essay",
+    "pk": 2,
+    "fields": {
+      "name": "Peso Básico",
+      "detail": null,
+      "method": "003",
+      "unit": 3
+    }
+  },
+  {
+    "model": "home.essay",
+    "pk": 3,
+    "fields": {
+      "name": "Espesor",
+      "detail": null,
+      "method": "004",
+      "unit": 4
+    }
+  },
+  {
+    "model": "home.essay",
+    "pk": 4,
+    "fields": {
+      "name": "Aplicación de Silicona",
+      "detail": null,
+      "method": "005",
+      "unit": 3
+    }
+  },
+  {
+    "model": "home.essay",
+    "pk": 5,
+    "fields": {
+      "name": "Smear",
+      "detail": null,
+      "method": "006",
+      "unit": null
+    }
+  },
+  {
+    "model": "home.essay",
+    "pk": 6,
+    "fields": {
+      "name": "Rub-Off",
+      "detail": null,
+      "method": "007",
+      "unit": null
+    }
+  },
+  {
+    "model": "home.essay",
+    "pk": 7,
+    "fields": {
+      "name": "Resistencia del Sellado A/A y A/B",
+      "detail": "A: Cara interna y B: Cara externa",
+      "method": "008",
+      "unit": 5
+    }
+  },
+  {
+    "model": "home.essay",
+    "pk": 8,
+    "fields": {
+      "name": "Resistencia del Sellado A/A",
+      "detail": "A: Cara interna y B: Cara externa",
+      "method": "008",
+      "unit": 5
+    }
+  },
+  {
+    "model": "home.essay",
+    "pk": 9,
+    "fields": {
+      "name": "Resistencia del Sellado A/B",
+      "detail": "A: Cara interna y B: Cara externa",
+      "method": "008",
+      "unit": 5
+    }
+  },
+  {
+    "model": "home.essay",
+    "pk": 10,
+    "fields": {
+      "name": "Fuerza de Delaminación",
+      "detail": "Medida @300mm/min,10kgf",
+      "method": "011",
+      "unit": 5
+    }
+  },
+  {
+    "model": "home.essay",
+    "pk": 11,
+    "fields": {
+      "name": "Resistencia a la Tracción",
+      "detail": "Medida @300mm/min,10kgf",
+      "method": "010",
+      "unit": 5
+    }
+  },
+  {
+    "model": "home.essay",
+    "pk": 12,
+    "fields": {
+      "name": "Aplicación de Tintas",
+      "detail": null,
+      "method": "029",
+      "unit": 3
+    }
+  },
+  {
+    "model": "home.essay",
+    "pk": 13,
+    "fields": {
+      "name": "Aplicación de Adhesivo",
+      "detail": null,
+      "method": "029",
+      "unit": 3
+    }
+  },
+  {
+    "model": "home.essay",
+    "pk": 14,
+    "fields": {
+      "name": "Temperatura Mínima de Sellado",
+      "detail": "@50 psi x 0.5s",
+      "method": "008",
+      "unit": 6
+    }
+  },
+  {
+    "model": "home.essay",
+    "pk": 15,
+    "fields": {
+      "name": "Coeficiente de Fricción II",
+      "detail": "Interna vs Interna",
+      "method": "009",
+      "unit": null
+    }
+  },
+  {
+    "model": "home.essay",
+    "pk": 16,
+    "fields": {
+      "name": "Coeficiente de Fricción EE",
+      "detail": "Externa vs Externa",
+      "method": "009",
+      "unit": null
+    }
+  },
+  {
+    "model": "home.essay",
+    "pk": 17,
+    "fields": {
+      "name": "Coeficiente de Fricción EM",
+      "detail": "Externa vs Metal",
+      "method": "009",
+      "unit": null
+    }
+  },
+  {
+    "model": "home.essay",
+    "pk": 18,
+    "fields": {
+      "name": "Coeficiente de Fricción IM",
+      "detail": "Interna vs Metal",
+      "method": "009",
+      "unit": null
+    }
+  },
+  {
+    "model": "home.essay",
+    "pk": 19,
+    "fields": {
+      "name": "Impresión",
+      "detail": null,
+      "method": "025",
+      "unit": null
+    }
+  },
+  {
+    "model": "home.essay",
+    "pk": 20,
+    "fields": {
+      "name": "Repetición",
+      "detail": null,
+      "method": "026",
+      "unit": 7
+    }
+  },
+  {
+    "model": "home.essay",
+    "pk": 21,
+    "fields": {
+      "name": "Posición de Embobinado",
+      "detail": null,
+      "method": "031",
+      "unit": 8
+    }
+  },
+  {
+    "model": "home.essay",
+    "pk": 22,
+    "fields": {
+      "name": "Solvente Residual",
+      "detail": null,
+      "method": "042",
+      "unit": 9
+    }
+  },
+  {
+    "model": "home.essay",
+    "pk": 23,
+    "fields": {
+      "name": "Ancho",
+      "detail": null,
+      "method": "012",
+      "unit": 7
+    }
+  },
+  {
+    "model": "home.essay",
+    "pk": 24,
+    "fields": {
+      "name": "Fuerza de Release",
+      "detail": null,
+      "method": "015",
+      "unit": 5
+    }
+  },
+  {
+    "model": "home.essay",
+    "pk": 25,
+    "fields": {
+      "name": "Anclaje",
+      "detail": null,
+      "method": "019",
+      "unit": null
+    }
+  },
+  {
+    "model": "home.essay",
+    "pk": 26,
+    "fields": {
+      "name": "Aplicación de Resina",
+      "detail": null,
+      "method": "029",
+      "unit": 3
+    }
+  },
+  {
+    "model": "home.essay",
+    "pk": 27,
+    "fields": {
+      "name": "Microhuecos (Pin Holes)",
+      "detail": null,
+      "method": "037",
+      "unit": 10
+    }
+  },
+  {
+    "model": "home.essay",
+    "pk": 28,
+    "fields": {
+      "name": "Permeabilidad al Vapor de Agua",
+      "detail": null,
+      "method": "000",
+      "unit": 12
+    }
+  },
+  {
+    "model": "home.essay",
+    "pk": 29,
+    "fields": {
+      "name": "Permeabilidad al Oxígeno",
+      "detail": null,
+      "method": "000",
+      "unit": 11
+    }
+  },
+  {
+    "model": "home.essay",
+    "pk": 30,
+    "fields": {
+      "name": "Aplicación de Barniz",
+      "detail": null,
+      "method": "029",
+      "unit": 3
+    }
+  },
+  {
+    "model": "home.essay",
+    "pk": 30,
+    "fields": {
+      "name": "Aplicación de Primer",
+      "detail": null,
+      "method": "029",
+      "unit": 3
+    }
+  },
+  {
+    "model": "home.unit",
+    "pk": 3,
+    "fields": {
+      "name": "Gramaje",
+      "symbol": "g/m²",
+      "description": "Gramos de papel por metro cuadrado"
+    }
+  },
+  {
+    "model": "home.unit",
+    "pk": 4,
+    "fields": {
+      "name": "Micra",
+      "symbol": "µ",
+      "description": "Millonésima parte de un metro"
+    }
+  },
+  {
+    "model": "home.unit",
+    "pk": 5,
+    "fields": {
+      "name": "Gramos Fuerza/Pulgada",
+      "symbol": "gf/in",
+      "description": "Unidad gravitacional de fuerza"
+    }
+  },
+  {
+    "model": "home.unit",
+    "pk": 6,
+    "fields": {
+      "name": "Grado Celsius",
+      "symbol": "°C",
+      "description": "Unidad de temperatura"
+    }
+  },
+  {
+    "model": "home.unit",
+    "pk": 7,
+    "fields": {
+      "name": "Milímetro",
+      "symbol": "mm",
+      "description": "Unidad de medida milimétrica"
+    }
+  },
+  {
+    "model": "home.unit",
+    "pk": 8,
+    "fields": {
+      "name": "Número",
+      "symbol": "N°",
+      "description": null
+    }
+  },
+  {
+    "model": "home.unit",
+    "pk": 9,
+    "fields": {
+      "name": "Miligramo por metro cuadrado",
+      "symbol": "mg/m²",
+      "description": "Densidad de área"
+    }
+  },
+  {
+    "model": "home.unit",
+    "pk": 10,
+    "fields": {
+      "name": "Pin Holes",
+      "symbol": "Pin Holes/m",
+      "description": null
+    }
+  },
+  {
+    "model": "home.unit",
+    "pk": 11,
+    "fields": {
+      "name": "cm3/m².24h",
+      "symbol": "cm3/m².24h",
+      "description": null
+    }
+  },
+  {
+    "model": "home.unit",
+    "pk": 12,
+    "fields": {
+      "name": "g/m².24h",
+      "symbol": "g/m².24h",
+      "description": null
+    }
+  },
+  {
+    "model": "home.test",
+    "pk": 1,
+    "fields": {
+      "plan": 1,
+      "essay": 2,
+      "critic": true,
+      "spec": null,
+      "archived": false
+    }
+  },
+  {
+    "model": "home.test",
+    "pk": 2,
+    "fields": {
+      "plan": 1,
+      "essay": 3,
+      "critic": false,
+      "spec": null,
+      "archived": false
+    }
+  },
+  {
+    "model": "home.test",
+    "pk": 3,
+    "fields": {
+      "plan": 1,
+      "essay": 23,
+      "critic": true,
+      "spec": "324 ± 1",
+      "archived": false
+    }
+  },
+  {
+    "model": "home.test",
+    "pk": 4,
+    "fields": {
+      "plan": 1,
+      "essay": 12,
+      "critic": false,
+      "spec": "± 0,5",
+      "archived": false
+    }
+  },
+  {
+    "model": "home.test",
+    "pk": 5,
+    "fields": {
+      "plan": 1,
+      "essay": 13,
+      "critic": false,
+      "spec": "+ 0,5 /- 0",
+      "archived": false
+    }
+  },
+  {
+    "model": "home.test",
+    "pk": 6,
+    "fields": {
+      "plan": 1,
+      "essay": 10,
+      "critic": true,
+      "spec": "Min 180",
+      "archived": false
+    }
+  },
+  {
+    "model": "home.test",
+    "pk": 7,
+    "fields": {
+      "plan": 1,
+      "essay": 11,
+      "critic": true,
+      "spec": "L: > 8000 / T: > 14000",
+      "archived": false
+    }
+  },
+  {
+    "model": "home.test",
+    "pk": 8,
+    "fields": {
+      "plan": 1,
+      "essay": 8,
+      "critic": false,
+      "spec": "L: > 350 / T: > 350",
+      "archived": false
+    }
+  },
+  {
+    "model": "home.test",
+    "pk": 9,
+    "fields": {
+      "plan": 1,
+      "essay": 14,
+      "critic": true,
+      "spec": "145",
+      "archived": false
+    }
+  },
+  {
+    "model": "home.test",
+    "pk": 10,
+    "fields": {
+      "plan": 1,
+      "essay": 16,
+      "critic": false,
+      "spec": "E: 0,15-0,40 / C: 0,15-0,35",
+      "archived": false
+    }
+  },
+  {
+    "model": "home.test",
+    "pk": 11,
+    "fields": {
+      "plan": 1,
+      "essay": 15,
+      "critic": false,
+      "spec": "E: 0,15-0,45 / C: 0,15-0,40",
+      "archived": false
+    }
+  },
+  {
+    "model": "home.test",
+    "pk": 12,
+    "fields": {
+      "plan": 1,
+      "essay": 19,
+      "critic": true,
+      "spec": "Tonos según estandar",
+      "archived": false
+    }
+  },
+  {
+    "model": "home.test",
+    "pk": 13,
+    "fields": {
+      "plan": 1,
+      "essay": 20,
+      "critic": true,
+      "spec": "220 ± 1",
+      "archived": false
+    }
+  },
+  {
+    "model": "home.test",
+    "pk": 14,
+    "fields": {
+      "plan": 1,
+      "essay": 21,
+      "critic": true,
+      "spec": "2 Elect. Lado izquierdo",
+      "archived": false
+    }
+  },
+  {
+    "model": "home.test",
+    "pk": 15,
+    "fields": {
+      "plan": 1,
+      "essay": 22,
+      "critic": true,
+      "spec": "Máximo 20",
+      "archived": false
+    }
+  },
+  {
+    "model": "home.test",
+    "pk": 16,
+    "fields": {
+      "plan": 1,
+      "essay": 28,
+      "critic": true,
+      "spec": "Máximo 2",
+      "archived": false
+    }
+  },
+  {
+    "model": "home.test",
+    "pk": 17,
+    "fields": {
+      "plan": 1,
+      "essay": 29,
+      "critic": true,
+      "spec": "Máximo 3,6",
+      "archived": false
+    }
+  }
+]

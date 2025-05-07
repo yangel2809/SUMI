@@ -1,0 +1,266 @@
+{% load home_tags %}
+
+<label for="documents" class="ps-1">{{ documents.label }}</label>
+<div class="mx-1 mb-3 border rounded-3 p-2 text-center">
+	{% if existing %}
+	<div id="added-area" class="d-flex flex-wrap justify-content-center">
+		{% for doc in existing %}
+		<div class="card-document" id="existing-document-{{ forloop.counter0 }}">
+			<div class="card-document-img-top card-document-img-top-existent">
+				{% if doc|doc_ext == 'jpg' or doc|doc_ext == 'jpeg' or doc|doc_ext == 'png' %}
+				<img alt="Image preview" class="document-thumbnail" src="{{ doc.file.url }}">
+				{% else %}
+				<i class="fa-solid {{ doc|file_preview }} icon-thumbnail"></i>
+				{% endif %}
+				<div class="remove-file-btn" id="remove-file-btn-{{ forloop.counter0 }}" data-bs-toggle="modal"
+					data-bs-target="#removeConfirmModal-{{ forloop.counter0 }}">
+					<i class="fa-solid fa-trash fa-xs remove-icon"></i>
+				</div>
+
+				<div class="modal fade" id="removeConfirmModal-{{ forloop.counter0 }}" tabindex="-1"
+					aria-labelledby="removeConfirmModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header bg-primary">
+								<h5 class="modal-title text-white fw-bold" id="removeConfirmModalLabel">Eliminar Documento</h5>
+							</div>
+							<div class="modal-body">
+								<p class="text-start mb-0">¿Está seguro de que quiere eliminar este documento <x class="fw-bold text-dark">{% if doc.label %}{{ doc.label }}{% else %}Documento.{{ doc|doc_ext }}{% endif %}</x>?</p>
+							</div>
+							<div class="modal-footer text-center">
+								<button type="button" class="mb-0 btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+								<button type="button" class="mb-0 btn btn-danger remove-file-confirm"
+									id="remove-file-btn-confirm-{{ forloop.counter0 }}" counter="{{ forloop.counter0 }}"
+									document-id="{{ doc.id }}" data-bs-dismiss="modal">Eliminar</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+			<div class="card-document-body">
+				<a class="card-document-text card-text text-center cursor-pointer" title="{{ doc|default_link_action }}" target="_blank"
+					href="{{ doc.file.url }}" style="font-size: 12px;">
+					{% if doc.label %}
+					{{ doc.label|truncate_filename }}
+					{% else %}
+					Documento.{{ doc|doc_ext }}
+					{% endif %}
+				</a>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+	{% endif %}
+
+
+	<div class="drop-area" id="drop-area">
+	</div>
+	{{ documents }}
+	<div id="preview-area" class="d-flex flex-wrap justify-content-center"></div>
+</div>
+<script>
+	$(document).ready(function () {
+		// Get CSRF token from cookies
+		function getCookie(name) {
+			var cookieValue = null;
+			if (document.cookie && document.cookie !== '') {
+				var cookies = document.cookie.split(';');
+				for (var i = 0; i < cookies.length; i++) {
+					var cookie = cookies[i].trim();
+					// Does this cookie string begin with the name we want?
+					if (cookie.startsWith(name + '=')) {
+						cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+						break;
+					}
+				}
+			}
+			return cookieValue;
+		}
+		var csrftoken = getCookie('csrftoken');
+
+		var dropArea = $('#drop-area');
+		var input = $('#documents');
+		var previewArea = $('#preview-area');
+		var filesArray = [];
+
+		$('.remove-file-confirm').on('click', function () {
+			let delBtn = $(this)
+			var docId = delBtn.attr('document-id');
+			$.ajax({
+				type: 'POST',
+				url: `/documents/${docId}/delete/`,
+				data: { csrfmiddlewaretoken: csrftoken },
+				success: function (data) {
+					$('#existing-document-' + delBtn.attr('counter')).remove();
+				}
+			});
+		});
+
+		dropArea.on('click', function () {
+			input.click();
+		});
+
+		input.on('change', function () {
+			var newFiles = Array.from(this.files);
+			if (validateFiles(newFiles)) {
+				filesArray = filesArray.concat(newFiles);
+				displayPreview(filesArray);
+			} else {
+				addErrorClass();
+			}
+			input.val('');  // Clear the input field to allow selecting the same file again if needed
+		});
+
+		dropArea.on('dragenter dragover', function (e) {
+			e.preventDefault();
+			e.stopPropagation();
+			dropArea.addClass('drop-area-dragover');
+		});
+
+		dropArea.on('dragleave', function (e) {
+			e.preventDefault();
+			e.stopPropagation();
+			dropArea.removeClass('drop-area-dragover');
+		});
+
+		dropArea.on('drop', function (e) {
+			e.preventDefault();
+			e.stopPropagation();
+			dropArea.removeClass('drop-area-dragover');
+			var newFiles = Array.from(e.originalEvent.dataTransfer.files);
+			if (validateFiles(newFiles)) {
+				filesArray = filesArray.concat(newFiles);
+				displayPreview(filesArray);
+			} else {
+				addErrorClass();
+			}
+		});
+
+		function validateFiles(files) {
+			var validExtensions = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'xlsm', 'jpeg', 'jpg', 'png'];
+			var maxSizeMb = 10;
+			var maxSizeBytes = maxSizeMb * 1024 * 1024;
+			var valid = true;
+
+			for (var i = 0; i < files.length; i++) {
+				var fileExtension = files[i].name.split('.').pop().toLowerCase();
+				if (validExtensions.indexOf(fileExtension) === -1 || files[i].size > maxSizeBytes) {
+					valid = false;
+					break;
+				}
+			}
+
+			return valid;
+		}
+
+		function addErrorClass() {
+			dropArea.addClass('drop-area-error');
+			setTimeout(function () {
+				dropArea.removeClass('drop-area-error');
+			}, 700);
+		}
+
+		function displayPreview(files) {
+			previewArea.empty();
+			for (let i = 0; i < files.length; i++) {
+				(function (index) { // Create a closure to capture the current value of i
+					let file = files[index];
+					let fileExtension = file.name.split('.').pop().toLowerCase();
+
+					let card = $('<div class="card-document"></div>');
+					let imgContainer = $('<div class="card-document-img-top"></div>');
+					let removeButton = $('<div class="remove-file-btn" title="Eliminar"><i class="fa-solid fa-xmark fa-sm remove-icon"></i></div>');
+
+					if (['jpeg', 'jpg', 'png'].includes(fileExtension)) {
+						let img = $('<img alt="Image preview" class="document-thumbnail">');
+						let reader = new FileReader();
+						reader.onload = function (e) {
+							img.attr('src', e.target.result);
+							imgContainer.append(img);
+						};
+						reader.readAsDataURL(file);
+					} else {
+						// Use Font Awesome icons for file types
+						let iconClass = '';
+						if (fileExtension === 'pdf') {
+							iconClass = 'fa-solid fa-file-pdf';
+						} else if (['doc', 'docx'].includes(fileExtension)) {
+							iconClass = 'fa-solid fa-file-word';
+						} else if (['xls', 'xlsx', 'xlsm'].includes(fileExtension)) {
+							iconClass = 'fa-solid fa-file-excel';
+						} else {
+							iconClass = 'fa-solid fa-file';
+						}
+						let icon = $('<i class="' + iconClass + ' icon-thumbnail"></i>');
+						imgContainer.append(icon);
+					}
+
+					removeButton.on('click', function () {
+						filesArray.splice(index, 1);
+						displayPreview(filesArray);
+					});
+
+					imgContainer.append(removeButton);
+
+					let cardBody = $('<div class="card-document-body"></div>');
+					// Truncate long file names, keeping the extension
+					let fileNameParts = file.name.split(/\.([^.]+)$/);
+					let fileName = fileNameParts[0];
+					let fileExt = fileNameParts[1];
+					let fileExtLength = fileExt.length;
+					let fileNameLength = fileName.length;
+					if (fileNameLength + fileExtLength > 13) {
+						let truncateLength = fileNameLength + fileExtLength - 13;
+						fileName = fileName.substring(0, fileName.length - truncateLength).replace(/\s+$/, '') + '...' + fileExt;
+					} else {
+						fileName += '.' + fileExt;
+					}
+					let fileNameElement = $('<p class="card-document-text card-text text-center" style="font-size: 12px;">' + fileName + '</p>');
+					cardBody.append(fileNameElement);
+
+					card.append(imgContainer).append(cardBody);
+					previewArea.append(card);
+				})(i);
+			}
+		}
+
+
+
+		$('#main-form').on('submit', function (e) {
+			e.preventDefault(); // Prevent default form submission
+
+			var formData = new FormData();
+
+			// Append CSRF token
+			formData.append('csrfmiddlewaretoken', csrftoken);
+
+			// Append form fields
+			var other_data = $(this).serializeArray();
+			$.each(other_data, function (key, input) {
+				formData.append(input.name, input.value);
+			});
+
+			// Append files from filesArray
+			for (var i = 0; i < filesArray.length; i++) {
+				formData.append('documents', filesArray[i]);
+			}
+
+			$.ajax({
+				url: $(this).attr('action'),
+				type: 'POST',
+				data: formData,
+				processData: false,
+				contentType: false,
+				success: function (response) {
+					window.location.href = response.url;
+				},
+				error: function (jqXHR) {
+					var response = jqXHR.responseJSON;
+				}
+			});
+		});
+	});
+
+</script>

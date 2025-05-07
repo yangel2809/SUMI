@@ -1,0 +1,116 @@
+{% extends 'layouts/base_table.html' %}
+
+{% block table_header %}
+{% include 'home/headers/plan.html' %}
+{% endblock table_header %}
+
+{% block table_filter %}
+<form class="form" id="filter" action="" method="GET">
+    <table class="table m-0 p-0">
+        <tr class="{% if not '?' in request.get_full_path %} search-bar-toggle {% endif %}" style="user-select: none;" id="expand-collapse-search">
+            <th class="col-4 py-1 ps-3 pe-1"> {{plan_filter.form.product}} </th>            
+            {% if not tab == 'plans_0' %}
+            <th class="py-1 px-1 d-flex">{{plan_filter.form.pc}}</th>
+            {% endif %}
+            <th class="col-2 py-1 px-1"> {{plan_filter.form.rev_date}} </th>
+            <th class="col-2 py-1 px-1"> {{plan_filter.form.gp_code}} </th>
+            <th class="col-3 py-1 px-1 pe-3"> {{plan_filter.form.client}} </th>
+        </tr>
+    </table>
+</form>
+{% endblock table_filter %}
+
+{% block table_scripts %}
+<script>
+   // var address = "{% url 'plans' %}";
+   // $(document).on('click', '.client-filter', function() {
+   //     $('#id_cl').val($(this).attr('hrefw')).trigger('change');
+   // });
+   // $(document).on('click', '.title-tab', function() {
+   //     $('#filter').find('input, select').each(function() {
+   //       $(this).val(null);
+   //     })
+   //     $("#expand-collapse-search").hide('fast');
+   //     $("#clear-s").hide('fast');
+   //     let data = null;
+   //     var goto = $(this).attr('hrefw')
+   //     $.ajax({
+   //       url: goto,
+   //       data: data,
+   //       dataType: 'json',
+   //       success: function(data) {
+   //           history.pushState({}, '', goto);
+   //           $('#my-header-container').html(data.header_html);
+   //           $('#my-table-container').html(data.table_html);
+   //           $('#my-paginator-container').html(data.paginator_html);
+   //           $('#id_cl').select2({
+   //             language: "es",
+   //             allowClear: true,
+   //             placeholder: 'Cliente...',
+   //             width: '100%',
+   //             selectionCssClass: ':all:',
+   //             dropdownCssClass: ':all:'
+   //           });
+   //           $("#s_dt").datepicker( {
+   //             showOtherMonths: "true",
+   //             selectOtherMonths: "true",
+   //           }, $.datepicker.regional[ "es" ] );
+   //       }
+   //   });
+   // });
+    
+  $(document).on('click', '.client-filter', function() {
+    $('#id_cl').val($(this).attr('hrefw')).trigger('change');
+  });
+
+  var address = "{% url 'plans' %}";
+
+  $(document).on('click', '.title-tab', function() {
+    if($(this).attr("value") == $('#tab').attr("value")){
+      return
+    }
+    var current_tab = $(this)
+    
+    var params = new URLSearchParams(window.location.search);
+    var data = {};
+    for (var pair of params.entries()) {
+      data[pair[0]] = pair[1];
+    }
+    
+    $('#filter').find('input, select').each(function() {
+      $(this).val(null);
+    })
+    $("#expand-collapse-search").hide('fast');
+    $("#clear-s").hide('fast');
+    
+    data['header'] = $(this).attr("value");
+    
+
+    $.ajax({
+      url: address,
+      data: data,
+      dataType: 'json',
+      success: function(data) {
+        $('#my-table-container').html(data.table_html);
+        $('#my-paginator-container').html(data.paginator_html);
+        $('#s_cl').select2({
+          language: "es",
+          allowClear: true,
+          placeholder: 'Cliente...',
+          width: '100%',
+          selectionCssClass: ':all:',
+          dropdownCssClass: ':all:'
+        });
+        $("#s_dt").datepicker( {
+          showOtherMonths: "true",
+          selectOtherMonths: "true",
+        }, $.datepicker.regional[ "es" ] );
+        $('.title-tab').addClass("faded-title cursor-pointer");
+        current_tab.removeClass("faded-title cursor-pointer");
+          var data = {};
+      }
+    });
+  });
+  
+</script>
+{% endblock table_scripts %}

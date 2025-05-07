@@ -1,0 +1,80 @@
+{% if objects %}
+<table class="table table-hover align-items-center mb-0">
+  {% load home_tags %}
+  <thead>
+    <tr>
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Tipo de ensayo</th>
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Descripción</th>
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center px-0">Método</th>
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center px-0" colspan="{% if not perms.home.add_essay %}2{% endif %}">Unidad</th>
+      {% if perms.home.change_essay or perms.home.delete_essay %}
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center" style="user-select: none">editar</th>
+      {% endif %}
+    </tr>
+  </thead>
+  <tbody>
+    <!--Essays info-->
+    {% for essay in objects %}
+    <tr>
+      <td class="ps-4 fw-bold text-dark">
+          {{ essay.name }}
+      </td>
+      <td class="ps-4 text-sm">
+          {{ essay.detail|default_if_none:'-' }}
+      </td>
+      <td class="text-center text-dark fw-bold text-sm">
+          ASCA-ME-{{ essay.method }}
+      </td>
+      <td colspan="{% if not perms.home.add_essay %}2{% endif %}" class="font-weight-bold text-sm text-center">
+          {{ essay.unit|default_if_none:'-'  }}
+      </td>
+      {% if perms.home.change_essay or perms.home.delete_essay %}
+      <td class="text-center icon-container">
+
+        {% if perms.home.change_essay %}
+        <a href="{% url 'edit_essay' essay.id %}{% if '?' in request.get_full_path %}?next=/essays/{{ request.GET | query_encode }}{% endif %}" class="text-primary font-weight-bold text-xs"
+          style="user-select: none" title="Editar">
+          <i class="material-icons">drive_file_rename_outline</i>
+        </a>
+        {% endif %}
+        
+        {% if perms.home.delete_essay %}
+        <!-- Button trigger modal -->
+        <a class="font-weight-bold" data-bs-toggle="modal" data-bs-target="#id-{{ essay.id }}"
+          style="user-select: none; cursor: pointer !important;" title="Eliminar">
+          <i class="material-icons">delete</i>
+        </a>
+        {% endif %}
+
+        <!-- Modal -->
+        <div class="modal fade" id="id-{{ essay.id }}" tabindex="-1" aria-labelledby="exampleModalLabel"
+          aria-hidden="true" style="user-select: none;">
+          <div class="modal-dialog">
+            <div class="modal-content px-3">
+              <div class="modal-header px-4 mx-n3" style="background-color: var(--mc-color) !important;">
+                <h4 class="modal-title font-weight-bolder text-white" id="exampleModalLabel">¡Advertencia!</h4>
+              </div>
+              <div class="modal-body text-start px-1">
+                <p class="mb-0 font-weight-bold" style="line-height: 1.25; font-weight: 500 !important;">
+                  ¿Seguro que desea eliminar el Ensayo <b style="color: var(--mc-color)">{{ essay.name }}</b>?</p>
+              </div>
+              <div class="modal-footer text-center justify-content-center py-2">
+                <form method="POST" action="{% url 'delete_essay' essay.id %}">
+                  {% csrf_token %}
+                  <button type="button" class="m-0 btn btn-secondary"
+                    data-bs-dismiss="modal">Cancelar</button>
+                  <button type="submit" class="m-0 btn btn-danger">Confirmar</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </td>
+      {% endif %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+{% include 'includes/no-table-results.html' %}
+{% endif %}

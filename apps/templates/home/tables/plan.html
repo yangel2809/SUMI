@@ -1,0 +1,302 @@
+{% if objects %}
+  {% load home_tags %}
+  
+  <table class="table table-hover align-items-center mb-0">
+      <thead>
+      <tr>
+        <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-4">producto</th>
+        <th class="text-uppercase text-secondary text-xxs font-weight-bolder px-2">plan</th>
+        <th class="text-uppercase text-secondary text-xxs font-weight-bolder px-2">rev</th>
+        <th class="text-uppercase text-secondary text-xxs font-weight-bolder px-2">códigos</th>
+        <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center" colspan="{% if not perms.home.add_plan %}2{% endif %}">cliente</th>
+        {% if perms.home.change_plan or perms.home.delete_plan or perms.home.add_plan %}
+        <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center" style="user-select: none">editar</th>
+        {% endif %}
+      </tr>                
+    </thead>
+    <tbody><!--Plans info-->
+    {% for plan in objects %}                                                
+      <tr>
+        <td class="text-sm text-dark ps-3">
+          {{ plan.product }}
+        </td>
+        <td>
+          <div class="d-flex justify-content-between">
+          <h5 class="text-xs font-weight-bold mb-0"><a title="Ver plan de calidad PC-ASC-{{ plan.pc }}"
+              href="{% url 'plan_view' plan.id %}{% if '?' in request.get_full_path %}?next=/plans/{{ request.GET | query_encode }}{% endif %}">PC-ASC-{{ plan.pc }}</a></h5>
+            {% if plan.reviewer == None or plan.reviewer == '' %}                      
+              <i class="ps-2 material-symbols-rounded  text-danger" 
+              style="user-select: none; vertical-align: middle; font-size: 16px; scale:150%">
+              {% if perms.home.sign_plan %}
+                {% if not request.user.username == 'Pasante' %}
+                  {% if not request.user.username == 'Jefe-ASCA' %}
+                    <a style="cursor: pointer;" title="Revisar y aprobar" class="pop-tooltip" href="{% url 'edit_plan' plan.id %}">draw</a>  
+                  {% else %}
+                    <x style="cursor: help;" title="Pendiente por revisión y aprobación" class="pop-tooltip text-danger">draw</x>  
+                  {% endif %}
+                {% else %}
+                  <x style="cursor: help;" title="Pendiente por revisión y aprobación" class="pop-tooltip text-danger">draw</x>  
+                {% endif %}
+              {% else %}
+                <x style="cursor: help;" title="Pendiente por revisión y aprobación" class="pop-tooltip text-danger">draw</x>  
+              {% endif %}
+              </i>                      
+            {% endif %}
+          </div>
+        </td>
+        <td>
+          <div class="mb-n1">
+            <h6 class="text-xs font-monospace font-weight-bold mb-0 mt-n1">REV-PC-{{ plan.revission|stringformat:"02d" }}</h6>
+            <h6 class="text-xs font-monospace font-weight-bold mb-0"> {{ plan.rev_date|date:"d/m/Y" }}</h6>
+          </div>
+        </td>
+        <td>
+          <div class="mb-n1">
+            <p class="text-xs font-monospace font-weight-bold mb-0 mt-n1 ">{{ plan.gp_code }}</p>
+            <p class="text-xs font-monospace font-weight-bold mb-0">{{ plan.code }}</p>
+          </div>
+        </td>
+        
+        <td class="align-middle font-weight-bolder text-center text-sm" colspan="{% if not perms.home.add_plan %}2{% endif %}">
+          {% if request.GET.client %} 
+            <h6 class="text-bold text-xs m-0">{{ plan.client }}</h6>
+          {% else %}
+            <a class="cursor-pointer client-filter text-xs" hrefw="{{ plan.client.id }}">{{ plan.client }}</a>
+          {% endif %}
+        </td>
+        {% if perms.home.change_plan or perms.home.delete_plan or perms.home.add_plan or perms.home.disincorporate_plan %}
+        <td class="text-center icon-container" style="user-select: none">
+          {% if not plan.archived %}
+            {% if perms.home.change_plan %}
+              {% if not request.user.username == 'Pasante' %}                    
+                <a href="{% url 'edit_plan' plan.id %}{% if '?' in request.get_full_path %}?next=/plans/{{ request.GET | query_encode }}{% endif %}" 
+                class="text-primary font-weight-bold text-xs"
+                title="Editar">
+                  <i class="material-icons">drive_file_rename_outline</i>
+                </a>
+              {% elif plan.new_p %}
+                <a href="{% url 'edit_plan' plan.id %}{% if '?' in request.get_full_path %}?next=/plans/{{ request.GET | query_encode }}{% endif %}" 
+                class="text-primary font-weight-bold text-xs"
+                title="Editar">
+                  <i class="material-icons">drive_file_rename_outline</i>  
+                </a>                          
+              {% endif %}
+            {% elif plan.pc == '00000000' %}
+              {% if plan.reviewer == None or plan.reviewer == '' %}
+                <a href="{% url 'edit_plan' plan.id %}{% if '?' in request.get_full_path %}?next=/plans/{{ request.GET | query_encode }}{% endif %}" 
+                class="text-primary font-weight-bold text-xs"
+                  title="Editar">
+                  <i class="material-icons">drive_file_rename_outline</i>  
+                </a> 
+              {% elif perms.home.sign_plan %}
+                <a href="{% url 'edit_plan' plan.id %}{% if '?' in request.get_full_path %}?next=/plans/{{ request.GET | query_encode }}{% endif %}" 
+                class="text-primary font-weight-bold text-xs"
+                title="Editar">
+                  <i class="material-icons">drive_file_rename_outline</i>  
+                </a> 
+              {% endif %}
+            {% endif %}
+          {% endif %}
+          
+          {% if plan.archived and perms.home.delete_archive_plan %}
+            <a class="text-primary font-weight-bold text-xs cursor-pointer" title="Restaurar" data-bs-toggle="modal" data-bs-target="#id-{{ plan.id }}-r">
+              <i class="material-icons">settings_backup_restore</i>
+            </a>
+            <div class="modal fade" id="id-{{ plan.id }}-r" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="user-select: none;">
+              <div class="modal-dialog">
+                <div class="modal-content px-3">
+                  <div class="modal-header px-4 mx-n3" style="background-color: var(--mc-color) !important;">
+                    <h4 class="modal-title font-weight-bolder text-white" id="exampleModalLabel">¡Alerta!</h4>  
+                  </div>
+                  <div class="modal-body text-start px-1">
+                    <p class="mb-1 font-weight-bold" style="line-height: 1.25; font-weight: 500 !important;">
+                      ¿Seguro que desea <b class="text-success">resturar</b> el Plan de Calidad <b style="color: var(--mc-color)">{{ plan_details.product }}</b>?</p>
+                  </div>
+                  <div class="modal-footer text-center justify-content-center py-2">
+                    <form method="POST" action="{% url 'restore_plan' plan.id %}">
+                      {% csrf_token %}
+                      <button type="button" class="m-0 btn btn-secondary"
+                        data-bs-dismiss="modal">Cancelar</button>
+                      <button type="submit" class="m-0 btn btn-success">Confirmar</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div> 
+          {% elif perms.home.add_plan %}
+            <a href="{% url 'clone_plan' plan.id %}" id="clone-{{ plan.id }}" class="a-deaf clone-link"
+            title="Duplicar">
+              <i class="material-icons">difference</i>  
+            </a>     
+            <span class="loader" title="Si la carga no concluye, comoníquese con soporte" id="clone-{{ plan.id }}-l" style="scale: 80%; display: none;"></span>
+          {% endif %}
+          
+          {% if perms.home.add_plan %}
+            {% if not plan.archived %}
+            {% if perms.home.disincorporate_plan %}
+              {% if not plan.disincorporated %}
+                <a class="cursor-pointer font-weight-bold" data-bs-toggle="modal" data-bs-target="#id-{{ plan.id }}-di" style="user-select: none;" title="Desincorporar">
+                  <i class="material-icons">archive</i>
+                </a>
+              {% else %}
+                <a class="cursor-pointer font-weight-bold" data-bs-toggle="modal" data-bs-target="#id-{{ plan.id }}-ri" style="user-select: none;" title="Reincorporar">
+                  <i class="material-icons">unarchive</i>
+                </a>
+                <div class="modal fade" id="id-{{ plan.id }}-ri" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="user-select: none;">
+                  <div class="modal-dialog">
+                    <div class="modal-content px-3">
+                      <div class="modal-header px-4 mx-n3" style="background-color: var(--mc-color) !important;">
+                        <h4 class="modal-title font-weight-bolder text-white" id="exampleModalLabel">¡Alerta!</h4>  
+                      </div>
+                      <div class="modal-body text-start px-1">
+                        <p class="mb-1 font-weight-bold" style="line-height: 1.25; font-weight: 500 !important;">
+                          ¿Seguro que desea <b class="text-success">reincorporar</b> el Plan de Calidad <b style="color: var(--mc-color)">{{ plan_details.product }}</b>?</p>
+                      </div>
+                      <div class="modal-footer text-center justify-content-center py-2">
+                        <form method="POST" action="{% url 'reincorporate_plan' plan.id %}">
+                          {% csrf_token %}
+                          <button type="button" class="m-0 btn btn-secondary"
+                            data-bs-dismiss="modal">Cancelar</button>
+                          <button type="submit" class="m-0 btn btn-success">Confirmar</button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div> 
+              {% endif %}
+            {% endif %}
+              {% if perms.home.delete_plan %}
+                {% if not request.user.username == 'Pasante' %}                    
+                  <a class="cursor-pointer text-danger" data-bs-toggle="modal" data-bs-target="#id-{{ plan.id }}" style="user-select: none;" title="Eliminar">
+                    <i class="material-icons">delete</i>
+                  </a>
+                {% elif plan.new_p %}
+                  <a class="cursor-pointer text-danger" data-bs-toggle="modal" data-bs-target="#id-{{ plan.id }}" style="user-select: none;" title="Eliminar">
+                    <i class="material-icons">delete</i>
+                  </a>          
+                {% endif %}
+              {% elif plan.pc == '00000000' %}
+                {% if plan.reviewer == None or plan.reviewer == '' %}
+                  <a class="cursor-pointer text-danger" data-bs-toggle="modal" data-bs-target="#id-{{ plan.id }}" style="user-select: none;" title="Eliminar">
+                    <i class="material-icons">delete</i>
+                  </a>
+                {% elif perms.home.sign_plan %}
+                  <a class="cursor-pointer text-danger" data-bs-toggle="modal" data-bs-target="#id-{{ plan.id }}" style="user-select: none;" title="Eliminar">
+                    <i class="material-icons">delete</i>
+                  </a>
+                {% endif %}
+              {% endif %}
+            {% elif perms.home.delete_archive_plan %}
+              <a class="cursor-pointer text-danger" data-bs-toggle="modal" data-bs-target="#id-{{ plan.id }}-del" style="user-select: none;" title="Eliminar permanentemente">
+                <i class="material-icons">delete</i>
+              </a>
+              <div class="modal fade" id="id-{{ plan.id }}-del" tabindex="-1"
+              aria-labelledby="TrueDelete" aria-hidden="true" style="user-select: none;">
+                <div class="modal-dialog">
+                  <form method="POST" action="{% url 'delete_true_plan' plan.id %}">
+                    <div class="modal-content px-3">
+                      <div class="modal-header px-4 mx-n3" style="background-color: var(--mc-color) !important;">
+                        <h4 class="modal-title font-weight-bolder text-white" id="TrueDelete">¡Advertencia!</h4>
+                      </div>
+                      <div class="modal-body text-start px-1">
+                        <p class="mb-1 font-weight-bold" style="line-height: 1.25; font-weight: 500 !important;">
+                          ¿Seguro que desea eliminar <b class="text-danger">permanentemente</b> el Plan de Calidad <b style="color: var(--mc-color)">{{ plan.product }}</b>?</p>
+                        <p class="mb-0 text-xs">Los datos de estructura y ensayos se perderán, esta acción es irreversible</p>
+                      </div>
+                      <div class="modal-footer text-center justify-content-center py-2 gap-2">
+                          {% csrf_token %}
+                          <button type="button" class="m-0 btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                          <button type="submit" class="m-0 btn btn-danger">Confirmar</button>
+                        </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            {% endif %}
+          {% endif %}
+          <!-- Modal -->
+          {% if not plan.archived %}
+          <div class="modal fade" id="id-{{ plan.id }}" tabindex="-1"
+          aria-labelledby="exampleModalLabel" style="user-select: none;">
+          <div class="modal-dialog">
+            <form method="POST" id="delete-form-{{ plan.id }}" action="{% url 'delete_plan' plan.id %}">
+              {% csrf_token %}
+              <div class="modal-content px-3">
+                <div class="modal-header px-4 mx-n3" style="background-color: var(--mc-color) !important;">
+                  <h4 class="modal-title font-weight-bolder text-white" id="exampleModalLabel">¡Advertencia!</h4>  
+                </div>
+                <div class="modal-body text-start px-1">
+                  <p class="mb-1 font-weight-bold" style="line-height: 1.25; font-weight: 500 !important;">
+                    ¿Seguro que desea eliminar el Plan de Calidad <b style="color: var(--mc-color)">{{ plan.product }}</b>?</p>
+                    <p class="mb-0 text-xs">Los datos de estructura y ensayos se perderán, esta acción es irreversible</p>
+                    <p class="mt-1 mb-0 font-weight-bold text-sm text-primary">Razón</p>
+                    <textarea required name="deleted_reason" class="form-control align-items-center myform-focus py-1 px-2" value="" 
+                    style="transition: none !important;" id="id_deleted_reason"></textarea>
+                  </div>
+                  <div class="modal-footer text-center justify-content-center py-2">
+                    <button type="button" class="m-0 mx-1 btn btn-secondary"
+                    data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="m-0 mx-1 btn btn-danger">Confirmar</button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          
+          <div class="modal fade" id="id-{{ plan.id }}-di" tabindex="-1"
+          aria-labelledby="exampleModalLabel" style="user-select: none;">
+          <div class="modal-dialog">
+            <form method="POST" id="disincorporate-form-{{ plan.id }}" action="{% url 'disincorporate_plan' plan.id %}">
+              {% csrf_token %}
+              <div class="modal-content px-3">
+                <div class="modal-header px-4 mx-n3" style="background-color: var(--mc-color) !important;">
+                  <h4 class="modal-title font-weight-bolder text-white" id="exampleModalLabel">¡Advertencia!</h4>  
+                </div>
+                <div class="modal-body text-start px-1">
+                  <p class="mb-1 font-weight-bold" style="line-height: 1.25; font-weight: 500 !important;">
+                    ¿Seguro que desea desincorporar el Plan de Calidad <b style="color: var(--mc-color)">{{ plan.product }}</b>?</p>
+                    <p class="mt-1 mb-0 font-weight-bold text-sm text-primary">Razón</p>
+                    <textarea required name="disincorporate_reason" class="form-control align-items-center myform-focus py-1 px-2" value="" 
+                    style="transition: none !important;" id="id_disincorporate_reason"></textarea>
+                  </div>
+                  <div class="modal-footer text-center justify-content-center py-2">
+                    <button type="button" class="m-0 mx-1 btn btn-secondary"
+                    data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="m-0 mx-1 btn btn-danger">Confirmar</button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          {% endif %}
+        </td>
+        {% endif %}
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  {% include 'includes/no-table-results.html' %}
+{% endif %}
+{% if tab == 'plans-deleted' %}
+<div class="modal fade" id="empty-trash" tabindex="-1" aria-hidden="true" style="user-select: none;">
+  <div class="modal-dialog">
+    <div class="modal-content px-3">
+      <div class="modal-header px-4 mx-n3" style="background-color: var(--mc-color) !important;">
+        <h4 class="modal-title font-weight-bolder text-white" id="exampleModalLabel">¡Advertencia!</h4>
+      </div>
+      <div class="modal-body text-start px-1">
+        <p class="mb-1 font-weight-bold" style="line-height: 1.25; font-weight: 500 !important;">
+          ¿Seguro que desea vaciar la papelera de Planes de Calidad?</p>
+        <p class="mb-0 text-xs">Esta acción es toalmente irreversible</p>
+      </div>
+      <div class="modal-footer text-center justify-content-center py-2">
+        <button type="button" class="m-0 mx-1 btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <a href="{% url 'delete_true_plan_mass' %}">
+          <button type="submit" class="m-0 mx-1 btn btn-danger">Confirmar</button>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}

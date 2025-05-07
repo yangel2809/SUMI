@@ -1,0 +1,23 @@
+{% extends 'layouts/base_table.html' %}
+
+{% block table_header %}
+<h5 class="text-white font-weight-bolder text-nowrap pe-3">
+  Materiales {% if perms.home.view_materialtype %}| <a class="faded-title" href="{% url 'material_types' %}">Tipos de Materiales</a> {% endif %}
+</h5>
+<div class="ms-auto my-auto text-nowrap">
+  {% if perms.home.add_material %}
+  <a title="Agregar Material según Proveedor" href="/materials/add">
+    <i class="material-icons text-white ">library_add</i>
+  </a>
+  {% endif %}
+  <a title="Limpiar filtros" href="{% url 'materials' %}" class="cursor-pointer {% if not '?' in request.get_full_path %}search-bar-toggle{% endif %}" id="clear-s">
+    <i class="material-icons text-white ">clear</i>
+  </a>
+</div>
+{% endblock table_header %}
+
+{% block table_scripts %}
+<script>
+    var address = "{% url 'materials' %}";
+</script>
+{% endblock table_scripts %}

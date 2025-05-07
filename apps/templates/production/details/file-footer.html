@@ -1,0 +1,27 @@
+
+{% if report.observation.html %}
+{% if report.observation.html != '<p><br></p>' %}
+  <h6 class="fw-bold text-primary m-0">Observaciones</h6>
+  <div class="col-12">{{ report.observation.html|safe }}</div>
+{% endif %}
+{% endif %}
+<div class="d-flex flex-wrap justify-content-between gap-3 mb-3">
+  
+  <div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Analista Inspector</label>
+    <p class="ps-1 mb-0 fw-bold">{{ report.quality_analist }}</p>
+  </div>
+  <div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Personal de Producción</label>
+    <p class="ps-1 mb-0 fw-bold">{{ report.production_operator }}</p>
+  </div>
+  <div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0" title="Revisado Supervisor de Aseguramiento de la Calidad">Rev. Sup. ASCA</label>
+    <p class="ps-1 mb-0 fw-bold">{{ report.supervisor|default_if_none:"Pendiente por revisión" }}</p>
+  </div>
+  <div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Aprobado Jefe/Gerente</label>
+    <p class="ps-1 mb-0 fw-bold">{{ report.boss|default_if_none:"Pendiente por aprobación" }}</p>
+  </div>
+  {% if report.idat %}
+  <div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Verificación IDAT</label>
+    <p class="ps-1 mb-0 fw-bold">{{ report.idat }}</p>
+  </div>
+  {% endif %}
+</div>

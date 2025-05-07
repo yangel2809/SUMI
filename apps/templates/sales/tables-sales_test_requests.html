@@ -1,0 +1,18 @@
+{% extends 'layouts/base_table.html' %}
+
+{% block table_header %}
+  <h5 class="text-white font-weight-bolder text-nowrap pe-3 ">Solicitudes de Ventas</h5>
+  <div class="ms-auto my-auto text-nowrap">
+    {% if perms.sales.salestestrequest %}
+      <a title="Crear Solicitud" href="/sales_test_requests/add">
+        <i class="material-icons text-white ">add_chart</i>
+      </a>
+    {% endif %}
+  </div>
+{% endblock table_header %}
+
+{% block table_scripts %}
+<script>
+    var address = "{% url 'sales_test_requests' %}";
+</script>
+{% endblock table_scripts %}

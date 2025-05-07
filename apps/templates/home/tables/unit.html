@@ -1,0 +1,75 @@
+<table class="table table-hover align-items-center mb-0">
+{% if objects %}
+{% load home_tags %}
+  <thead>
+    <tr>
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Nombre</th>
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center px-0">Símbolo</th>
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder px-2">Descripción</th>
+      {% if perms.home.change_unit or perms.home.delete_unit %}
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center" style="user-select: none">editar</th>
+      {% endif %}
+    </tr>
+  </thead>
+  <tbody>
+    <!--units info-->
+    {% for unit in objects %}
+    <tr>
+      <td class="font-weight-bold text-dark ps-4">
+          {{ unit.name }}
+      </td>                  
+      <td class="text-center font-weight-bold text-sm text-dark">
+          {{ unit.symbol }}
+      </td>
+      <td class="font-weight-bold text-sm">
+          {% firstof unit.description %}
+      </td>
+      {% if perms.home.change_unit or perms.home.delete_unit %}
+      <td class="text-center icon-container">
+        {% if perms.home.change_unit %}
+        <a href="{% url 'edit_unit' unit.id %}{% if '?' in request.get_full_path %}?next=/essays/units/{{ request.GET | query_encode }}{% endif %}" class="text-primary font-weight-bold text-xs"
+          style="user-select: none" title="Editar">
+          <i class="material-icons">drive_file_rename_outline</i>
+        </a>
+        {% endif %}
+        
+        {% if perms.home.delete_unit %}
+        <!-- Button trigger modal -->
+        <a class="font-weight-bold" data-bs-toggle="modal" data-bs-target="#id-{{ unit.id }}"
+          style="user-select: none; cursor: pointer !important;" title="Eliminar">
+          <i class="material-icons">delete</i>
+        </a>
+        {% endif %}
+        <!-- Modal -->
+        <div class="modal fade" id="id-{{ unit.id }}" tabindex="-1" aria-labelledby="exampleModalLabel"
+          aria-hidden="true" style="user-select: none;">
+          <div class="modal-dialog">
+            <div class="modal-content px-3">
+              <div class="modal-header px-4 mx-n3" style="background-color: var(--mc-color) !important;">
+                <h4 class="modal-title font-weight-bolder text-white" id="exampleModalLabel">¡Advertencia!</h4>
+              </div>
+              <div class="modal-body text-start px-1">
+                <p class="mb-0 font-weight-bold" style="line-height: 1.25; font-weight: 500 !important;">
+                  ¿Seguro que desea eliminar la Unidad <b style="color: var(--mc-color)">{{ unit.name }}</b>?</p>
+                  <p class="mb-0 text-xs">No es posible eliminar unidades que estén asociados a un ensayo, si desea eliminar esta unidad, elimine la relación con sus ensayos</p>
+              </div>
+              <div class="modal-footer text-center justify-content-center py-2">
+                <form method="POST" action="{% url 'delete_unit' unit.id %}{% if '?' in request.get_full_path %}?next=/essays/units/{{ request.GET | query_encode }}{% endif %}">
+                  {% csrf_token %}
+                  <button type="button" class="m-0 btn btn-secondary"
+                    data-bs-dismiss="modal">Cancelar</button>
+                  <button type="submit" class="m-0 btn btn-danger">Confirmar</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </td>
+      {% endif %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+{% include 'includes/no-table-results.html' %}
+{% endif %}

@@ -1,0 +1,21 @@
+<div class="modal fade modal-form" counter="{{ counter }}" rid="{{ sale_order. }}" tabindex="-1" id="modal-id-{{ counter }}-return" role="dialog">
+
+    <div class="modal-dialog">
+      <div class="modal-content px-3">
+        <div class="bg-primary modal-header px-4 mx-n3 user-select-none">
+          <h4 class="modal-title font-weight-bolder text-white" id="exampleModalLabel">Deshacer Revisión</h4>
+        </div>
+        <form id="return-treview-form-{{ counter }}" rid="{{ sale_order.treview.id }}" >
+          {% csrf_token %}
+          <div class="modal-body text-start px-1">
+            <p class="m-0">¿Seguro que desea deshacer la revisión del pedido <x class="fw-bold">{{ sale_order.plan.gp_code }}</x>?</p>
+          </div>
+          <div class="modal-footer text-center justify-content-center py-2">
+            <button type="button" class="m-0 mx-1 btn btn-secondary"
+            data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="m-0 mx-1 btn btn-danger">Confirmar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>

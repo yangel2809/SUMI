@@ -1,0 +1,54 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<link href="{{ ASSETS_ROOT }}/css/client-provider-form.css" rel="stylesheet" />
+
+<div class="container pt-1 pb-3">
+  <div class="row min-vh-80 justify-content-center h-100">
+    <div class=" container-sm col-12" style="max-width: 700px;">
+
+      <div class="card justify-content-center my-4" style="min-width: 450px !important;">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2" style="user-select: none">
+          <div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2">
+            <div class="mt-2 justify-content-center">
+              <h5 class="text-white text-center font-weight-bolder me-3">{% if 'edit' in request.get_full_path %}Editar {% else %}Agregar {% endif %}{{ title }}</h5>
+            </div>
+          </div>
+        </div>
+        <div class="card-body container justify-content-center px-0 pb-2">
+          <div class="form-group justify-content-center d-flex input-group input-group-outline px-3">
+            <form class="form justify-content-center col-12" action="" method="POST">
+
+              {% csrf_token %}
+              <div class="col-12 px-4 text-center justify-content-center" style="user-select: none;">
+                
+                <div class="d-flex mb-3">
+                  <div class="flex-grow-1 text-start flex-coulum">
+                    <label for="name">Nombre</label>
+                    <div class="{% if form.name.errors %}border-error{% endif %}">{{ form.name }}</div>
+                  </div>
+                  <div class="form-check d-flex flex-wrap align-content-end">
+                    {{ form.active }}
+                    <label for="active">Activo</label>
+                  </div>
+                </div>
+
+                <div style="user-select: none;">
+                  <button type="submit" class="btn btn-primary mx-1 my-2">Guardar</button>
+                  <a onClick="window.history.back();return false;">
+                    <button type="button" class="btn btn-secondary mx-1 my-2">Cancelar</button>
+                  </a>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

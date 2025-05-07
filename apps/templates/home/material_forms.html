@@ -1,0 +1,197 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Template {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% block content %}
+<link href="{{ ASSETS_ROOT }}/css/plan-form.css" rel="stylesheet" />
+<div class="containercol-12 d-flex justify-content-center px-1">
+
+  <div class="card my-4 col-lg-8 col-sm-10 col-12">
+    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2" style="user-select: none">
+      <div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2">
+        <div class="mt-2 justify-content-center">
+          <h5 class="text-white text-center font-weight-bolder me-3">{% if 'edit' in request.get_full_path %}Editar {% else %}Agregar {% endif %}Material</h5>
+        </div>
+      </div>
+    </div>
+    <div class="card-body px-lg-6 px-sm-4 px-2 pb-2 py-lg-4 py-sm-3 py-2 user-select-none">
+        <form id="materialForm" method="POST" id="main-form">
+          {% csrf_token %}
+
+          <div class="form-group">
+
+            <label class="mb-0" for="name">
+              Tipo de Material
+              <a class="a-deaf text-middle" id="add_material" data-bs-toggle="modal" data-bs-target="#materialTypeModal">
+                <i class="material-icons" style="vertical-align: text-top; font-size: 15px !important;">add_circle</i>
+              </a>
+            </label>
+            <div class="{% if form.material_type.errors %}border-error{% endif %}">
+              {{ form.material_type }}
+            </div>
+
+            <label class="mb-0 mt-2" for="name">Proveedor</label>
+            <div class="{% if form.provider.errors %}border-error{% endif %}">
+              {{ form.provider }}
+            </div>
+
+            <label class="mb-0 mt-2" for="name">Nombre del Material según su proveedor</label>
+            <div class="{% if form.name.errors %}border-error{% endif %}">
+              {{ form.name }}
+            </div>
+            <p id="error-message" class="fw-bold text-danger"></p>
+            <p id="success-message" class="fw-bold text-success"></p>
+            <div class="text-center mb-2">
+              <button type="submit" class="btn btn-primary mb-1">Guardar</button>
+              <a href="/materials">
+                <button  type="button" class="mb-1 btn btn-secondary" >Cancelar</button>
+              </a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+<div class="modal fade user-select-none" id="materialTypeModal" tabindex="-1" role="dialog"
+  aria-labelledby="materialTypeModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: var(--mc-color) !important;">
+        <h5 class="modal-title fw-bold text-white" id="cancelModalLabel">Agregar Tipo de Material</h5>
+      </div>
+      <form id="materialTypeForm">
+        <div class="modal-body pb-0">
+          {% csrf_token %}
+          <div class="form-group">
+            <label class="fw-bold" for="name">Tipo de Material</label>
+            <input type="text" class="px-3 mb-2 form-control myform-focus" autocomplete="false" id="name_modal"
+              placeholder="Nombre...">
+          </div>
+          <p id="error-message-t" class="fw-bold text-danger"></p>
+          <p id="success-message-t" class="fw-bold text-success"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary mb-1">Guardar</button>
+          <button type="button" type="reset" id="mtDismiss" class="mb-1 btn btn-secondary" id="mt_modal_c"
+            data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+   $(document).ready(function () {
+    $('#main-form').on('submit', function() {
+      $(this).find('button[type="submit"]').prop('disabled', true);
+    });
+    $('#materialTypeForm').on('submit', function(e) {
+      e.preventDefault();
+      $.ajax({
+        url: '/x-material-types/add',
+        data: {
+          'name': $('#name_modal').val(),
+          'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+        },
+        type: 'POST',
+        dataType: 'json',
+        success: function(data) {
+          if(data.status == 'success'){
+            $('#success-message-t').text('Tipo de Material creado exitosamente');
+            setTimeout(function() {
+              $('#materialTypeModal').modal('hide');
+              $('#materialTypeForm')[0].reset();
+              $('#error-message-t').text('');
+              $('#success-message-t').text('');
+            }, 1000);
+          }else{
+            var messageObj = JSON.parse(data.message);
+            $('#error-message-t').text(messageObj.name[0].message);
+          }
+        },
+        error: function(xhr,errmsg,err) {
+          $('#error-message-t').text('Oops! un error tipo: '+errmsg+
+                ' \nPorfavor intente nuevamente, si el error persiste, contacte a soporte técnico.');
+        }
+      });
+    });
+
+    $('.btn-secondary').on('click', function() {
+      $('#materialTypeForm')[0].reset();
+      $('#error-message').text('');
+    });
+
+    $('#provider').select2({
+      placeholder: 'Seleccione un Proveedor...',
+      width: '100%',
+      selectionCssClass: ':all:',
+      dropdownCssClass: ':all:',
+      ajax: {
+        url: '/x-providers/',
+        dataType: 'json',
+        data: function (params) {
+          var queryParameters = {
+            f: params.term
+          }
+          return queryParameters;
+        },
+        processResults: function (data) {
+          return {
+            results: JSON.parse(data).map(function(item) {
+              return { id: item.pk, text: item.fields.name };
+            })
+          };
+        },
+      },
+      language: {
+        noResults: function () {
+          return "No hay resultados";
+        },
+        searching: function () {
+          return "Buscando...";
+        }
+      }
+    });
+
+    $('#material_type').select2({
+      placeholder: 'Seleccione un Tipo de material...',
+      width: '100%',
+      selectionCssClass: ':all:',
+      dropdownCssClass: ':all:',
+      ajax: {
+        url: '{% url "x-material_types" %}',
+        type: "GET",
+        dataType: 'json',
+        data: function (params) {
+          var queryParameters = {
+            f: params.term
+          }
+          return queryParameters;
+        },
+        processResults: function (data) {
+          return {
+            results: JSON.parse(data).map(function(item) {
+              return { id: item.pk, text: item.fields.name };
+            })
+          };
+        },
+      },
+      language: {
+        noResults: function () {
+          return "No hay resultados";
+        },
+        searching: function () {
+          return "Buscando...";
+        }
+      }
+    });
+  });
+</script>
+ 
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

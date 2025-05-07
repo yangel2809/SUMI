@@ -1,0 +1,26 @@
+{% extends "admin/change_form.html" %}
+
+{% block content %}
+  {{ block.super }}
+  <h2>Historical Structures</h2>
+  <ul>
+    {% for structure in historical_structures %}
+        <li><strong>{{ structure.material_type }} - peso: {{ structure.weight }} / gramaje: {{ structure.thickness }}</strong> - El: {{ structure.history_date }} por: {{ structure.history_user }}
+            {% comment %}
+            <ul>
+                {% for material in structure.material %}
+                <li>{{ material.material_type }}: {{ material.provider }} - {{ material.name }}</li>
+                {% endfor %}
+            </ul>
+            {% endcomment %}
+        </li>
+    {% endfor %}
+  </ul>
+
+  <h2>Historical Tests</h2>
+  <ul>
+    {% for test in historical_tests %}
+      <li><strong>{{ test.essay }} / crit: {{ test.critic }} - espec: {{ test.spec }}</strong> - El: {{ test.history_date }} por: {{ test.history_user }}</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

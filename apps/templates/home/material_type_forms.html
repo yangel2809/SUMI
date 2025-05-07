@@ -1,0 +1,54 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Template {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+
+    <div class="container-sm col-8-lg col-sm-10 col-12 px-1" style="max-width: 700px;">
+
+      <div class="card my-4">
+        <div class="card-header p-0 position-relative mt-n4 mx-sm-3 mx-2 z-index-2" style="user-select: none">
+          <div class="bg-primary shadow-primary border-radius-lg px-2 pt-2 pb-2">
+            <div class="mt-2 justify-content-center">
+              <h5 class="text-white text-center font-weight-bolder ">
+                {% if 'edit' in request.get_full_path %}Editar {% else %}Agregar {% endif %}Tipo de Material
+              </h5>
+            </div>
+          </div>
+        </div>
+        <div class="card-body container px-0 py-3">
+          <div class="form-group d-flex input-group input-group-outline px-lg-5 px-sm-4 px-3">
+            <form class="form col-12 justify-content-center d-flex" action="" method="POST" id="main-form">
+
+              {% csrf_token %}
+              <div class="col-lg-8 col-sm-10 col-12 pb-0" style="user-select: none;">
+                  <label class="font-weight-bold" for="name">Tipo de Material</label>
+                    <div class="{% if form.name.errors %}border-error{% endif %} mb-1">{{ form.name }}</div>
+                {% if form.name.errors %}
+                  <p class="text-s text-center mt-2 mb-0 text-danger font-weight-bold">Este tipo de material ya existe</p>
+                {% endif %}
+                <div class="user-select-none text-center">
+                  <button type="submit" class="btn btn-primary mx-1 my-2">Guardar</button>
+                  <a href="/materials/types">
+                    <button type="button" class="btn btn-secondary mx-1 my-2">Cancelar</button>
+                  </a>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      $('#main-form').on('submit', function() {
+        $(this).find('button[type="submit"]').prop('disabled', true);
+      });
+    </script>
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

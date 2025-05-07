@@ -1,0 +1,37 @@
+
+{% if obj_list.paginator.count > 15 %}
+<div class="my-0 mb-0 py-0 px-1">
+  <hr class="mt-0 mb-1 py-0" style="border-top: 1px solid !important; height: 1px;">
+</div>
+<div class="card-footer text-uppercase p-0 pt-1 font-weight-bold text-center" style="user-select: none;">
+  <div class="d-flex justify-content-center py-0 pb-2">
+    <div class="ms-n1 me-n1">
+      {% if obj_list.has_previous %}
+      <a class="paginationer" title="Primera página" href="?page=1">
+        <i class="me-1 fas fa-backward"></i>
+      </a>
+      {% if not obj_list.number < 3 %}
+      <a class="paginationer" title="Página previa" href="?page={{ obj_list.previous_page_number }}">
+        <i class="me-1 fas fa-step-backward"></i>
+      </a>
+      {% endif %}
+      {% endif %}
+    </div>
+    <div class="mx-2 text-xs" style="line-height: 25px;">
+      Página {{ obj_list.number }} de {{ obj_list.paginator.num_pages }}
+    </div>
+    <div class="ms-n1 me-n1">
+      {% if obj_list.has_next %}
+      {% if not obj_list.next_page_number == obj_list.paginator.num_pages %}
+      <a class="paginationer" title="Página siguiente" href="?page={{ obj_list.next_page_number }}">
+        <i class="ms-1 fas fa-step-forward"></i>
+      </a>
+      {% endif %}
+      <a class="paginationer" title="Página final" href="?page={{ obj_list.paginator.num_pages }}">
+        <i class="ms-1 fas fa-forward"></i>
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endif %}

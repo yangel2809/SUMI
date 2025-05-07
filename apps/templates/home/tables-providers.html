@@ -1,0 +1,18 @@
+{% extends 'layouts/base_table.html' %}
+
+{% block table_header %}
+<h5 class="text-white font-weight-bolder text-nowrap pe-3">Proveedores</h5>
+<div class="ms-auto my-auto text-nowrap">
+  {% if perms.home.add_provider %}
+  <a title="Agregar Proveedor" href="{% url 'add_provider' %}">
+    <i class="material-icons text-white">add_business</i>
+  </a>
+  {% endif %}
+</div>
+{% endblock table_header %}
+
+{% block table_scripts %}
+<script>
+    var address = "{% url 'providers' %}";
+</script>
+{% endblock table_scripts %}

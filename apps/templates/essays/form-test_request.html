@@ -1,0 +1,977 @@
+
+{% extends "layouts/base.html" %}
+{% block content %}
+<!-- form_view.html -->
+<link href="{{ ASSETS_ROOT }}/css/plan-form.css" rel="stylesheet" />
+<div class="container-fluid pt-1 px-sm-4 px-3 pb-3">
+  <div class="row min-vh-80 h-100">
+    <div class="col-12 px-0 px-md-2">
+      <div class="card my-4">
+        <div class="card-header p-0 position-relative mt-n4 mx-2 mx-md-3 z-index-2" style="user-select: none">
+          <div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2">
+            <div class="mt-2 text-center">
+              <h4 class="text-white text-center font-weight-bolder me-3">{% if 'edit' in request.get_full_path %}Editar {% else %}{% endif %}Solicitud de Prueba</h5>
+            </div>
+          </div>
+          <div class="card-body px-md-0 px-2 py-2">
+            <div class="form-group d-flex input-group input-group-outline">
+              <form class="form justify-content-center col-12" method="POST" style="user-select: none" id="main-form">
+                {% csrf_token %}
+                <div class="row px-1 px-md-3">
+                  <div class="col-sm-4 col-6 p-1 m-0 {% if form.number.errors %}border-error{% endif %}"><label class="mb-n1" for="number">Solicitud N° <abbr title="Dejar en blanco para asignar automaticamente según la base de datos"></abbr>
+                  <i class="fa fa-info-circle" aria-hidden="true"></i>
+                  </label>
+                  {% if 'edit' in request.get_full_path %}
+                    <input name="update_date" class="pt-2" title="Actualizar Fecha automáticamente" type="checkbox">
+                  {% endif %}
+                  {{ form.number }}</div>
+                  <div class="col-sm-4 col-6 p-1 m-0 {% if form.origin.errors %}border-error{% endif %}"><label class="mb-n1" for="origin">Origen</label> {{ form.origin }}</div>
+                  <div class="col-sm-4 col-12 p-1 m-0 {% if form.company.errors %}border-error{% endif %}"><label class="mb-n1" for="company">Empresa</label> {{ form.company }}</div>
+                  {{ form.check_test_client }}
+                  <div class="p-1 m-0 col-sm-5 col-12 {% if form.client.errors %}border-error{% endif %}" id="normal-client">
+                    <label class="mb-n1 normal-client" for="client">
+                      {% if not entry_element %}<a class="a-deaf cursor-pointer client-swap"><i class="fa fa-exchange" aria-hidden="true"></i> </a>{% endif %}
+                      Cliente
+                    </label>                    
+                    {{ form.client }}
+                  </div>
+                  <div class="p-1 m-0 col-sm-5 col-12 {% if form.test_client.errors %}border-error{% endif %}" id="test-client" style="display: none;">
+                    <label class="mb-n1" for="test_client">
+                      {% if not entry_element %}<a class="a-deaf cursor-pointer client-swap"><i class="fa fa-exchange" aria-hidden="true"></i> </a>{% endif %}
+                      Cliente de Prueba
+                    </label>
+                    {{ form.test_client }}
+                  </div>                 
+
+                  <div class="col-sm-7 col-12 p-1 m-0 {% if form.product.errors %}border-error{% endif %}"><label class="mb-n1" for="product">Pruducto</label> {{ form.product }}</div>
+                  <div class="col-md-6 col-12 p-1 m-0 {% if form.design.errors %}border-error{% endif %}"><label class="mb-n1" for="design">Diseño</label> {{ form.design }}</div>
+                  <div class="col-md-3 col-6 p-1 m-0 {% if form.art_number.errors %}border-error{% endif %}"><label class="mb-n1" for="art_number">N° Solicitud de Arte</label> {{ form.art_number }}</div>
+                  <div class="col-md-3 col-6 p-1 m-0 {% if form.art_date.errors %}border-error{% endif %}"><label class="mb-n1" for="art_date">Fecha Sol. de Arte</label> {{ form.art_date }}</div>
+                </div>                               
+                <!---------------------------------------------------INLINE FORMSET-------------------------------------------------->
+                {% include 'essays/formsets/test_structure.html' %}                              
+                <!------------------------------------------------------------------------------------------------------------------->    
+                <div class="row pt-0 pt-2 px-1 px-md-3 pb-3">
+                  <h5 class="text-bold text-primary text-center pt-1 m-0">Plan de Producción</h5>
+                  <p class="text-bold text-center text-primary col-12 p-0 m-0 ps-1 mt-2 mb-n2">Cantidad a producir</p>
+                  <p class="{% if form.quantity.errors %}border-error{% endif %} col-md-4 col-sm-6 col-12 px-1 m-0"><label class="mb-n1" for="quantity">Cantidad</label>{{ form.quantity }}</p>
+                  <p class="{% if form.unit.errors %}border-error{% endif %} col-md-4 col-sm-6 col-12 px-1 m-0"><label class="mb-n1" for="unit">Unidad</label>{{ form.unit }}</p>
+                  <p class="{% if form.tolerance.errors %}border-error{% endif %} col-md-4 col-12 px-1 m-0"><label class="mb-n1" for="tolerance">Tolerancia (<abbr title="Porcentaje">%</abbr>)</label>{{ form.tolerance }}</p>
+
+                  
+                  <div class="col-12 d-md-flex d-block justify-content-center text-bold p-0 m-0 mt-2">                                  
+                    <div class="px-1 p-0 form-check">{{ form.print_selector }}<label style="transition: all 0.3 ease; font-size: medium; line-height: 1.3em;" for="print_selector" class="cursor-pointer text-bold mb-0 mt-1" id="title-print"> Proceso de Impresión</label></div>                                  
+                  </div>            
+                  
+                  <div class="row p-0 m-0" style="display: none" id="print-warning">
+                    <h5 class="text-danger text-md-center">Seleccione al menos un material en la lista de estructuras</h5>
+                  </div>
+                  <div class="row p-0 m-0" style="display: none" id="print-container">
+                    <div class="{% if form.printer.errors %}border-error{% endif %} col-lg-3 col-6 px-1 m-0"><label class="mb-n1" for="printer">Máquina impresora</label>{{ form.printer }}</div>
+                    <div class="{% if form.colors.errors %}border-error{% endif %} col-lg-3 col-6 px-1 m-0"><label class="mb-n1" for="colors">Colorimetría</label>{{ form.colors }}</div>
+                    <div class="{% if form.sustrate_width.errors %}border-error{% endif %} col-lg-3 col-sm-6 col-12 px-1 m-0"><label class="mb-n1" for="sustrate_width">Ancho de Sustrato (mm)</label>{{ form.sustrate_width }}</div>
+                    <div class="col-lg-3 col-sm-6 col-12 px-1 m-0">
+                      <label class="mb-n1" for="print_width">Ancho de Impresión</label>
+                      <div class="d-flex flex-nowrap">
+                        <div class="{% if form.print_width.errors %}border-error{% endif %} d-flex flex-row-reverse flex-grow-1">
+                          <a class="position-absolute m-2 a-deaf font-weight-black cursor-pointer" id="prw_char" style="user-select: none;">±</a>{{ form.print_width }}
+                        </div>
+                        <div class="{% if form.repetition_unit.errors %}border-error{% endif %} flex-grow-1">
+                          {{ form.print_width_unit }}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="{% if form.width_photo.errors %}border-error{% endif %} col-lg-3 col-sm-6 col-12 px-1 m-0"><label class="mb-n1" for="width_photo">Ancho de la fotocélula</label>{{ form.width_photo }}</div>
+                    <div class="col-lg-3 col-sm-6 col-12 px-1 m-0"><label class="mb-n1" for="develop">Largo de fotocélula</label>
+                      <div class="d-flex flex-nowrap">
+                        <div class="{% if form.lenght_photo.errors %}border-error{% endif %} d-flex flex-row-reverse flex-grow-1">
+                          {{ form.lenght_photo }}
+                        </div>                        
+                        <div class="{% if form.unit_photo.errors %}border-error{% endif %} flex-grow-1">
+                          {{ form.unit_photo }}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="d-flex flex-row col-lg-6 col-12 align-content-end flex-wrap">
+                      <div class="d-flex flex-column flex-shrink-1">
+                        <div class="form-check ps-0">
+                          {{ form.reverse_selector }}
+                          <label class="text-primary cursor-pointer text-bold mb-n1" id="reverse_label" for="reverse_selector">Reverso</label>
+                        </div>
+                        <div class="form-check ps-0">
+                          {{ form.surface_selector }}
+                          <label class="cursor-pointer text-bold mb-n1" id="surface_label" for="surface_selector">Superficie</label>
+                        </div>
+                      </div>
+                      <div class="flex-shrink-1 ps-3">
+                        <label class="fw-bold m-0 text-primary">En <a class="d-inline" id="sindex-up"><i class="fas fa-arrow-down action-icon"></i></a> <a class="d-inline" id="sindex-dw"><i class="fas fa-arrow-up action-icon" ></i></a></label>
+                        <h6 class="mb-0 text-sm text-secondary" id="current_sustrate">
+                          Seleccione un material...
+                        </h6>
+                      </div>
+                      {{ form.sindex }}
+                    </div>
+                  </div>                
+                  <p class="text-bold text-primary text-center pt-2 m-0">Descripción de Procesos Productivos</p><div class="p-0 mx-0 {% if form.lamination_process.errors %} quill-error-outline {% endif %}">{{ form.lamination_process }}</div>
+                  
+                  <h6 class="col-12 text-center text-bold text-primary p-0 m-0 mb-n1 mt-2">Dimensiones y Proceso de Corte/Despacho</h6>
+                  <p class="col-sm-6 col-12 px-1 m-0" title="Distancia Borde de Mateerial al Borde de la Fotocelda"><label class="mb-n1" for="dist_boder_cell_material">Dist. Borde Mat./Borde Fotoc. (mm)</label>{{ form.dist_boder_cell_material }}</p>
+                  <div class="col-sm-6 col-12 px-1 m-0"><label class="mb-n1" for="repetition">Repetición</label>
+                    <div class="d-flex flex-nowrap">
+                      <div class="{% if form.repetition.errors %}border-error{% endif %} d-flex flex-row-reverse flex-grow-1">
+                        <a class="position-absolute m-2 a-deaf font-weight-black cursor-pointer" id="rep_char" style="user-select: none;">±</a>{{ form.repetition }}
+                      </div>
+                      <div class="{% if form.repetition_unit.errors %}border-error{% endif %} flex-grow-1">
+                        {{ form.repetition_unit }}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="{% if form.width_photo.errors %}border-error{% endif %} col-sm-6 col-12 px-1 m-0"><label class="mb-n1" for="packaging">Embalaje</label>{{ form.packaging }}</div>
+                  <div class="{% if form.width_photo.errors %}border-error{% endif %} col-sm-6 col-12 px-1 m-0"><label class="mb-n1" for="tie_color">Color de Empate</label>{{ form.tie_color }}</div>
+
+                  <div class="col-12 d-flex justify-content-center text-bold p-0 m-0 mt-2">                                  
+                    <div class="px-1 p-0 form-check">{{ form.check_bobbin }}<label style="transition: all 0.3 ease;" for="check_bobbin" class="cursor-pointer text-bold mb-0 mt-1" id="title-bobbin"> Bobinas</x></div>                                  
+                    <div class="px-1 p-0 form-check">{{ form.check_ream }}<label style="transition: all 0.3 ease;" for="check_ream" class="cursor-pointer text-bold mb-0 mt-1" id="title-ream"> Resmas</x></div>                                  
+                  </div>                                  
+                  
+                  <div class="col-12 p-0 m-0 flex-wrap" id="field-check_bobbin"  style="display: none;">
+                    <div class="col-6 col-lg-4 px-1 m-0"><label class="mb-n1" for="width_bobbin">Ancho Bobina</label>
+                      <div class="d-flex flex-nowrap">
+                        <div class="{% if form.width_bobbin.errors %}border-error{% endif %} d-flex flex-row-reverse flex-grow-1">
+                          <a class="position-absolute m-2 a-deaf font-weight-black cursor-pointer" id="wbo_char" style="user-select: none;">±</a>{{ form.width_bobbin }}
+                        </div>                        
+                        <div class="{% if form.width_bobbin_unit.errors %}border-error{% endif %} flex-grow-1">
+                          {{ form.width_bobbin_unit }}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-6 col-lg-4 px-1 m-0"><label class="mb-n1" for="develop">Desarrollo</label>
+                      <div class="d-flex flex-nowrap">
+                        <div class="{% if form.develop.errors %}border-error{% endif %} d-flex flex-row-reverse flex-grow-1">
+                          <a class="position-absolute m-2 a-deaf font-weight-black cursor-pointer" id="dbo_char" style="user-select: none;">±</a>{{ form.develop }}
+                        </div>                        
+                        <div class="{% if form.develop_unit.errors %}border-error{% endif %} flex-shrink-1">
+                          {{ form.develop_unit }}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-6 col-lg-2 px-1 m-0"><label class="mb-n1" for="exterior_dia_bobbin">Diámetro Exterior</label>
+                      <div class="d-flex flex-nowrap">
+                        <div class="{% if form.exterior_dia_bobbin.errors %}border-error{% endif %} d-flex flex-row-reverse flex-grow-1">
+                          <a class="position-absolute m-2 a-deaf font-weight-black cursor-pointer" id="exdia_char" style="user-select: none;">±</a>{{ form.exterior_dia_bobbin }}
+                        </div>                        
+                        <div class="{% if form.exterior_dia_bobbin_unit.errors %}border-error{% endif %} flex-grow-1">
+                          {{ form.exterior_dia_bobbin_unit }}
+                        </div>
+                      </div>
+                    </div>
+                    <p class="{% if form.core_dia_bobbin.errors %}border-error{% endif %} col-6 col-lg-2 px-1 m-0"><label class="mb-n1" for="core_dia_bobbin">Diámetro Core</label>{{ form.core_dia_bobbin }}</p>
+                    <p class="{% if form.winding.errors %}border-error{% endif %} col-6 col-lg-3 px-1 m-0"><label class="mb-n1" for="winding">Embobinado al Cliente</label>{{ form.winding }}</p>
+                    <p class="{% if form.winding.errors %}border-error{% endif %} col-6 col-lg-3 px-1 m-0"><label class="mb-n1" for="photocell_side">Lado de Fotocelda</label>{{ form.photocell_side }}</p>
+                    <p class="{% if form.winding_description.errors %}border-error{% endif %} col-12 col-lg-6 px-1 m-0"><label class="mb-n1" for="winding_description">Descripción Embobinado</label>{{ form.winding_description }}</p>
+                  </div>
+                  
+                  <div class="col-12 p-0 m-0" id="field-check_ream"  style="display: none;">
+                    <p class="{% if form.width_ream.errors %}border-error{% endif %} col-4 px-1 m-0"><label class="mb-n1" for="width_ream">Ancho Resma</label>{{ form.width_ream }}</p>
+                    <p class="{% if form.lenght_ream.errors %}border-error{% endif %} col-4 px-1 m-0"><label class="mb-n1" for="lenght_ream">Largo Resma</label>{{ form.lenght_ream }}</p>
+                    <p class="{% if form.weight_ream.errors %}border-error{% endif %} col-4 px-1 m-0"><label class="mb-n1" for="weight_ream">Peso Resma</label>{{ form.weight_ream }}</p>
+                  </div>
+                  
+                  <p class="text-bold text-primary text-center pt-2 m-0">Obsevación</p><div class="p-0 mx-0 {% if form.observation.errors %}quill-error-outline{% endif %}">{{ form.observation }}</div>
+                  
+                  <div class="d-flex flex-wrap align-content-between col-md-5 col-12 pt-2 px-0">
+                    <div class="d-flex flex-wrap align-self-start col-12 p-0">
+                      <div class="form-check col-6 px-1 mb-2 m-0">{{ form.pre_print }}<label class="mb-n1" for="pre_print">Pre Prensa</label></div>
+                      <div class="form-check col-6 px-1 mb-2 m-0">{{ form.colorimetry }}<label class="mb-n1" for="colorimetry">Colorimetría</label></div>
+                      <div class="form-check col-6 px-1 mb-2 m-0">{{ form.plan_crx }}<label class="mb-n1" for="plan_crx">Prod. CRX</label></div>
+                      <div class="form-check col-6 px-1 mb-2 m-0">{{ form.plan_mcl }}<label class="mb-n1" for="plan_mcl">Prod. MCL</label></div>
+                      <div class="form-check col-6 px-1 mb-2 m-0">{{ form.logistics }}<label class="mb-n1" for="logistics">Planif. y Logística</label></div>
+                      <div class="form-check col-6 px-1 mb-2 m-0">{{ form.quality }}<label class="mb-n1" for="quality">ASCA</label></div>
+                    </div>
+                    
+                    <div class="d-md-flex d-none flex-wrap justify-content-center align-self-center col-12 p-0">
+                      <div class="px-1 m-0" style="user-select: none;">
+                        <button type="submit" class="btn mx-1 mb-0 mt-2 btn-primary">Guardar</button>
+                        <button type="submit" class="btn mx-1 mb-0 mt-2 btn-info" id="save_and_view">Guardar y Ver</button>
+
+                        <button type="button" class="btn mx-1 mb-0 mt-2 btn-secondary" data-bs-toggle="modal" data-bs-target="#cancelModal">
+                          Cancelar
+                        </button>
+                       
+                      </div>
+                    </div>
+
+                  </div>          
+                  <div class="d-flex flex-wrap justify-content-center col-md-7 col-12 pt-md-2 px-0">
+                    <p class="col-md-12 col-sm-4 col-12 px-1 m-0"><label class="text-xl text-bold mb-n1" for="applicant">Solicitante</label>{{ form.applicant }}</p>
+                    <p class="col-md-12 col-sm-4 col-12 px-1 m-0"><label class="text-xl text-bold mb-n1" for="elaborator">Realizado por</label>{{ form.elaborator }}</p>
+                    <p class="col-md-12 col-sm-4 col-12 px-1 m-0"><label class="text-xl text-bold mb-n1" for="reviewer">Revisado por</label>{{ form.reviewer }}</p>                    
+                  </div>
+                  <div class="d-md-none d-flex flex-wrap justify-content-center align-self-center col-12 mt-3 p-0">
+                    <div class="px-1 m-0" style="user-select: none;">
+                      <button type="submit" class="btn btn-primary mx-1 mb-0 mt-2">Guardar</button>
+                      <!-- Botón que activa el modal -->
+                      <button type="button" class="btn btn-secondary mx-1 mb-0 mt-2" data-bs-toggle="modal" data-bs-target="#cancelModal">
+                        Cancelar
+                      </button>
+                      
+                      <!-- Modal -->
+                      
+                      
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>                    
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade user-select-none" id="materialTypeModal" tabindex="-1" role="dialog" aria-labelledby="materialTypeModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form id="materialTypeForm">
+        {% csrf_token %}
+        <div class="modal-header" style="background-color: var(--mc-color) !important;">
+          <h5 class="modal-title fw-bold text-white" id="cancelModalLabel">Agregar Tipo de Material</h5>
+        </div>
+        <div class="modal-body pb-0">
+          <div class="form-group">
+            <label class="fw-bold" for="name">Tipo de Material</label>
+            <input type="text" class="px-3 mb-2 form-control myform-focus" autocomplete="false" id="name" required
+              placeholder="Nombre...">
+          </div>
+          <p id="error-message" class="fw-bold text-danger"></p>
+          <p id="success-message" class="fw-bold text-success"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary mb-1">Guardar</button>
+          
+          <button type="button" type="reset" id="mtDismiss" class="mb-1 btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel"
+aria-labelledby="TrueDelete" aria-hidden="true" style="user-select: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: var(--mc-color) !important;">
+        <h5 class="modal-title fw-bold text-white" id="cancelModalLabel">Confirmación de Cancelación</h5>
+      </div>
+      <div class="modal-body">
+        ¿Estás seguro de que quieres cancelar?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="mb-1 btn btn-secondary" data-bs-dismiss="modal">No</button>
+        <button type="button" class="mb-1 btn btn-primary" onClick="window.history.back();">Sí, cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if not perms.essays.sign_testrequest %}
+<script>  
+  $(document).ready(function () {
+    $('#reviewer').prop('readonly', true);
+  });
+</script>
+{% endif %} 
+<script>
+  $('#save_and_view').click(function() {
+    $('<input />')
+        .attr('type', 'hidden')
+        .attr('name', 'save_and_view')
+        .attr('value', 'True')
+        .appendTo('#main-form');
+  });
+  $('#main-form').on('submit', function() {
+    $(this).find('button[type="submit"]').prop('disabled', true);
+  });
+  function updateSustrate(sindex) {
+    var field = $('#id_structures-' + sindex + '-material_type option:selected').text();
+    var layer = 'Capa #' + (sindex + 1) + ' ';
+    var sustrateText = '';
+
+    if (field != '---------' && $('#id_structures-' + sindex + '-material_type').length) {
+        sustrateText = layer + field;
+    } else if (sindex >= 0) {
+        sustrateText = layer + 'Seleccione un material...';
+    } else {
+        sustrateText = 'Seleccione una capa usando las flechas';
+    }
+
+    $('#current_sustrate').text(sustrateText);
+  }
+  // Set the color theme
+  $('#company').on('change', function() {
+    if ($(this).val() === 'mcl') {
+      $('meta[name="theme-color"]').attr('content', '#946037');
+      $(':root').css('--mc-color', '#946037');
+      $(':root').css('--mc-selection', '#ad7e5a');
+      $(':root').css('--mc-shadow-color', '#94603780');
+      $(':root').css('--mc-calendar-today', '#94603780');
+      $(':root').css('--critical-color', '#94603769');
+      $(':root').css('--mc-hover-color', '#94603759');
+    } else {
+      $('meta[name="theme-color"]').attr('content', '#fe5000');
+      $(':root').css('--mc-color', '#fe5000');
+      $(':root').css('--mc-selection', '#fe7a51');
+      $(':root').css('--mc-shadow-color', '#fe520080');
+      $(':root').css('--mc-calendar-today', '#fea67d');
+      $(':root').css('--critical-color', '#fedabf');
+      $(':root').css('--mc-hover-color', '#fed9b5');
+    };
+  });
+  $('#company').trigger('change')
+  
+  // Load Selectors and hidden fields
+  if($('#check_test_client').is(':checked')) {
+    $('#test-client').show();
+    $('#normal-client').hide();
+    $('#test_client').prop('required', true);
+    $('#client').prop('required', false);
+    $('#client').val(null).trigger('change');
+  }
+  if($('#check_bobbin').is(':checked')) {
+    $('#field-check_bobbin').css('display', 'flex');
+    $('#title-bobbin').addClass('text-primary');                        
+  };
+  if($('#check_ream').is(':checked')) {
+    $('#field-check_ream').css('display', 'flex');
+    $('#title-ream').addClass('text-primary');
+  };
+
+  var max_sindex = parseInt($('#id_structures-TOTAL_FORMS').val()) -1;
+  var sindex = parseInt($('#sindex').val())
+
+  if (sindex < 0){
+    $('#current_sustrate').text('Seleccione una capa usando las flechas');
+  }else{
+    updateSustrate(sindex);
+  }
+  
+  
+  if($('#print_selector').is(':checked')) {
+    $('#print-container').show();
+    $('#title-print').addClass('text-primary');
+    if($('#surface_selector').is(':checked')) {
+      $('#reverse_label').removeClass('text-primary');
+      $('#surface_label').addClass('text-primary');
+    };
+  }
+  
+  let n = 0;
+  
+  $("select[name*='-material_type']").each(function () {
+
+    const w_counts = $('#id_structures-' + n + "-w_counts")
+
+    if (!w_counts.prop("checked")){
+      $('#' + n + "-w_counts").removeClass('c-selector-selected')
+    };
+    
+    const t_counts = $('#id_structures-' + n + "-t_counts")
+
+    if (!t_counts.prop("checked")){
+      $('#' + n + "-t_counts").removeClass('c-selector-selected')
+    };
+
+    $("select[name|='structures-" + n + "-material_type']").attr("id",'id_structures-' + n + '-material_type');
+    
+    $("select[name|='structures-" + n + "-material_type']").select2({
+      placeholder: 'Seleccione...',
+      width: '100%',
+      selectionCssClass: ':all:',
+      dropdownCssClass: ':all:',
+      ajax: {
+        url: '/x-material-types/',
+        dataType: 'json',
+        data: function (params) {
+          var queryParameters = {
+            f: params.term
+          }
+          return queryParameters;
+        },
+        processResults: function (data) {
+          return {
+            results: JSON.parse(data).map(function(item) {
+              return { id: item.pk, text: item.fields.name };
+            })
+          };
+        },
+      },
+      language: {
+        noResults: function () {
+          return "No hay resultados";
+        },
+        searching: function () {
+          return "Buscando...";
+        }
+      }
+    })
+      
+    n++
+  });
+  let b = 0;
+  $("select[name*='-provider']").each(function () {
+    $("select[name|='structures-" + b + "-provider']").attr("id",'id_structures-' + b + '-provider');
+    
+    $("select[name|='structures-" + b + "-provider']").select2({
+      placeholder: 'Seleccione...',
+        width: '100%',
+        selectionCssClass: ':all:',
+        dropdownCssClass: ':all:',
+        ajax: {
+          url: '/x-providers/',
+          dataType: 'json',
+          data: function (params) {
+            var queryParameters = {
+              search_text: params.term
+            }
+            return queryParameters;
+          },
+          processResults: function (data) {
+            return {
+              results: JSON.parse(data).map(function(item) {
+                return { id: item.pk, text: item.fields.name };
+              })
+            };
+          },
+        },
+        language: {
+          noResults: function () {
+            return "No hay resultados";
+          },
+          searching: function () {
+            return "Buscando...";
+          }
+        }
+    })
+      
+    b++
+  });
+  
+  $(document).on('click', '.c-selector', function() {
+    $(this).toggleClass('c-selector-selected');
+    const checkBox = $('#id_structures-' + $(this).attr('id'));
+    checkBox.prop("checked", !checkBox.prop("checked"));
+  });
+  
+  $(document).ready(function () {
+    $('#materialTypeForm').on('submit', function(e) {
+      e.preventDefault();
+      $.ajax({
+        url: '{% url "x-add_material_types" %}',
+        data: {
+          'name': $('#name').val(),
+          'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+        },
+        type: 'POST',
+        dataType: 'json',
+        success: function(data) {
+          if(data.status == 'success'){
+            $('#success-message').text('Tipo de Material creado exitosamente');
+            setTimeout(function() {
+              $('#materialTypeModal').modal('hide');
+              $('#materialTypeForm')[0].reset();
+              $('#error-message').text('');
+              $('#success-message').text('');
+            }, 1600);
+          }else{
+            var messageObj = JSON.parse(data.message);
+            $('#error-message').text(messageObj.name[0].message);
+          }
+        },
+        error: function(xhr,errmsg,err) {
+          $('#error-message').text('Oops! un error tipo: '+errmsg+
+                ' \nPorfavor intente nuevamente, si el error persiste, contacte a soporte técnico.');
+        }
+      });
+    });
+
+    $('.btn-secondary').on('click', function() {
+      $('#materialTypeForm')[0].reset();
+      $('#error-message').text('');
+    });
+   
+        $('#check_bobbin').change(function () {
+          if($(this).is(':checked')) {
+            $('#field-check_bobbin').css('display', 'flex');
+            $('#title-bobbin').addClass('text-primary');                        
+          } else {
+            $('#field-check_bobbin').css('display', 'none');
+            $('#title-bobbin').removeClass('text-primary');
+
+            $('#width_bobbin').val(null);
+            $('#width_bobbin_unit').val(null).trigger('change');
+            $('#develop').val(null);
+            $('#develop_unit').val(null).trigger('change');
+            $('#exterior_dia_bobbin').val(null);
+            $('#exterior_dia_bobbin_unit').val(null).trigger('change');
+            $('#core_dia_bobbin').val(null).trigger('change');
+            $('#winding').val(null).trigger('change');
+            $('#photocell_side').val(null).trigger('change');
+            $('#winding_description').val(null);
+          }
+        });
+
+        $('#check_ream').change(function () {
+          if($(this).is(':checked')) {
+            $('#field-check_ream').css('display', 'flex');
+            $('#title-ream').addClass('text-primary');
+          } else {
+            $('#field-check_ream').css('display', 'none');
+            $('#title-ream').removeClass('text-primary');
+
+            $('#width_ream').val(null);
+            $('#lenght_ream').val(null);
+            $('#weight_ream').val(null);
+          }
+        });
+        
+        $('#print_selector').change(function () {
+          sindex = $('#sindex').val()
+          var materialType = $('#id_structures-'+ sindex +'-material_type option:selected').text();
+          if(materialType != '---------' && $('#id_structures-'+ sindex +'-material_type').length || sindex == '-1'){
+            if($(this).is(':checked')) {
+              $('#print-container').show();
+              $('#title-print').addClass('text-primary');
+              $('#title-print').removeClass('text-danger');
+              $('#surface_selector').prop('checked', false);
+              $('#surface_label').removeClass('text-primary');
+              $('#reverse_selector').prop('checked', true);
+              $('#reverse_label').addClass('text-primary');
+              $('#print-warning').hide();
+              if (sindex == '-1' || sindex == '-2'){
+                $('#current_sustrate').text('Seleccione una capa usando las flechas');
+              }else{
+                $('#current_sustrate').text($('#id_structures-'+ sindex +'-material_type option:selected').text());
+              }
+            } else {
+              $('#print-container').hide();
+              $('#title-print').removeClass('text-primary');
+              $('#printer').val(null).trigger('change');
+              $('#colors').val(null);
+              $('#unit_photo').val(null).trigger('change');
+              $('#widht_photo').val(null);
+              $('#lenght_photo').val(null);
+              $('#sustrate_width').val(null);
+              $('#sindex').val('-1');
+              $('#surface_label').removeClass('text-primary');
+              $('#reverse_label').removeClass('text-primary');
+              $('#surface_selector').prop('checked', false);
+              $('#reverse_selector').prop('checked', false);
+              $('#title-print').removeClass('text-danger');
+              $('#print-warning').hide();
+              sindex = '-1'
+              $('#current_sustrate').text('Seleccione una capa usando las flechas');
+            }
+          } else {
+            $(this).prop('checked', false);
+            $('#print-container').hide();
+            $('#printer').val(null).trigger('change');
+            $('#colors').val(null);
+            $('#unit_photo').val(null).trigger('change');
+            $('#widht_photo').val(null);
+            $('#lenght_photo').val(null);
+            $('#sustrate_width').val(null);
+            $('#surface_selector').prop('checked', false);
+            $('#reverse_selector').prop('checked', false);
+            $('#title-print').removeClass('text-primary');
+            $('#print-warning').show('fast');
+        }
+        });
+
+        $(document).on('change', "select[name*='-material_type']", function () {
+          var sindex = parseInt($('#sindex').val());
+          updateSustrate(sindex);
+        });
+
+        $('#sindex-up').click(function() {
+            var sindex = parseInt($('#sindex').val());
+            if (sindex < max_sindex && sindex > -2) {
+                sindex++;
+                $('#sindex').val(sindex);
+                updateSustrate(sindex);
+            }
+        });
+
+        $('#sindex-dw').click(function() {
+            var sindex = parseInt($('#sindex').val());
+            if (max_sindex && sindex > 0) {
+                sindex--;
+                $('#sindex').val(sindex);
+                updateSustrate(sindex);
+            }
+        });
+      
+
+        $('#reverse_selector').change(function () {
+          if($('#reverse_selector').is(':checked')) {
+            $('#surface_selector').prop('checked', false);
+            $('#surface_label').removeClass('text-primary');
+            $('#reverse_label').addClass('text-primary');
+          };
+        });
+        
+        $('#surface_selector').change(function () {
+          if($('#surface_selector').is(':checked')) {
+            $('#reverse_selector').prop('checked', false);
+            $('#reverse_label').removeClass('text-primary');
+            $('#surface_label').addClass('text-primary');
+          };
+          
+        });
+
+        $('.client-swap').click(function () {
+          if($('#check_test_client').is(':checked')) {
+            $('#check_test_client').prop('checked', false);
+            $('#normal-client').show();
+            $('#test-client').hide();
+            $('#client').prop('required', true);
+            $('#test_client').prop('required', false);
+            $('#test_client').val(null);
+            
+          } else {
+            $('#check_test_client').prop('checked', true);
+            $('#test-client').show();
+            $('#normal-client').hide();
+            $('#test_client').prop('required', true);
+            $('#client').prop('required', false);
+            $('#client').val(null).trigger('change');
+          };
+        });
+        $( "#date" ).datepicker( {
+          showOtherMonths: "true",
+          selectOtherMonths: "true",
+        },$.datepicker.regional[ "es" ] );
+
+        $( "#art_date" ).datepicker( {
+          showOtherMonths: "true",
+          selectOtherMonths: "true",
+        },$.datepicker.regional[ "es" ] );
+     
+        $('#company').select2({
+          minimumResultsForSearch: Infinity,
+          allowClear: true,
+          placeholder: 'Empresa...',
+          width: '100%',
+          selectionCssClass: ':all:',
+          dropdownCssClass: ':all:'
+        });
+        
+        $('#origin').select2({
+          minimumResultsForSearch: Infinity,
+          placeholder: 'Origen...',
+          width: '100%',
+          selectionCssClass: ':all:',
+          dropdownCssClass: ':all:'
+        });
+
+        $('#print_width_unit').select2({
+          minimumResultsForSearch: Infinity,
+          placeholder: '-',
+          width: '100%',
+          selectionCssClass: ':all:',
+          dropdownCssClass: ':all:'
+        });
+        
+        $('#repetition_unit').select2({
+          minimumResultsForSearch: Infinity,
+          allowClear: true,
+          placeholder: '-',
+          width: '100%',
+          selectionCssClass: ':all:',
+          dropdownCssClass: ':all:'
+        });
+
+        $('#unit_photo').select2({
+          minimumResultsForSearch: Infinity,
+          placeholder: '-',
+          width: '100%',
+          selectionCssClass: ':all:',
+          dropdownCssClass: ':all:'
+        });
+
+        $('#width_bobbin_unit').select2({
+          minimumResultsForSearch: Infinity,
+          placeholder: '-',
+          width: '100%',
+          selectionCssClass: ':all:',
+          dropdownCssClass: ':all:'
+        });
+
+        $('#develop_unit').select2({
+          minimumResultsForSearch: Infinity,
+          allowClear: true,
+          placeholder: '-',
+          width: '100%',
+          selectionCssClass: ':all:',
+          dropdownCssClass: ':all:'
+        });
+
+        $('#exterior_dia_bobbin_unit').select2({
+          minimumResultsForSearch: Infinity,
+          placeholder: '-',
+          width: '100%',
+          selectionCssClass: ':all:',
+          dropdownCssClass: ':all:'
+        });
+
+        $('#layers').select2({
+          minimumResultsForSearch: Infinity,
+          placeholder: 'Capas...',
+          width: '100%',
+          selectionCssClass: ':all:',
+          dropdownCssClass: ':all:'
+        });
+
+        $('#client').select2({
+          placeholder: 'Seleccione un Cliente...',
+          width: '100%',
+          selectionCssClass: ':all:',
+          dropdownCssClass: ':all:'
+        });
+    
+        $('#printer').select2({
+          minimumResultsForSearch: Infinity,
+          allowClear: true,
+          placeholder: 'Ninguna',
+          width: '100%',
+          selectionCssClass: ':all:',
+          dropdownCssClass: ':all:'
+        });
+
+        $('#core_dia_bobbin').select2({
+          minimumResultsForSearch: Infinity,
+          allowClear: true,
+          placeholder: '"',
+          width: '100%',
+          selectionCssClass: ':all:',
+          dropdownCssClass: ':all:'
+        });
+        
+        $('#unit').select2({
+          minimumResultsForSearch: Infinity,
+          placeholder: 'Unidad...',
+          width: '100%',
+          selectionCssClass: ':all:',
+          dropdownCssClass: ':all:'
+        });
+
+        function formatWinding (winding) {
+          if (!winding.id) {
+            return winding.text;
+          }
+          // Get the value for the company
+          var comp = $("#company").val()
+          if (!comp) {
+            comp = 'crx'
+          }
+          // Import icon index
+          var htmlString = '{% include "essays/icons/index.html" %}';
+          // Format to JQuery
+          var $index = $("<div>" + htmlString + "</div>");
+          // Select icon group by company
+          var $iconGroup = $index.find("#icons-" + comp);               
+          // Select the icon
+          var $icon = $iconGroup.find("#wd-"+ winding.element.value);
+
+          return $icon;
+        };
+
+        function formatPhotocell (photocell_side) {
+          if (!photocell_side.id) {
+            return photocell_side.text;
+          }          
+          // Import icon index
+          var htmlString = '{% include "essays/icons/index.html" %}';
+          // Format to JQuery
+          var $index = $("<div>" + htmlString + "</div>");  
+          // Select icon group
+          var $iconGroup = $index.find("#photocell"); 
+          // Select the icon
+          var $icon = $index.find("#p-"+ photocell_side.element.value);
+
+          return $icon;
+        };
+
+        $('#winding').select2({
+          templateResult: formatWinding,
+          minimumResultsForSearch: Infinity,
+          allowClear: true,
+          placeholder: 'N°',
+          width: '100%',
+          selectionCssClass: ':all:',
+          dropdownCssClass: ':all:'
+        });
+
+        $('#photocell_side').select2({
+          templateResult: formatPhotocell,
+          minimumResultsForSearch: Infinity,
+          allowClear: true,
+          placeholder: 'Seleccione...',
+          width: '100%',
+          selectionCssClass: ':all:',
+          dropdownCssClass: ':all:'
+        });
+
+        $( "#prw_char" ).click(function() {
+          var text = $( "#print_width" ).val();
+          $( "#print_width" ).val( text + "±" );
+          $( "#print_width" ).focus();
+        });
+
+        $( "#rep_char" ).click(function() {
+          var text = $( "#repetition" ).val();
+          $( "#repetition" ).val( text + "±" );
+          $( "#repetition" ).focus();
+        });
+
+        $( "#exdia_char" ).click(function() {
+          var text = $( "#exterior_dia_bobbin" ).val();
+          $( "#exterior_dia_bobbin" ).val( text + "±" );
+          $( "#exterior_dia_bobbin" ).focus();
+        });
+
+        $( "#wbo_char" ).click(function() {
+          var text = $( "#width_bobbin" ).val();
+          $( "#width_bobbin" ).val( text + "±" );
+          $( "#width_bobbin" ).focus();
+        });
+        $( "#dbo_char" ).click(function() {
+          var text = $( "#develop" ).val();
+          $( "#develop" ).val( text + "±" );
+          $( "#develop" ).focus();
+        });
+    });
+
+    $('#add_mores, #add_moresb').click(function () {
+      var sform_idx = parseInt($('#id_structures-TOTAL_FORMS').val());
+      $('#sform_set').append($('#sempty_form').html().replace(/__prefix__/g, sform_idx));
+      $('#id_structures-TOTAL_FORMS').val(parseInt(sform_idx) + 1);
+      max_sindex = parseInt(sform_idx)
+      if (max_sindex == 0){
+        $('#sindex').val('-1')
+        $('#print_selector').trigger('change');
+      }
+      
+      if(parseInt($('#sindex').val()) == -2){
+        $('#sindex').val('-1')
+      }
+
+      $('#id_structures-' + sform_idx + '-material_type').select2({
+        placeholder: 'Seleccione...',
+        width: '100%',
+        selectionCssClass: ':all:',
+        dropdownCssClass: ':all:',
+        ajax: {
+          url: '/x-material-types/',
+          dataType: 'json',
+          data: function (params) {
+            var queryParameters = {
+              f: params.term
+            }
+            return queryParameters;
+          },
+          processResults: function (data) {
+            return {
+              results: JSON.parse(data).map(function(item) {
+                return { id: item.pk, text: item.fields.name };
+              })
+            };
+          }
+        },
+        language: {
+          noResults: function () {
+            return "No hay resultados";
+          },
+          searching: function () {
+            return "Buscando...";
+          }
+        }
+      });
+
+      $('#id_structures-' + sform_idx + '-provider').select2({
+        placeholder: 'Seleccione...',
+        width: '100%',
+        selectionCssClass: ':all:',
+        dropdownCssClass: ':all:',
+        ajax: {
+          url: '/x-providers/',
+          dataType: 'json',
+          data: function (params) {
+            var queryParameters = {
+              f: params.term
+            }
+            return queryParameters;
+          },
+          processResults: function (data) {
+            return {
+              results: JSON.parse(data).map(function(item) {
+                return { id: item.pk, text: item.fields.name };
+              })
+            };
+          },
+        },
+        language: {
+          noResults: function () {
+            return "No hay resultados";
+          },
+          searching: function () {
+            return "Buscando...";
+          }
+        }
+      })
+  
+    });
+
+    $('#remove_s').click(function () {
+      var sform_idz = parseInt($('#id_structures-TOTAL_FORMS').val());
+       
+      
+      if(sform_idz > sform_minlimit){
+        sform_idz = sform_idz - 1;
+        $('#strow-' + sform_idz).remove();
+        $('#id_structures-TOTAL_FORMS').val(parseInt(sform_idz));
+        max_sindex = parseInt(sform_idz) - 1;
+        if(sform_idz == 0){
+          $('#sindex').val('-2');
+          $('#print_selector').trigger('change');
+        }
+      }
+    });
+
+ 
+    let sform_minlimit = 0 //parseInt($('#id_structures-TOTAL_FORMS').val());
+</script>
+{% if entry_element %}
+<script>
+  $(document).ready(function () {
+    $('#elaborator').val("{{ entry_element.elaborator }}");
+    $('#product').val("{{ entry_element.product }}").prop('readonly', true);
+    $('#design').val("{{ entry_element.design }}").prop('readonly', true);
+    if ({{ entry_element.check_test_client|yesno:"true,false" }}) {
+      $('#check_test_client').prop('checked', true);
+      $('#test_client').val("{{ entry_element.test_client }}");
+      $('#test-client').show();
+      $('#normal-client').hide();
+      $('#test_client').prop('required', true);
+      $('#client').prop('required', false);
+      $('#client').val(null).trigger('change');
+      $('#test_client').prop('readonly', true);
+    } else {
+      $('#client').find('option[value="{{ entry_element.client.id }}"]').prop('selected', true).trigger('change');
+      
+      $('#client').next('.select2-container').addClass('select2-container--readonly');
+      $('#client').on('select2:opening select2:unselecting', function(e) { e.preventDefault(); });
+      } 
+  });
+</script>
+{% endif %}
+{% endblock content %}

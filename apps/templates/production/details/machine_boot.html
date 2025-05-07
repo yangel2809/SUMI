@@ -1,0 +1,93 @@
+{% load tz %}
+{% load home_tags %}
+
+<!---------------------------------[Content Start]--------------------------------->
+{% if order_obj.sale_order.plan.company == 'mcl' %}
+<style>
+  :root {
+    --mc-color: #946037;
+    --mc-selection: #ad7e5a;
+    --mc-shadow-color: #94603780;
+    --mc-calendar-today: #94603780;
+    --critical-color: #94603769;
+    --mc-hover-color: #94603759;
+  }
+</style>
+<script>$('meta[name="theme-color"]').attr('content', '#946037')</script>
+{% endif %}
+<div class="tabbed-content" id="parent-content">
+  {% if tab == 'printer_boot' %}
+  {% include 'production/details/printer.html' %}
+  {% elif tab == 'laminator_boot' %} 
+  {% include 'production/details/laminator.html' %}
+  {% endif %}
+</div>
+{% for report, result_cols, bobbin_id in objects %}
+<div class="tabbed-content" id="child-content-{{ forloop.counter0 }}" style="display: none;">
+  <div class="d-flex flex-row flex-wrap justify-content-between px-1 px-md-3">
+    <div class="d-flex flex-sm-row{% if test_request_obj.company == 'mcl' %}-reverse{% endif %} flex-column{% if not test_request_obj.company == 'crx' %}-reverse{% endif %} user-select-none">
+      <div class="p-1">
+        {% if order_obj.sale_order.plan.company == 'mcl' %}
+          <img alt="Morrocel c.a RIF:J-06000377-6" width="220em" src="{{ ASSETS_ROOT }}/img/logo_mcl.svg" />
+        {% else %}
+          <img alt="Curex c.a RIF:J-00074598-6" width="220em" src="{{ ASSETS_ROOT }}/img/logo_crx.svg" />
+        {% endif %}
+      </div>
+    </div>
+    <div class="d-flex flex-column align-items-end">
+      <p class="text-end m-0 mb-n1 fw-bolder text-xxs">
+        F-ASC-L02
+      </p>
+      <p class="text-end m-0 mb-n1 fw-bolder text-xxs">
+        REV-9
+      </p>
+      <p class="text-end m-0 mb-n1 fw-bolder text-xxs text-uppercase">
+        30/NOV/2017
+      </p>
+    </div>
+    <h3 class="col-12 text-center mb-1 mt-2 fw-bold text-primary" style="line-height: 1;">
+      Reporte de Control de Calidad{% if tab == 'printer_boot' %}: Impresión{% elif tab == 'laminator_boot' %} de LAM Paso: {{ laminator_boot_obj.step }}{% endif %}</h3>
+  </div>
+  
+  <div class="row px-1 px-md-3">
+    <div class="d-flex flex-wrap justify-content-between gap-3 mb-n2 mt-2">
+      <div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Pedido N°</label>
+        <p class="ps-1 mb-0 fw-bold">{{ order_obj.sale_order.number }}</p>
+      </div>
+      <div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Cliente</label>
+        <p class="ps-1 mb-0 fw-bold">
+          {{ order_obj.sale_order.plan.client }}
+        </p>
+      </div>
+      <div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Producto</label>
+        <p class="ps-1 mb-0 fw-bold">{{ order_obj.sale_order.plan.product }}</p>
+      </div>
+      
+      <div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Código GP</label>
+        <p class="ps-1 mb-0 fw-bold">{{ order_obj.sale_order.plan.gp_code }}</p>
+      </div>
+      <div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Órden de producción</label>
+        <p class="ps-1 mb-0 fw-bold">OP-{{ order_obj.number }}</p>
+      </div>
+      <div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Turno</label>
+        <p class="ps-1 mb-0 fw-bold">{{ report.turn }}</p>
+      </div>
+      <div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Fecha</label>
+        <p class="ps-1 mb-0 fw-bold text-uppercase">{{ report.date|date:"d/b/Y" }}</p>
+      </div>
+    </div>
+
+    <!-- Essays -->
+    {% include 'production/details/essay-table.html' %}
+    
+    {% include 'production/details/file-footer.html' %}
+
+  </div>
+  
+</div>
+{% endfor %}
+{% if tab == 'printer_boot' %}
+  {% include "production/details/action-pill.html" with title="Impresión" machine_obj="printer" obj_id=printer_boot_obj.id edit_boot=perms.essays.change_printerboot export_boot=perms.essays.export_boot delete_boot=perms.essays.delete_printerboot %}
+{% elif tab == 'laminator_boot' %} 
+  {% include "production/details/action-pill.html" with title="Laminación" machine_obj="laminator" obj_id=laminator_boot_obj.id edit_boot=perms.essays.change_laminatorboot export_boot=perms.essays.export_boot delete_boot=perms.essays.delete_laminatorboot %}
+{% endif %}

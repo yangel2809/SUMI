@@ -1,0 +1,242 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<!-- form_view.html -->
+{% if order_obj.sale_order.plan.company == 'mcl' %}
+<style>:root {--mc-color: #946037;--mc-selection: #ad7e5a;--mc-shadow-color: #94603780;--mc-calendar-today: #94603780;--critical-color: #94603769;--mc-hover-color: #94603759;}</style>
+<script>$('meta[name="theme-color"]').attr('content', '#946037')</script>
+{% endif %}
+<link href="{{ ASSETS_ROOT }}/css/essay-material-form.css" rel="stylesheet" />
+<div class="container-fluid pt-1 px-sm-4 px-3 pb-3">
+	<div class="row min-vh-80 h-100">
+		<div class="col-12 px-0 px-md-2">
+			<div class="card my-4">
+				<div class="card-header p-0 position-relative mt-n4 mx-2 mx-md-3 z-index-2" style="user-select: none">
+					<div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2">
+						<div class="mt-2 text-center">
+							<h4 class="text-white text-center font-weight-bolder me-3">{% if 'edit' in request.get_full_path %}Editar
+								{% endif %}Reporte de Control de Calidad de {% if boot_obj.step %}LAM Paso:{{ boot_obj.step }}{% elif boot_obj %}Impresión{% endif %}</h5>
+						</div>
+					</div>
+					<div class="card-body px-md-0 px-2 py-2">
+						<div class="form-group d-flex input-group input-group-outline">
+							<form class="form col-12" method="POST" style="user-select: none">
+								{% csrf_token %}
+								<div class="row px-1 px-md-3">
+
+									<div class="d-flex flex-wrap justify-content-between gap-3 pb-2 mt-2">
+
+										<div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Pedido N°</label>
+											<p class="ps-1 mb-0 fw-bold">{{ order_obj.sale_order.number }}</p>
+										</div>
+
+										<div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Cliente</label>
+											<p class="ps-1 mb-0 fw-bold">
+												{{ order_obj.sale_order.plan.client }}
+											</p>
+										</div>
+
+										<div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Producto</label>
+											<p class="ps-1 mb-0 fw-bold">{{ order_obj.sale_order.plan.product }}</p>
+										</div>
+										
+										<div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Código</label>
+											<p class="ps-1 mb-0 fw-bold">{{ order_obj.sale_order.plan.gp_code }}</p>
+										</div>
+
+										<div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Prueba N°</label>
+											<p class="ps-1 mb-0 fw-bold">{{ boot_obj.production_order.number }}</p>
+										</div>
+
+										<div class="d-flex flex-column flex-grow-1"><label class="text-primary fw-bold mb-0" for="turn">Turno</label>
+											{{ form.turn }}
+										</div>
+
+										<div class="d-flex flex-column flex-grow-1"><label class="text-primary fw-bold mb-0" for="date">Fecha</label>
+											{{ form.date }}
+										</div>
+										
+									</div>
+
+									<!-- formset -->
+									{% if not "edit" in request.get_full_path %}
+										{% include 'production/forms/formsets/test_file_essay.html' %}
+									{% endif %}
+																									
+									
+									<h6 class="fw-bold text-primary m-0">Observaciones</h6>
+									<br>
+									<div class="col-12">{{ form.observation }}</div>
+									
+									<div class="d-flex flex-wrap justify-content-center gap-3 pt-3">
+										<div class="d-flex flex-column flex-grow-1"><label for="quality_analist">Analista Inspector</label>
+											{{ form.quality_analist }}</p>
+										</div>
+										<div class="d-flex flex-column flex-grow-1"><label for="production_operator">Personal de Producción</label>
+											{{ form.production_operator }}</p>
+										</div>
+									</div>
+									<hr>
+									<div class="d-flex flex-wrap justify-content-center gap-3">
+										{% if perms.essays.boss_sign_testfile or perms.essays.supv_sign_testfile or perms.essays.idat_sign_testfile %}
+										<div class="d-flex flex-column flex-grow-1"><label for="supervisor">Rev. Sup. ASCA</label>
+											{{ form.supervisor }}
+										</div>
+										<div class="d-flex flex-column flex-grow-1"><label for="boss">Aprobado Jefe/Gerente</label>
+											{{ form.boss }}
+										</div>
+										{% endif %}
+									</div>
+								</div>
+
+								<div class="d-flex flex-wrap justify-content-center gap-2 pt-3">
+									<button class="btn btn-primary" type="submit">Guardar</button>
+									<button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#cancelModal">
+										Cancelar
+									  </button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel"
+aria-labelledby="TrueDelete" aria-hidden="true" style="user-select: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: var(--mc-color) !important;">
+        <h5 class="modal-title fw-bold text-white" id="cancelModalLabel">Confirmación de Cancelación</h5>
+      </div>
+      <div class="modal-body">
+        ¿Estás seguro de que quieres cancelar?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="mb-1 btn btn-secondary" data-bs-dismiss="modal">No</button>
+        <button type="button" class="mb-1 btn btn-primary" onClick="window.history.back();">Sí, cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+	let p = 0;
+  
+	$("select[name*='-essay']").each(function () {
+	  
+	  $('#id_essays-' + p + '-essay').select2({
+		allowClear: true,
+		placeholder: 'Seleccione...',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	  });
+  
+	  p++
+	});
+
+	$(document).ready(function(){
+
+	    $('#add_more, #add_more_b').click(function () {
+			var form_id_x = parseInt($('#id_essays-TOTAL_FORMS').val());
+			$('#form_set').append($('#empty_form').html().replace(/__prefix__/g, form_id_x));
+			$('#id_essays-TOTAL_FORMS').val(parseInt(form_id_x) + 1);
+			$('#id_results-TOTAL_FORMS').val(parseInt(form_id_x) + 1);
+			
+			$('#id_essays-' + form_id_x + '-essay').select2({
+			  allowClear: true,
+			  placeholder: 'Seleccione...',
+			  width: '100%',
+			  selectionCssClass: ':all:',
+			  dropdownCssClass: ':all:'
+			});
+		
+		});
+	  
+		$('#remove').click(function () {
+			var form_id_z = parseInt($('#id_essays-TOTAL_FORMS').val());
+			if(form_id_z > form_minlimit){
+			  form_id_z = form_id_z - 1
+			  $('#form-row-' + form_id_z).remove();
+			  $('#id_essays-TOTAL_FORMS').val(parseInt(form_id_z));
+			  $('#id_results-TOTAL_FORMS').val(parseInt(form_id_z));
+			}
+		});
+	   
+		$('#adhesive').select2({
+			allowClear: true,
+			placeholder: 'Seleccione...	',
+			width: '100%',
+			selectionCssClass: ':all:',
+			dropdownCssClass: ':all:',
+			ajax: {
+				url: "{% url 'x-materials' %}",
+				type: "GET",
+				dataType: 'json',
+				data: function (params) {
+					  var queryParameters = {
+						  q: '4',
+						  f: params.term
+					  }
+					  return queryParameters;
+				  },
+				  processResults: function (data) {
+					  return {
+						  results: $.map(data, function (item) {
+							if (item.name == item.material_type__name){
+							  var name = item.provider__name;
+							}else{
+							  var name = item.name + ' - ' + item.provider__name;
+							};
+							return {
+								text: name,
+								id: item.pk
+							  }
+						  })
+					  };
+				  }
+			  },
+			  language: {
+				noResults: function () {
+				  return "No hay resultados";
+				},
+				searching: function () {
+				  return "Buscando...";
+				}
+			  }
+		});
+		
+		$('#turn').select2({
+			minimumResultsForSearch: Infinity,
+			placeholder: '...',
+			width: '100%',
+			selectionCssClass: ':all:',
+			dropdownCssClass: ':all:'
+		});
+		$( "#date" ).datepicker( {
+			showOtherMonths: "true",
+			selectOtherMonths: "true",
+		  },$.datepicker.regional[ "es" ] );
+		
+		$('#quality_analist').select2({
+			allowClear: true,
+			placeholder: 'Seleccione...',
+			width: '100%',
+			selectionCssClass: ':all:',
+			dropdownCssClass: ':all:'
+		});		
+		$('#production_operator').select2({
+			allowClear: true,
+			placeholder: 'Seleccione...',
+			width: '100%',
+			selectionCssClass: ':all:',
+			dropdownCssClass: ':all:'
+		});
+	});
+	let form_minlimit = parseInt($('#id_essays-TOTAL_FORMS').val());
+</script>
+
+{% endblock content %}

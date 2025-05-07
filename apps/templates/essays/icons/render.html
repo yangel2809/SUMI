@@ -1,0 +1,91 @@
+{% load home_tags %}
+{% if title %}
+  <h6 class="text-center text-primary fw-bold m-0">{{ title }}</h6>
+{% endif %}
+{% if description and not photocell %}
+  <p class="mb-1 fw-bold text-left text-sm-center">
+    {% if winding %}<x class="text-dark">Posición N°{{ winding }}, {% endif %}</x>{{ description }}
+  </p>
+{% elif description and not winding %}
+  <p class="mb-1 fw-bold text-left text-sm-center">
+    {% if photocell %}<x class="text-dark">{{ photocell_dsp }}, {% endif %}</x>{{ description }}
+  </p>
+{% elif description and photocell and winding %}
+  <p class="mb-1 fw-bold text-left text-sm-center">
+    <x class="text-dark">Posición N°{{ winding }}</x>, {{ photocell_dsp }}, {{ description }}
+  </p>
+{% elif not description and photocell and winding %}
+  <p class="mb-1 fw-bold text-left text-sm-center">
+    <x class="text-dark">Posición N°{{ winding }}</x>, {{ photocell_dsp }}
+  </p>
+{% elif not description and photocell and not winding %}
+  <p class="mb-1 fw-bold text-left text-sm-center">
+    <x class="text-dark">{{ photocell_dsp }}</x>
+  </p>
+{% endif %}
+{% if winding and not photocell %}
+<div class="d-flex flex-wrap justify-content-center " style="user-select: none;">
+  {% if set == "mcl" %}
+  
+  <div class="col-12 mb-0 mb-md-2 mb-xl-4 d-flex justify-content-between ">
+  {% include 'essays/icons/mcl/1.svg' %}
+  {% include 'essays/icons/mcl/2.svg' %}
+  {% include 'essays/icons/mcl/3.svg' %}
+  {% include 'essays/icons/mcl/4.svg' %}
+  </div>
+
+  <div class="col-12 d-flex justify-content-between ">
+  {% include 'essays/icons/mcl/5.svg' %}
+  {% include 'essays/icons/mcl/6.svg' %}
+  {% include 'essays/icons/mcl/7.svg' %}
+  {% include 'essays/icons/mcl/8.svg' %}
+  </div>
+
+{% else %}
+<div class="col-12 mb-sm-3 mb-0 mb-md-2 mb-xl-4 d-flex justify-content-between ">
+  {% include 'essays/icons/crx/1.svg' %}
+  {% include 'essays/icons/crx/2.svg' %}
+  {% include 'essays/icons/crx/3.svg' %}
+  {% include 'essays/icons/crx/4.svg' %}
+</div>
+<div class="col-12 d-flex justify-content-between ">
+  {% include 'essays/icons/crx/5.svg' %}
+  {% include 'essays/icons/crx/6.svg' %}
+  {% include 'essays/icons/crx/7.svg' %}
+  {% include 'essays/icons/crx/8.svg' %}
+</div>
+{% endif %}
+</div>
+<script>
+  $(document).ready(function(){
+    $('#wd-{{ winding }}').addClass('winding-icon-selected-high')
+  })
+</script>
+{% elif photocell and not winding %}
+
+<div class="col-12 d-flex justify-content-center">
+{% with icon='essays/icons/pw'|add:photocell|add:'.svg' %}
+{% include icon %}
+{% endwith %}
+</div>
+<script>
+  $(document).ready(function(){
+    $('#p-{{ photocell }}').addClass('winding-icon-selected')
+    $('.winding-icon').addClass('winding-icon-lg')
+  })
+</script>
+{% elif photocell %}
+<div class="col-12 d-flex justify-content-center">
+  {% with icon='essays/icons/pw'|add:photocell|add:'.svg' wd='essays/icons/'|add:set|add:'/'|add:winding|add:'.svg' %}
+  {% include wd %}
+  {% include icon %}
+  {% endwith %}
+  <script>
+    $(document).ready(function(){
+      $('#wd-{{ winding }}').addClass('winding-icon-selected')
+      $('#p-{{ photocell }}').addClass('winding-icon-selected')
+      $('.winding-icon').addClass('winding-icon-lg')
+    })
+  </script>
+</div>
+{% endif %}
