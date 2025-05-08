@@ -13,6 +13,7 @@ urlpatterns = [
     # The index
     path('entry_elements/', indexEntryElement.as_view(), name='entry_element'),
     path('test_requests/', views.indexTestRequest, name='test_request'),
+    path('test_requests_art/', views.indexTestRequestArt, name='test_request_art'),
     path('exit_elements/', indexExitElement.as_view(), name='exit_element'),
     path('personal/<str:set>/', indexPersonal, name='personal'),
     #path('art_requests/', views.indexArtRequest, name='art_request'),  # Nueva ruta

@@ -450,6 +450,86 @@ def indexTestRequest(request):
     
     return render(request, 'essays/tables-test_request.html', context)
 
+@login_required(login_url="/login/")
+@permission_required('essays.view_testrequest', raise_exception=True)
+def indexTestRequestArt(request):
+
+    header = request.GET.get('header') or request.session.get('header')
+    if header == "deleted":
+        test_request_obj = TestRequest.objects.filter(deleted=True).order_by('-number')
+        tab = 'deleted'
+    elif header == "archived":
+        test_request_obj = TestRequest.objects.filter(archived=True).order_by('-number')
+        tab = 'archived'
+    elif header == "review":
+        test_request_obj = TestRequest.objects.exclude(Q(deleted=True)|Q(archived=True)|Q(closed=True)).filter(reviewer=None).order_by('-number')
+        tab = 'review'
+    elif request.GET.get('touched') != 'closed':
+        test_request_obj = TestRequest.objects.exclude(Q(deleted=True)|Q(archived=True)|Q(closed=True)).exclude(reviewer=None).order_by('-number')
+        tab = 'main'
+        segment = 'requests_art'
+    
+    if request.session.get('header'):
+        request.session['header'] = None
+
+    touched = request.GET.get('touched')
+    if touched:
+        if touched != 'closed':
+            val = touched == 'True'
+            if val == False:
+                #solicitud
+                segment = 'requests_art'
+                order = '-number'
+            else:
+                #expedientes
+                segment = 'test_request'
+                order = '-production_order'
+
+            test_request_obj = test_request_obj.filter(Q(touched=val)).order_by(order)
+        else:
+            tab = 'main'
+            segment = 'closed_test_request'
+            order = '-production_order'
+
+            test_request_obj = TestRequest.objects.filter(Q(closed=True)).order_by(order)
+
+    else:
+        segment = 'requests_art'
+        test_request_obj = test_request_obj.filter(Q(touched=False))
+
+    search_text = request.GET.get('search_text')
+    if search_text:
+        test_request_obj = test_request_obj.filter(
+            Q(product__icontains=search_text)|
+            Q(number__icontains=search_text)|
+            Q(production_order__icontains=search_text)|
+            Q(client__name__icontains=search_text)|
+            Q(test_client__icontains=search_text)
+        )
+
+    test_request_filter = TestRequestFilter(request.GET, queryset=test_request_obj)
+    test_request_obj = test_request_filter.qs
+        
+    paginator = Paginator(test_request_obj, per_page=15, orphans=2)
+    page_number = request.GET.get('page')
+    test_request_list = paginator.get_page(page_number)
+
+    context={
+        'objects':test_request_list,
+        'test_request_filter':test_request_filter,
+        'segment': segment,
+        'table': 'essays/tables/test_request_art.html',
+        'search': True,
+        'tab':tab
+    }
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        table_html = render_to_string('essays/tables/test_request_art.html', context, request)
+        paginator_html = render_to_string('includes/paginator.html', context, request)
+        return JsonResponse({'table_html': table_html, 'paginator_html': paginator_html})
+    
+    return render(request, 'essays/tables-test_request_art.html', context)
+
 @login_required(login_url='/login/')
 @permission_required('essays.view_entryelement', raise_exception=True)
 def viewEntryElement(request, pk):
