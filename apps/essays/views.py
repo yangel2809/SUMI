@@ -574,6 +574,8 @@ def viewEntryElement(request, pk):
         'entry_first':True,
         'segment': segment,
     }
+    print(context)
+    print(entry_element_obj)
     if entry_element_obj.has_test_request:
         context.update({
             'structure_list':structure_list,
@@ -647,6 +649,61 @@ def viewTestRequest(request, pk):
         return JsonResponse({'content_html': content_html})
     
     return render(request, 'essays/details-test_request.html', context)
+
+@login_required(login_url='/login/')
+@permission_required('essays.view_testrequest', raise_exception=True)
+def viewTestRequestArt(request, pk):
+    
+    test_request_obj = get_object_or_404(TestRequest, pk=pk)
+    segment = 'test_request_art'
+    back = '/test_requests_art/?touched=True'
+
+    if test_request_obj.closed == True:
+        segment = 'closed_test_request_art'
+    elif test_request_obj.touched == False:
+        segment = 'requests_art'
+        back = '/test_requests_art/?touched=False'
+    if 'next' in request.GET:
+        back =+ request.GET.get('next')
+    if 'back' in request.GET:
+        back = request.GET.get('back')
+    if test_request_obj.deleted and not request.user.has_perm('essays.view_deleted_testrequest'):
+        return render(request, 'errors/404.html', status=404)
+    
+    structure_list = TestStructure.objects.filter(test_request__pk=pk)
+    sustrate = None
+    if structure_list and test_request_obj.sindex >= 0:
+        sustrate = structure_list[test_request_obj.sindex]
+    printer_boot = PrinterBoot.objects.filter(test_request__pk=pk)
+    lamination_boot = LaminatorBoot.objects.filter(test_request__pk=pk)
+    cutter_boot = CutterBoot.objects.filter(test_request__pk=pk)
+    spec_extra = TechnicalSpecs.objects.filter(test_request=test_request_obj).first()
+    annexes = Annex.objects.filter(test_request__pk=pk)
+
+    content = 'essays/details/test_request_art.html'
+    
+    context = {
+        'test_request_obj':test_request_obj,
+        'structure_list':structure_list,
+        'entry_element_obj':test_request_obj.entry_element,
+        'sustrate':sustrate,
+        'printer_boot':printer_boot,
+        'lamination_boot':lamination_boot,
+        'cutter_boot':cutter_boot,
+        'spec_extra':spec_extra,
+        'annexes':annexes,
+        'segment': segment,
+        'tab':'main',
+        'back': back,
+        'content':content
+    }
+    
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        content_html = render_to_string(content, context, request)
+        
+        return JsonResponse({'content_html': content_html})
+    
+    return render(request, 'essays/details-test_request_art.html', context)
 
 @login_required(login_url='/login/')
 @permission_required('essays.view_entryelement', raise_exception=True)
@@ -1002,6 +1059,47 @@ def cloneTestRequest(request, pk):
 @login_required(login_url='/login/')
 @permission_required('essays.add_testrequest', raise_exception=True)#type:ignore
 @transaction.atomic
+def cloneTestRequestArt(request, pk):
+    with CaptureQueriesContext(connection) as context:
+
+        test_request = TestRequest.objects.get(id=pk)
+        test = TestStructure.objects.filter(test_request__pk=pk)
+
+        test_request.id = get_id(TestRequest) #type:ignore
+        test_request.entry_element = None
+        test_request.deleted = False
+        test_request.deleted_by = None
+        test_request.deleted_time = None
+        test_request.deleted_reason = None
+        test_request.archived = False
+        test_request.archived_time = None
+        test_request.closed = False
+        test_request.closed_time = None
+        test_request.touched = False
+        test_request.number = None
+        test_request.production_order = ''
+        test_request.reviewer = None
+
+        test_request.save()
+
+        test_request_id = test_request
+
+        new_tests = []
+        for ts in test:
+            ts.id = None #type:ignore
+            ts.test_request = test_request_id #type:ignore
+            new_tests.append(ts)
+
+        TestStructure.objects.bulk_create(new_tests)
+
+        #print(f"The function made {len(context)} queries.")
+
+    request.session['header'] = 'review'
+    return redirect('test_request_art')
+
+@login_required(login_url='/login/')
+@permission_required('essays.add_testrequest', raise_exception=True)#type:ignore
+@transaction.atomic
 def addTestRequest (request, entry_element_id=None):
     
     form = TestRequestForm(request.POST or None)
@@ -1073,7 +1171,7 @@ def editTestRequest (request, pk):
     #elif not request.user.is_superuser and obj.touched:
     #    return render(request, 'errors/403.html', status=403)
     form = TestRequestForm(request.POST or None, instance=obj)
-    sformset = TestStructureFormset(request.POST or None, instance = obj, prefix='structures')
+    sformset = TestStructureFormset(request.POST or None, prefix='structures')
 
     context = {'form': form,'sformset': sformset, 'segment':segment, 'entry_element':entry_element, 'back': True}
     if request.method == 'POST':
@@ -1119,11 +1217,81 @@ def editTestRequest (request, pk):
             return redirect('/test_requests/?touched=False')
         else:
             for err in form.errors:
-                print(err)
+                return redirect('/test_requests/?touched=False')
+    else:
+        for err in form.errors:
+            print(err)
     return render(request, 'essays/form-test_request.html', context)
 
 @login_required(login_url='/login/')
-@permission_required('essays.delete_testrequest', raise_exception=True)#type:ignore
+@permission_required('essays.change_testrequest', raise_exception=True)#type:ignore
+@transaction.atomic
+def editTestRequestArt(request, pk):
+    
+    obj = get_object_or_404(TestRequest, pk=pk)
+    
+    try:
+        entry_element = obj.entry_element
+    except:
+        entry_element = None
+
+    segment = 'test_request_art'
+    if obj.deleted or \
+    (obj.reviewer and not request.user.has_perm('essays.sign_testrequest')):
+        return render(request, 'errors/403.html', status=403)
+    if obj.touched == False:
+        segment = 'requests_art'
+    #elif not request.user.is_superuser and obj.touched:
+    #    return render(request, 'errors/403.html', status=403)
+    form = TestRequestForm(request.POST or None, instance=obj)
+    sformset = TestStructureFormset(request.POST or None, instance = obj, prefix='structures')
+
+    context = {'form': form,'sformset': sformset, 'segment':segment, 'entry_element':entry_element, 'back': True}
+    if request.method == 'POST':
+        if form.is_valid() and sformset.is_valid():
+            test_request = form.save(commit=False)
+            #validation
+            if test_request.art_number:
+                test_request.art_number = test_request.art_number.upper()
+            
+            #add if update date true from the request
+            if request.POST.get('update_date'):
+                test_request.date = timezone.now()
+            
+            if not test_request.number:
+                last = TestRequest.objects.exclude(deleted=True).exclude(pk=pk).order_by('-number')[0]
+                test_request.number = set_tr_number(last.number) #type:ignore
+
+            if not request.user.has_perm('essays.sign_testrequest'):
+                test_request.reviewer = obj.reviewer or None
+
+            test_request.save(force_update=True)
+
+            sform = sformset.save(commit=False)
+
+            for rms in sformset.deleted_objects:
+                rms.delete()
+
+            for structure in sform:
+                if not structure.id:
+                    structure.test_request = test_request
+                if structure.code is not None:
+                    structure.code = structure.code.upper()
+                structure.save() 
+
+            action = bool(request.POST.get('save_and_view'))
+            
+            if action == True:
+                return redirect('view_test_request_art', test_request.id)
+            
+            if 'next' in request.GET:
+                return redirect(request.GET.get('next'))
+            
+            return redirect('/test_requests_art/?touched=False')
+        else:
+            for err in form.errors:
+                print(err)
+    return render(request, 'essays/form-test_request.html', context)
 def deleteTestRequest(request, pk):
     test_request = get_object_or_404(TestRequest, pk=pk)
      
@@ -1251,7 +1419,135 @@ def openTestRequest(request, pk):
     
     return redirect('/test_requests/?touched=closed')
 
-#----------------------------------------------------------------->
+@login_required(login_url='/login/')
+@permission_required('essays.delete_testrequest', raise_exception=True)#type:ignore
+def deleteTestRequestArt(request, pk):
+    test_request = get_object_or_404(TestRequest, pk=pk)
+     
+    if test_request.deleted or \
+    (test_request.reviewer and not request.user.has_perm('essays.sign_testrequest')):
+        return render(request, 'errors/403.html', status=403)
+    if not request.user.is_superuser and test_request.touched:
+        return render(request, 'errors/404.html', status=404)
+        
+    test_request.deleted = True
+    test_request.deleted_by = request.user.username
+    test_request.deleted_reason = request.POST.get('deleted_reason')
+    test_request.deleted_time = timezone.now()
+
+    test_request.save()
+
+    #something to redirect to unsigned test request
+    if 'next' in request.GET:
+        return redirect(request.GET.get('next'))
+        
+    return redirect('/test_requests_art/?touched=False') 
+    
+@login_required(login_url='/login/')
+@permission_required('essays.delete_true_testrequest', raise_exception=True)#type:ignore
+def deleteTrueTestRequestArt(request, pk):
+    test_request = get_object_or_404(TestRequest, pk=pk)
+    if not test_request.deleted:
+        return render(request, 'errors/400.html', status=400)
+    if request.method == 'POST':
+        test_request.delete()
+    return redirect('/test_requests_art/?touched=False')
+    
+@login_required(login_url='/login/')
+@permission_required('essays.restore_testrequest', raise_exception=True)
+def restoreTestRequestArt(request, pk):
+
+    obj = get_object_or_404(TestRequest, pk=pk)
+
+    obj.deleted = False
+    obj.deleted_reason = None
+    obj.deleted_by = None
+    obj.deleted_time = None
+    obj.save()
+    
+    if 'next' in request.GET:
+        return redirect(request.GET.get('next'))
+    
+    return redirect('/test_requests_art/?touched=False')
+
+@login_required(login_url='/login/')
+@permission_required('essays.close_testrequest', raise_exception=True)
+def closeTestRequestArt(request, pk):
+
+    obj = get_object_or_404(TestRequest, pk=pk)
+
+    if obj.deleted == True:
+        return render(request, 'errors/403.html', status=403)
+    
+    obj.closed = True
+    obj.closed_time = timezone.now()
+    
+    obj.save()
+    
+    if 'next' in request.GET:
+        return redirect(request.GET.get('next'))
+    
+    return redirect('/test_requests_art/?touched=closed')
+
+@login_required(login_url='/login/')
+@permission_required('essays.archive_testrequest', raise_exception=True)
+def archiveTestRequestArt(request, pk):
+
+    obj = get_object_or_404(TestRequest, pk=pk)
+
+    if obj.deleted == True:
+        return render(request, 'errors/403.html', status=403)
+    
+    obj.archived = True
+    obj.archived_time = timezone.now()
+    
+    obj.save()
+    
+    request.session['header'] = 'archived'
+
+    if 'next' in request.GET:
+        return redirect(request.GET.get('next'))
+    
+    return redirect('/test_requests_art/?touched=false')
+
+@login_required(login_url='/login/')
+@permission_required('essays.unarchive_testrequest', raise_exception=True)
+def unarchiveTestRequestArt(request, pk):
+
+    obj = get_object_or_404(TestRequest, pk=pk)
+
+    if obj.deleted == True:
+        return render(request, 'errors/403.html', status=403)
+    
+    obj.archived = False
+    obj.archived_time = None
+    
+    obj.save()
+    
+    if 'next' in request.GET:
+        return redirect(request.GET.get('next'))
+    
+    return redirect('/test_requests_art/?touched=false')
+
+@login_required(login_url='/login/')
+@permission_required('essays.open_testrequest', raise_exception=True)
+def openTestRequestArt(request, pk):
+
+    obj = get_object_or_404(TestRequest, pk=pk)
+
+    if obj.deleted == True:
+        return render(request, 'errors/403.html', status=403)
+    
+    obj.closed = False
+    obj.closed_time = None
+    
+    obj.save()
+    
+    if 'next' in request.GET:
+        return redirect(request.GET.get('next'))
+    
+    return redirect('/test_requests_art/?touched=closed')
+
 #Printer Boot----------------------------------------------------->
 @login_required(login_url='/login/')
 @permission_required('essays.add_printerboot', raise_exception=True)#type:ignore

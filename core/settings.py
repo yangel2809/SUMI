@@ -198,7 +198,7 @@ WSGI_APPLICATION = "core.wsgi.application"
 DATABASES = {
   'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'dataservidor.sqlite',
+        'NAME': 'prueba_migrada.sqlite3',
     },
     # '': {
     #     'ENGINE': 'mssql',

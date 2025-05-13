@@ -46,6 +46,19 @@ urlpatterns = [
     path('test_requests/<str:pk>/archive/', archiveTestRequest, name='archive_test_request'),
     path('test_requests/<str:pk>/unarchive/', unarchiveTestRequest, name='unarchive_test_request'),
 
+    #Test Request Art
+    #re_path(r'^test_requests_art/add(?:/(?P<entry_element_id>\d+))?/$', addTestRequestArt, name='add_test_request_art'),
+    path('test_requests_art/<str:pk>/', viewTestRequestArt, name='view_test_request_art'),
+    path('test_requests_art/<str:pk>/clone/', cloneTestRequestArt, name='clone_test_request_art'),
+    path('test_requests_art/<str:pk>/edit/', editTestRequestArt, name='edit_test_request_art'),
+    path('test_requests_art/<str:pk>/delete/', deleteTestRequestArt, name='delete_test_request_art'),
+    path('test_requests_art/<str:pk>/restore/', restoreTestRequestArt, name='restore_test_request_art'),
+    path('test_requests_art/<str:pk>/deleteTrue/', deleteTrueTestRequestArt, name='delete_true_test_request_art'),
+    path('test_requests_art/<str:pk>/close/', closeTestRequestArt, name='close_test_request_art'),
+    path('test_requests_art/<str:pk>/open/', openTestRequestArt, name='open_test_request_art'),
+    path('test_requests_art/<str:pk>/archive/', archiveTestRequestArt, name='archive_test_request_art'),
+    path('test_requests_art/<str:pk>/unarchive/', unarchiveTestRequestArt, name='unarchive_test_request_art'),
+
     #Printer Boot
     path('test_requests/<str:pk>/printer/<str:ck>/', viewPrinterBoot, name='view_printer_boot_tr'),
     path('test_requests/<str:tr>/printer/', addPrinterBootTR, name='add_printer_boot_tr'),
