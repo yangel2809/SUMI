@@ -1,8 +1,16 @@
 @echo off
 
-cd D:\SUMI
-call D:\SUMI\env\Scripts\activate.bat
+REM Navega al directorio del script
+cd /d "%~dp0"
 
-python mange.py runserver 192.168.5.202:9000
+REM Activa el entorno virtual
+call env\Scripts\activate.bat
 
+REM instala las dependencias necesarias
+pip install -r requirements.txt
+
+REM Ejecuta el servidor Django en la IP y puerto deseados
+python manage.py runserver 0.0.0.0:9000
+
+REM Mantiene la ventana abierta
 cmd /k
