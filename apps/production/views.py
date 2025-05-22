@@ -17,7 +17,7 @@ from django.template.loader import render_to_string
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.decorators import login_required, permission_required
 #app imports------------------------------------------------------->
-from apps.essays.models import Annex, TestRequest, PrinterBoot as EssaysPrinterBoot, LaminatorBoot as EssaysLaminatorBoot, LaminationEssay as EssaysLaminationEssay, TestFile as EssaysTestFile, TestFileEssay as EssaysTestFileEssay, TestFileEssayResult as EssaysTestFileEssayResult, Bobbin as EssaysBobbin
+from apps.essays.models import Annex, ArtRequest, PrinterBoot as EssaysPrinterBoot, LaminatorBoot as EssaysLaminatorBoot, LaminationEssay as EssaysLaminationEssay, TestFile as EssaysTestFile, TestFileEssay as EssaysTestFileEssay, TestFileEssayResult as EssaysTestFileEssayResult, Bobbin as EssaysBobbin
 from apps.sales.models import SaleOrder
 from apps.home.models import Structure
 from .models import *
@@ -46,13 +46,13 @@ def test_or_order(request):
         if model == Order:
             objs = objs.exclude(sale_order__archived=True)
             return [{'id': f'{prefix}-{obj.id}',  'text': f'{prefix}-{get_nested_attr(obj, display_fields[0])} - {get_nested_attr(obj, display_fields[1])}'} for obj in objs]
-        elif model == TestRequest:
+        elif model == ArtRequest:
             objs = objs.exclude(reviewer=None)
             return [{'id': f'{prefix}-{obj.id}',  'text': f'Solicitud de Prueba - {get_nested_attr(obj, display_fields[1])}'} if obj.production_order is None else {'id': f'{prefix}-{obj.id}',  'text': f'{prefix}-{get_nested_attr(obj, display_fields[0])} - {get_nested_attr(obj, display_fields[1])}'} for obj in objs]
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         data = get_data(Order, current_op, 'OP', ['number', 'sale_order.plan.product'], ['number', 'sale_order__plan__product'])
-        data += get_data(TestRequest, current_tr, 'PR', ['production_order', 'product'], ['production_order', 'product'])#type: ignore
+        data += get_data(ArtRequest, current_tr, 'PR', ['production_order', 'product'], ['production_order', 'product'])#type: ignore
         return JsonResponse(data, safe=False)
         
     raise Http404
@@ -1095,7 +1095,7 @@ def ExportBoot(request, pk, machine, ck):
             destiny_document = get_object_or_404(Order, pk=destiny_id)
             address = 'production'
         elif destiny_type == 'PR':
-            destiny_document = get_object_or_404(TestRequest, pk=destiny_id)
+            destiny_document = get_object_or_404(ArtRequest, pk=destiny_id)
             address = 'test_requests'
 
         if destiny_type == 'OP':

@@ -10,7 +10,7 @@ class EntryElementAdmin(SimpleHistoryAdmin):
     pass
 class TestStructureInlineAdmin(admin.TabularInline):
     model = TestStructure
-@admin.register(TestRequest)
+@admin.register(ArtRequest)
 class TestRequestAdmin(SimpleHistoryAdmin):
     inlines = [TestStructureInlineAdmin]
     ordering = ['-number']

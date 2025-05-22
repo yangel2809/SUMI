@@ -111,10 +111,10 @@ def addEntryElement(request):
             tr_id = request.POST.get('test_request')
             if tr_id:
                 try:
-                    tr = TestRequest.objects.get(pk=tr_id)
+                    tr = ArtRequest.objects.get(pk=tr_id)
                     tr.entry_element = ee
                     tr.save()  
-                except TestRequest.DoesNotExist:
+                except ArtRequest.DoesNotExist:
                     pass
 
             response_data = {
@@ -150,7 +150,7 @@ def editEntryElement(request, pk):
         lock = obj
         
     try:
-        tr = TestRequest.objects.get(entry_element__pk=obj.pk)
+        tr = ArtRequest.objects.get(entry_element__pk=obj.pk)
         selected_tr = f'<option value="{tr.pk}" selected>{tr.number} - {tr.product}</option>'
     except:
         tr = None
@@ -164,10 +164,10 @@ def editEntryElement(request, pk):
             tr_id = request.POST.get('test_request')
             if tr_id:
                 try:
-                    tr = TestRequest.objects.get(pk=tr_id)
+                    tr = ArtRequest.objects.get(pk=tr_id)
                     tr.entry_element = ee
                     tr.save()  
-                except TestRequest.DoesNotExist:
+                except ArtRequest.DoesNotExist:
                     pass
 
             response_data = {
@@ -263,7 +263,7 @@ class indexExitElement(LoginRequiredMixin, PermissionRequiredMixin, ListView):
 @permission_required('essays.add_entryelement', raise_exception=True)
 def addExitElement(request, tr):
     try:
-        test_request_obj = TestRequest.objects.get(pk=tr)
+        test_request_obj = ArtRequest.objects.get(pk=tr)
     except:
         raise Http404
     
@@ -360,7 +360,7 @@ def deleteExitElement(request, pk):
 def ajaxTestRequest(request):
     filtr = request.GET.get('f', None)
 
-    test_requests = TestRequest.objects.exclude(Q(deleted=True)|Q(number=None)).order_by('-number')
+    test_requests = ArtRequest.objects.exclude(Q(deleted=True)|Q(number=None)).order_by('-number')
     if request.GET.get('exclude_ee'):
         test_requests = test_requests.filter(entry_element=None)
     if filtr:
@@ -376,16 +376,16 @@ def indexTestRequest(request):
 
     header = request.GET.get('header') or request.session.get('header')
     if header == "deleted":
-        test_request_obj = TestRequest.objects.filter(deleted=True).order_by('-number')
+        test_request_obj = ArtRequest.objects.filter(deleted=True).order_by('-number')
         tab = 'deleted'
     elif header == "archived":
-        test_request_obj = TestRequest.objects.filter(archived=True).order_by('-number')
+        test_request_obj = ArtRequest.objects.filter(archived=True).order_by('-number')
         tab = 'archived'
     elif header == "review":
-        test_request_obj = TestRequest.objects.exclude(Q(deleted=True)|Q(archived=True)|Q(closed=True)).filter(reviewer=None).order_by('-number')
+        test_request_obj = ArtRequest.objects.exclude(Q(deleted=True)|Q(archived=True)|Q(closed=True)).filter(reviewer=None).order_by('-number')
         tab = 'review'
     elif request.GET.get('touched') != 'closed':
-        test_request_obj = TestRequest.objects.exclude(Q(deleted=True)|Q(archived=True)|Q(closed=True)).exclude(reviewer=None).order_by('-number')
+        test_request_obj = ArtRequest.objects.exclude(Q(deleted=True)|Q(archived=True)|Q(closed=True)).exclude(reviewer=None).order_by('-number')
         tab = 'main'
         segment = 'request'
     
@@ -411,7 +411,7 @@ def indexTestRequest(request):
             segment = 'closed_test_request'
             order = '-production_order'
 
-            test_request_obj = TestRequest.objects.filter(Q(closed=True)).order_by(order)
+            test_request_obj = ArtRequest.objects.filter(Q(closed=True)).order_by(order)
 
     else:
         segment = 'requests'
@@ -456,16 +456,16 @@ def indexTestRequestArt(request):
 
     header = request.GET.get('header') or request.session.get('header')
     if header == "deleted":
-        test_request_obj = TestRequest.objects.filter(deleted=True).order_by('-number')
+        test_request_obj = ArtRequest.objects.filter(deleted=True).order_by('-number')
         tab = 'deleted'
     elif header == "archived":
-        test_request_obj = TestRequest.objects.filter(archived=True).order_by('-number')
+        test_request_obj = ArtRequest.objects.filter(archived=True).order_by('-number')
         tab = 'archived'
     elif header == "review":
-        test_request_obj = TestRequest.objects.exclude(Q(deleted=True)|Q(archived=True)|Q(closed=True)).filter(reviewer=None).order_by('-number')
+        test_request_obj = ArtRequest.objects.exclude(Q(deleted=True)|Q(archived=True)|Q(closed=True)).filter(reviewer=None).order_by('-number')
         tab = 'review'
     elif request.GET.get('touched') != 'closed':
-        test_request_obj = TestRequest.objects.exclude(Q(deleted=True)|Q(archived=True)|Q(closed=True)).exclude(reviewer=None).order_by('-number')
+        test_request_obj = ArtRequest.objects.exclude(Q(deleted=True)|Q(archived=True)|Q(closed=True)).exclude(reviewer=None).order_by('-number')
         tab = 'main'
         segment = 'requests_art'
     
@@ -491,7 +491,7 @@ def indexTestRequestArt(request):
             segment = 'closed_test_request'
             order = '-production_order'
 
-            test_request_obj = TestRequest.objects.filter(Q(closed=True)).order_by(order)
+            test_request_obj = ArtRequest.objects.filter(Q(closed=True)).order_by(order)
 
     else:
         segment = 'requests_art'
@@ -598,7 +598,7 @@ def viewEntryElement(request, pk):
 @permission_required('essays.view_testrequest', raise_exception=True)
 def viewTestRequest(request, pk):
     
-    test_request_obj = get_object_or_404(TestRequest, pk=pk)
+    test_request_obj = get_object_or_404(ArtRequest, pk=pk)
     segment = 'test_request'
     back = '/test_requests/?touched=True'
 
@@ -654,7 +654,7 @@ def viewTestRequest(request, pk):
 @permission_required('essays.view_testrequest', raise_exception=True)
 def viewTestRequestArt(request, pk):
     
-    test_request_obj = get_object_or_404(TestRequest, pk=pk)
+    test_request_obj = get_object_or_404(ArtRequest, pk=pk)
     segment = 'test_request_art'
     back = '/test_requests_art/?touched=True'
 
@@ -763,7 +763,7 @@ def viewExitElement(request, pk):
 @permission_required('essays.view_printerboot', raise_exception=True)
 def viewPrinterBoot(request, pk, ck):
     
-    test_request_obj = get_object_or_404(TestRequest, pk=pk)
+    test_request_obj = get_object_or_404(ArtRequest, pk=pk)
     segment = 'test_request'
     back = '/test_requests/?touched=True'
     if test_request_obj.touched == False:
@@ -829,7 +829,7 @@ def viewPrinterBoot(request, pk, ck):
 @permission_required('essays.view_laminatorboot', raise_exception=True)
 def viewLaminatorBoot(request, pk, ck):
     
-    test_request_obj = get_object_or_404(TestRequest, pk=pk)
+    test_request_obj = get_object_or_404(ArtRequest, pk=pk)
     segment = 'test_request'
     back = '/test_requests/?touched=True'
     if test_request_obj.touched == False:
@@ -893,7 +893,7 @@ def viewLaminatorBoot(request, pk, ck):
 @permission_required('essays.view_cutterboot', raise_exception=True)
 def viewCutterBoot(request, pk, ck):
     
-    test_request_obj = get_object_or_404(TestRequest, pk=pk)
+    test_request_obj = get_object_or_404(ArtRequest, pk=pk)
     segment = 'test_request'
     back = '/test_requests/?touched=True'
     if test_request_obj.touched == False:
@@ -944,7 +944,7 @@ def viewCutterBoot(request, pk, ck):
 @permission_required('essays.view_technicalspecs', raise_exception=True)
 def viewTechSpecs(request, pk):
     
-    test_request_obj = get_object_or_404(TestRequest, pk=pk)
+    test_request_obj = get_object_or_404(ArtRequest, pk=pk)
     if test_request_obj.deleted and not request.user.has_perm('essay.view_deleted_testrequest'):
         return render(request, 'errors/404.html', status=404)
     segment = 'test_request'
@@ -1021,7 +1021,7 @@ def set_tr_number(val: str) -> str:
 def cloneTestRequest(request, pk):
     with CaptureQueriesContext(connection) as context:
 
-        test_request = TestRequest.objects.get(id=pk)
+        test_request = ArtRequest.objects.get(id=pk)
         test = TestStructure.objects.filter(test_request__pk=pk)
 
         test_request.id = get_id(TestRequest) #type:ignore
@@ -1062,7 +1062,7 @@ def cloneTestRequest(request, pk):
 def cloneTestRequestArt(request, pk):
     with CaptureQueriesContext(connection) as context:
 
-        test_request = TestRequest.objects.get(id=pk)
+        test_request = ArtRequest.objects.get(id=pk)
         test = TestStructure.objects.filter(test_request__pk=pk)
 
         test_request.id = get_id(TestRequest) #type:ignore
@@ -1108,7 +1108,7 @@ def addTestRequest (request, entry_element_id=None):
     entry_element = get_object_or_404(EntryElement, pk=entry_element_id) if entry_element_id else None
     
     context = {'form': form, 'sformset': sformset, 'segment':'requests', 'entry_element':entry_element, 'back': True}
-    last_tr = TestRequest.objects.exclude(deleted=True).order_by('-number')
+    last_tr = ArtRequest.objects.exclude(deleted=True).order_by('-number')
     
     last = last_tr[0].number if last_tr else "03-000000"
 
@@ -1128,7 +1128,7 @@ def addTestRequest (request, entry_element_id=None):
             if entry_element:
                 test_request.entry_element = entry_element
 
-            test_request.id = get_id(TestRequest)
+            test_request.id = get_id(ArtRequest)
             test_request.date = timezone.now()
 
             test_request.save()
@@ -1155,7 +1155,7 @@ def addTestRequest (request, entry_element_id=None):
 @transaction.atomic
 def editTestRequest (request, pk):
     
-    obj = get_object_or_404(TestRequest, pk=pk)
+    obj = get_object_or_404(ArtRequest, pk=pk)
     
     try:
         entry_element = obj.entry_element
@@ -1186,7 +1186,7 @@ def editTestRequest (request, pk):
                 test_request.date = timezone.now()
             
             if not test_request.number:
-                last = TestRequest.objects.exclude(deleted=True).exclude(pk=pk).order_by('-number')[0]
+                last = ArtRequest.objects.exclude(deleted=True).exclude(pk=pk).order_by('-number')[0]
                 test_request.number = set_tr_number(last.number) #type:ignore
 
             if not request.user.has_perm('essays.sign_testrequest'):
@@ -1228,7 +1228,7 @@ def editTestRequest (request, pk):
 @transaction.atomic
 def editTestRequestArt(request, pk):
     
-    obj = get_object_or_404(TestRequest, pk=pk)
+    obj = get_object_or_404(ArtRequest, pk=pk)
     
     try:
         entry_element = obj.entry_element
@@ -1259,7 +1259,7 @@ def editTestRequestArt(request, pk):
                 test_request.date = timezone.now()
             
             if not test_request.number:
-                last = TestRequest.objects.exclude(deleted=True).exclude(pk=pk).order_by('-number')[0]
+                last = ArtRequest.objects.exclude(deleted=True).exclude(pk=pk).order_by('-number')[0]
                 test_request.number = set_tr_number(last.number) #type:ignore
 
             if not request.user.has_perm('essays.sign_testrequest'):
@@ -1293,7 +1293,7 @@ def editTestRequestArt(request, pk):
                 print(err)
     return render(request, 'essays/form-test_request.html', context)
 def deleteTestRequest(request, pk):
-    test_request = get_object_or_404(TestRequest, pk=pk)
+    test_request = get_object_or_404(ArtRequest, pk=pk)
      
     if test_request.deleted or \
     (test_request.reviewer and not request.user.has_perm('essays.sign_testrequest')):
@@ -1317,7 +1317,7 @@ def deleteTestRequest(request, pk):
 @login_required(login_url='/login/')
 @permission_required('essays.delete_true_testrequest', raise_exception=True)#type:ignore
 def deleteTrueTestRequest(request, pk):
-    test_request = get_object_or_404(TestRequest, pk=pk)
+    test_request = get_object_or_404(ArtRequest, pk=pk)
     if not test_request.deleted:
         return render(request, 'errors/400.html', status=400)
     if request.method == 'POST':
@@ -1328,7 +1328,7 @@ def deleteTrueTestRequest(request, pk):
 @permission_required('essays.restore_testrequest', raise_exception=True)
 def restoreTestRequest(request, pk):
 
-    obj = get_object_or_404(TestRequest, pk=pk)
+    obj = get_object_or_404(ArtRequest, pk=pk)
 
     obj.deleted = False
     obj.deleted_reason = None
@@ -1345,7 +1345,7 @@ def restoreTestRequest(request, pk):
 @permission_required('essays.close_testrequest', raise_exception=True)
 def closeTestRequest(request, pk):
 
-    obj = get_object_or_404(TestRequest, pk=pk)
+    obj = get_object_or_404(ArtRequest, pk=pk)
 
     if obj.deleted == True:
         return render(request, 'errors/403.html', status=403)
@@ -1364,7 +1364,7 @@ def closeTestRequest(request, pk):
 @permission_required('essays.archive_testrequest', raise_exception=True)
 def archiveTestRequest(request, pk):
 
-    obj = get_object_or_404(TestRequest, pk=pk)
+    obj = get_object_or_404(ArtRequest, pk=pk)
 
     if obj.deleted == True:
         return render(request, 'errors/403.html', status=403)
@@ -1385,7 +1385,7 @@ def archiveTestRequest(request, pk):
 @permission_required('essays.unarchive_testrequest', raise_exception=True)
 def unarchiveTestRequest(request, pk):
 
-    obj = get_object_or_404(TestRequest, pk=pk)
+    obj = get_object_or_404(ArtRequest, pk=pk)
 
     if obj.deleted == True:
         return render(request, 'errors/403.html', status=403)
@@ -1404,7 +1404,7 @@ def unarchiveTestRequest(request, pk):
 @permission_required('essays.open_testrequest', raise_exception=True)
 def openTestRequest(request, pk):
 
-    obj = get_object_or_404(TestRequest, pk=pk)
+    obj = get_object_or_404(ArtRequest, pk=pk)
 
     if obj.deleted == True:
         return render(request, 'errors/403.html', status=403)
@@ -1422,7 +1422,7 @@ def openTestRequest(request, pk):
 @login_required(login_url='/login/')
 @permission_required('essays.delete_testrequest', raise_exception=True)#type:ignore
 def deleteTestRequestArt(request, pk):
-    test_request = get_object_or_404(TestRequest, pk=pk)
+    test_request = get_object_or_404(ArtRequest, pk=pk)
      
     if test_request.deleted or \
     (test_request.reviewer and not request.user.has_perm('essays.sign_testrequest')):
@@ -1446,7 +1446,7 @@ def deleteTestRequestArt(request, pk):
 @login_required(login_url='/login/')
 @permission_required('essays.delete_true_testrequest', raise_exception=True)#type:ignore
 def deleteTrueTestRequestArt(request, pk):
-    test_request = get_object_or_404(TestRequest, pk=pk)
+    test_request = get_object_or_404(ArtRequest, pk=pk)
     if not test_request.deleted:
         return render(request, 'errors/400.html', status=400)
     if request.method == 'POST':
@@ -1457,7 +1457,7 @@ def deleteTrueTestRequestArt(request, pk):
 @permission_required('essays.restore_testrequest', raise_exception=True)
 def restoreTestRequestArt(request, pk):
 
-    obj = get_object_or_404(TestRequest, pk=pk)
+    obj = get_object_or_404(ArtRequest, pk=pk)
 
     obj.deleted = False
     obj.deleted_reason = None
@@ -1474,7 +1474,7 @@ def restoreTestRequestArt(request, pk):
 @permission_required('essays.close_testrequest', raise_exception=True)
 def closeTestRequestArt(request, pk):
 
-    obj = get_object_or_404(TestRequest, pk=pk)
+    obj = get_object_or_404(ArtRequest, pk=pk)
 
     if obj.deleted == True:
         return render(request, 'errors/403.html', status=403)
@@ -1493,7 +1493,7 @@ def closeTestRequestArt(request, pk):
 @permission_required('essays.archive_testrequest', raise_exception=True)
 def archiveTestRequestArt(request, pk):
 
-    obj = get_object_or_404(TestRequest, pk=pk)
+    obj = get_object_or_404(ArtRequest, pk=pk)
 
     if obj.deleted == True:
         return render(request, 'errors/403.html', status=403)
@@ -1514,7 +1514,7 @@ def archiveTestRequestArt(request, pk):
 @permission_required('essays.unarchive_testrequest', raise_exception=True)
 def unarchiveTestRequestArt(request, pk):
 
-    obj = get_object_or_404(TestRequest, pk=pk)
+    obj = get_object_or_404(ArtRequest, pk=pk)
 
     if obj.deleted == True:
         return render(request, 'errors/403.html', status=403)
@@ -1533,7 +1533,7 @@ def unarchiveTestRequestArt(request, pk):
 @permission_required('essays.open_testrequest', raise_exception=True)
 def openTestRequestArt(request, pk):
 
-    obj = get_object_or_404(TestRequest, pk=pk)
+    obj = get_object_or_404(ArtRequest, pk=pk)
 
     if obj.deleted == True:
         return render(request, 'errors/403.html', status=403)
@@ -1553,7 +1553,7 @@ def openTestRequestArt(request, pk):
 @permission_required('essays.add_printerboot', raise_exception=True)#type:ignore
 def addPrinterBootTR (request, tr):
     
-    test_request_obj = get_object_or_404(TestRequest, pk=tr)#Get the parent to render
+    test_request_obj = get_object_or_404(ArtRequest, pk=tr)#Get the parent to render
     
     if test_request_obj.signed_techspecs and not (request.user.groups.filter(name = 'ASCA-Staff').exists() or request.user.is_superuser):
         return render(request, 'errors/403.html', status=403)
@@ -1594,7 +1594,7 @@ def addPrinterBootTR (request, tr):
 @permission_required('essays.change_printerboot', raise_exception=True)#type:ignore
 def editPrinterBootTR (request, tr, ck):
     
-    test_request_obj = get_object_or_404(TestRequest, pk=tr)#Get the parent to render
+    test_request_obj = get_object_or_404(ArtRequest, pk=tr)#Get the parent to render
 
     if test_request_obj.signed_techspecs and not (request.user.groups.filter(name = 'ASCA-Staff').exists() or request.user.is_superuser):
         return render(request, 'errors/403.html', status=403)
@@ -1636,7 +1636,7 @@ def editPrinterBootTR (request, tr, ck):
 @permission_required('essays.delete_printerboot', raise_exception=True)#type:ignore
 def deletePrinterBootTR (request, tr, ck):
 
-    if TestRequest.objects.get(pk = tr).signed_techspecs and not (request.user.groups.filter(name = 'ASCA-Staff').exists() or request.user.is_superuser):
+    if ArtRequest.objects.get(pk = tr).signed_techspecs and not (request.user.groups.filter(name = 'ASCA-Staff').exists() or request.user.is_superuser):
         return render(request, 'errors/403.html', status=403)
     
     printr_boot = get_object_or_404(PrinterBoot, pk=ck)
@@ -1650,7 +1650,7 @@ def deletePrinterBootTR (request, tr, ck):
 @transaction.atomic
 def addLaminatorBootTR (request, tr):
     
-    test_request_obj = get_object_or_404(TestRequest, pk=tr)#Get the parent to render
+    test_request_obj = get_object_or_404(ArtRequest, pk=tr)#Get the parent to render
 
     if test_request_obj.signed_techspecs and not (request.user.groups.filter(name = 'ASCA-Staff').exists() or request.user.is_superuser):
         return render(request, 'errors/403.html', status=403)
@@ -1694,7 +1694,7 @@ def addLaminatorBootTR (request, tr):
 @transaction.atomic
 def editLaminatorBootTR (request, tr, ck):
     
-    test_request_obj = get_object_or_404(TestRequest, pk=tr)#Get the parent to render
+    test_request_obj = get_object_or_404(ArtRequest, pk=tr)#Get the parent to render
 
     if test_request_obj.signed_techspecs and not (request.user.groups.filter(name = 'ASCA-Staff').exists() or request.user.is_superuser):
         return render(request, 'errors/403.html', status=403)
@@ -1743,7 +1743,7 @@ def editLaminatorBootTR (request, tr, ck):
 @permission_required('essays.delete_laminatorboot', raise_exception=True)#type:ignore
 def deleteLaminatorBootTR (request, tr, ck):
 
-    if TestRequest.objects.get(pk = tr).signed_techspecs and not (request.user.groups.filter(name = 'ASCA-Staff').exists() or request.user.is_superuser):
+    if ArtRequest.objects.get(pk = tr).signed_techspecs and not (request.user.groups.filter(name = 'ASCA-Staff').exists() or request.user.is_superuser):
         return render(request, 'errors/403.html', status=403)
 
     laminator_boot = get_object_or_404(LaminatorBoot, pk=ck)
@@ -1758,7 +1758,7 @@ def deleteLaminatorBootTR (request, tr, ck):
 def ExportBoot(request, pk, machine, ck):
     
     if request.method == 'POST':
-        parent = get_object_or_404(TestRequest, pk=pk)
+        parent = get_object_or_404(ArtRequest, pk=pk)
         provider = None
         if parent.sindex >=0:
             test_structure = TestStructure.objects.filter(test_request__id=pk)[parent.sindex]
@@ -1769,7 +1769,7 @@ def ExportBoot(request, pk, machine, ck):
             destiny_document = get_object_or_404(Order, pk=destiny_id)
             address = 'production'
         elif destiny_type == 'PR':
-            destiny_document = get_object_or_404(TestRequest, pk=destiny_id)
+            destiny_document = get_object_or_404(ArtRequest, pk=destiny_id)
             address = 'test_requests'
 
         if destiny_type == 'OP':
@@ -1900,7 +1900,7 @@ def ExportBoot(request, pk, machine, ck):
 @transaction.atomic
 def Report(request, tr, ck, boot_type):
 
-    test_request_obj = get_object_or_404(TestRequest, pk=tr)  # Get the parent to render
+    test_request_obj = get_object_or_404(ArtRequest, pk=tr)  # Get the parent to render
 
     if test_request_obj.signed_techspecs and not (request.user.groups.filter(name = 'ASCA-Staff').exists() or request.user.is_superuser):
         return render(request, 'errors/403.html', status=403)
@@ -1983,7 +1983,7 @@ def Report(request, tr, ck, boot_type):
 @permission_required('essays.view_testfile', raise_exception=True)#type:ignore
 def editReport(request, tr, ck, rp, boot_type):
 
-    test_request_obj = get_object_or_404(TestRequest, pk=tr)  # Get the parent to render
+    test_request_obj = get_object_or_404(ArtRequest, pk=tr)  # Get the parent to render
     
     ug = request.user.groups
 
@@ -2045,7 +2045,7 @@ def editReport(request, tr, ck, rp, boot_type):
 @permission_required('essays.delete_testfile', raise_exception=True)#type:ignore
 def deleteReport(request, tr, ck, rp, boot_type):
 
-    if TestRequest.objects.get(pk = tr).signed_techspecs and not (request.user.groups.filter(name = 'ASCA-Staff').exists() or request.user.is_superuser):
+    if ArtRequest.objects.get(pk = tr).signed_techspecs and not (request.user.groups.filter(name = 'ASCA-Staff').exists() or request.user.is_superuser):
         return render(request, 'errors/403.html', status=403)
 
     report = get_object_or_404(TestFile, pk=rp)
@@ -2059,7 +2059,7 @@ def deleteReport(request, tr, ck, rp, boot_type):
 @transaction.atomic
 def addResult (request, tr, machine, ck, tf):
 
-    test_request_obj = get_object_or_404(TestRequest, pk=tr)#Get the grandparent to render
+    test_request_obj = get_object_or_404(ArtRequest, pk=tr)#Get the grandparent to render
 
     if test_request_obj.signed_techspecs and not (request.user.groups.filter(name = 'ASCA-Staff').exists() or request.user.is_superuser):
         return render(request, 'errors/403.html', status=403)
@@ -2250,7 +2250,7 @@ def deleteBobbin (request, pk):
 @permission_required('essays.add_cutterboot', raise_exception=True)#type:ignore
 def addCutterBootTR (request, tr):
     
-    test_request_obj = get_object_or_404(TestRequest, pk=tr)#Get the parent to render
+    test_request_obj = get_object_or_404(ArtRequest, pk=tr)#Get the parent to render
     if test_request_obj.signed_techspecs and not (request.user.groups.filter(name = 'ASCA-Staff').exists() or request.user.is_superuser):
         return render(request, 'errors/403.html', status=403)
 
@@ -2284,7 +2284,7 @@ def addCutterBootTR (request, tr):
 @permission_required('essays.change_cutterboot', raise_exception=True)#type:ignore
 def editCutterBootTR (request, tr, ck):
 
-    test_request_obj = get_object_or_404(TestRequest, pk=tr)#Get the parent to render
+    test_request_obj = get_object_or_404(ArtRequest, pk=tr)#Get the parent to render
 
     if test_request_obj.signed_techspecs and not (request.user.groups.filter(name = 'ASCA-Staff').exists() or request.user.is_superuser):
         return render(request, 'errors/403.html', status=403)
@@ -2321,7 +2321,7 @@ def editCutterBootTR (request, tr, ck):
 @permission_required('essays.delete_cutterboot', raise_exception=True)#type:ignore
 def deleteCutterBootTR (request, tr, ck):
 
-    if TestRequest.objects.get(pk = tr).signed_techspecs and not (request.user.groups.filter(name = 'ASCA-Staff').exists() or request.user.is_superuser):
+    if ArtRequest.objects.get(pk = tr).signed_techspecs and not (request.user.groups.filter(name = 'ASCA-Staff').exists() or request.user.is_superuser):
         return render(request, 'errors/403.html', status=403)
 
     item = get_object_or_404(CutterBoot, pk=ck)
@@ -2332,7 +2332,7 @@ def deleteCutterBootTR (request, tr, ck):
 @login_required(login_url='/login/')
 @permission_required('essays.add_technicalspecs', raise_exception=True)#type:ignore
 def addTechSpecs (request, tr):
-    test_request_obj = get_object_or_404(TestRequest, pk=tr)
+    test_request_obj = get_object_or_404(ArtRequest, pk=tr)
     form = TechnicalSpecsForm(request.POST or None)
     context = {'form': form, 'test_request_obj': test_request_obj, 'segment':'test_request', 'back': True}
     if request.method == 'POST':
@@ -2352,7 +2352,7 @@ def addTechSpecs (request, tr):
 @login_required(login_url='/login/')
 @permission_required('essays.change_technicalspecs', raise_exception=True)#type:ignore
 def editTechSpecs (request, tr, ck):
-    test_request_obj = get_object_or_404(TestRequest, pk=tr)
+    test_request_obj = get_object_or_404(ArtRequest, pk=tr)
     tech_specs_obj = get_object_or_404(TechnicalSpecs, pk=ck)
     form = TechnicalSpecsForm(request.POST or None, instance=tech_specs_obj)
     context = {'form': form, 'test_request_obj': test_request_obj, 'segment':'test_request', 'back': True}
@@ -2382,7 +2382,7 @@ def deleteTechSpecs (request, tr, ck):
 @login_required(login_url='/login/')
 @permission_required('essays.view_annex', raise_exception=True)#type:ignore
 def viewAnnex(request, pk):
-    test_request_obj = get_object_or_404(TestRequest, pk=pk)
+    test_request_obj = get_object_or_404(ArtRequest, pk=pk)
     annexes = Annex.objects.filter(test_request__id=pk)
     
     structure_list = TestStructure.objects.filter(test_request__pk=pk)
@@ -2420,7 +2420,7 @@ def viewAnnex(request, pk):
 @login_required(login_url='/login/')
 @permission_required('essays.add_annex', raise_exception=True)#type:ignore
 def addAnnex(request, tr):
-    test_request_obj = get_object_or_404(TestRequest, pk=tr)
+    test_request_obj = get_object_or_404(ArtRequest, pk=tr)
 
     ug = request.user.groups
 
@@ -2493,7 +2493,7 @@ def get_the_num(val):
 def deleteAnnex (request, tr, ck):
     item = get_object_or_404(Annex, pk=ck)
 
-    test_request_obj = get_object_or_404(TestRequest, pk=tr)
+    test_request_obj = get_object_or_404(ArtRequest, pk=tr)
     ug = request.user.groups
 
     if test_request_obj.signed_techspecs and not (ug.filter(name = 'ASCA-Staff').exists() or ug.filter(name = 'IDAT-A').exists() or request.user.is_superuser):

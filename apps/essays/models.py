@@ -160,7 +160,7 @@ class EntryElement(models.Model):
     #end
     observation = QuillField(blank=True, null=True)
 
-    sales_test_request = models.OneToOneField('sales.SalesTestRequest', on_delete=models.SET_NULL, null=True, blank=True)
+    sales_test_request = models.OneToOneField('sales.SalestestRequest', on_delete=models.SET_NULL, null=True, blank=True)
 
     elaborator = models.CharField(max_length=100, blank=False, null=True)
     reviewer = models.CharField(max_length=100, blank=True, null=True)
@@ -181,11 +181,11 @@ class EntryElement(models.Model):
         return f'{self.product} - {self.date}'
     @property
     def test_request(self):
-        return TestRequest.objects.get(entry_element=self) #type:ignore
+        return ArtRequest.objects.get(entry_element=self) #type:ignore
     
     @property
     def has_test_request(self):
-        return TestRequest.objects.filter(entry_element=self).exists()
+        return ArtRequest.objects.filter(entry_element=self).exists()
     
 class ExitElement(models.Model):
     ACC_OPT=(
@@ -198,10 +198,10 @@ class ExitElement(models.Model):
 
     EVA_OPT = ACC_OPT + (('eva', 'En evaluacion'),)
 
-    test_request = models.OneToOneField("essays.TestRequest", verbose_name=("Solicitud de prueba"), related_name="exit_element", blank=True, on_delete=models.RESTRICT, null=True)
-    #client comes from TestRequest
-    #PR comes from TestRequest production_order
-    #product comes from TestRequest
+    test_request = models.OneToOneField("essays.ArtRequest", verbose_name=("Solicitud de prueba"), related_name="exit_element", blank=True, on_delete=models.RESTRICT, null=True)
+    #client comes from ArtRequest
+    #PR comes from ArtRequest production_order
+    #product comes from ArtRequest
 
     #acomplished entry elements
     dimensions = models.BooleanField(default=False)
@@ -253,7 +253,7 @@ class ExitElement(models.Model):
         verbose_name = ("Elementos de salida del diseño y desarrollo")
         verbose_name_plural = ("Elementos de salida del diseño y desarrollo")
     
-class TestRequest (models.Model):
+class ArtRequest (models.Model):
     ORG_OPT=(
         ('new', 'Nueva Estructura'),
         ('upd', 'Cambio de Estructura'),
@@ -508,43 +508,43 @@ class TestRequest (models.Model):
         verbose_name_plural = 'Solicitudes de Prueba'
         permissions = [
             (
-                "view_working_testrequest",
+                "view_working_ArtRequest",
                 "Puede firmar una solicitud de prueba cómo revisada"
             ),
             (
-                "sign_testrequest",
+                "sign_ArtRequest",
                 "Puede firmar una solicitud de prueba cómo revisada"
             ),
             (
-                "view_archived_testrequest",
+                "view_archived_ArtRequest",
                 "Puede ver el archivo de solicitudes de prueba"
             ),
             (
-                "archive_testrequest",
+                "archive_ArtRequest",
                 "Puede archivar una solicitud de prueba"
             ),
             (
-                "unarchive_testrequest",
+                "unarchive_ArtRequest",
                 "Puede desarchivar una solicitud de prueba"
             ),
             (
-                "view_deleted_testrequest",
+                "view_deleted_ArtRequest",
                 "Puede ver la papelera de solicitudes de prueba"
             ),
             (
-                "delete_true_testrequest",
+                "delete_true_ArtRequest",
                 "Puede eliminar permanentemenete una solicitud de prueba"
             ),
             (
-                "restore_testrequest",
+                "restore_ArtRequest",
                 "Puede restaurar una solicitud de prueba de la papelera"
             ),
             (
-                "close_testrequest",
+                "close_ArtRequest",
                 "Puede Cerrar Un expediente de Pruebas y enviar a IDAT"
             ),
             (
-                "open_testrequest",
+                "open_ArtRequest",
                 "Puede Abrir Un expediente de Pruebas y enviar a IDAT"
             ),
         ]
@@ -554,7 +554,7 @@ class TestRequest (models.Model):
 
 class TestStructure (models.Model):
     
-    test_request = models.ForeignKey('essays.TestRequest', on_delete=models.CASCADE, null=True)
+    test_request = models.ForeignKey('essays.ArtRequest', on_delete=models.CASCADE, null=True)
 
     material_type = models.ForeignKey('home.MaterialType', on_delete=models.RESTRICT, blank=False, null=True)
     provider = models.ForeignKey('home.Provider', on_delete=models.RESTRICT, blank=False, null=True)
@@ -578,7 +578,7 @@ class TestStructure (models.Model):
 
 class PrinterBoot (models.Model):
     #Parent----------------------------------------------
-    test_request = models.ForeignKey('essays.TestRequest', on_delete=models.CASCADE, blank=True, null=True)#Comes from test request
+    test_request = models.ForeignKey('essays.ArtRequest', on_delete=models.CASCADE, blank=True, null=True)#Comes from test request
     origin = models.CharField(max_length=15, blank=True, default=None, null=True) 
     
     CRW_OPT=(
@@ -729,7 +729,7 @@ class PrinterBoot (models.Model):
         verbose_name_plural = 'Arranques de impresoras'
 
 class LaminatorBoot(models.Model):
-    test_request = models.ForeignKey('essays.TestRequest', on_delete=models.CASCADE, blank=True, null=True)
+    test_request = models.ForeignKey('essays.ArtRequest', on_delete=models.CASCADE, blank=True, null=True)
     origin = models.CharField(max_length=15, blank=True, default=None, null=True)
     
     TRN_OPT=(
@@ -839,7 +839,7 @@ class CutterBoot(models.Model):
         ('3','3"'),
         ('6','6"')
     )
-    test_request = models.ForeignKey('essays.TestRequest', on_delete=models.CASCADE, blank=True, null=True)#Comes from test request
+    test_request = models.ForeignKey('essays.ArtRequest', on_delete=models.CASCADE, blank=True, null=True)#Comes from test request
     #format = models.ForeignKey('home.Format', on_delete=models.RESTRICT, blank=True, null=True)
     
     machine = models.ForeignKey('essays.Cutter', on_delete=models.RESTRICT, null=True)
@@ -1131,7 +1131,7 @@ class Bobbin(models.Model):
 
 class TechnicalSpecs(models.Model):
     
-    test_request = models.OneToOneField('essays.TestRequest', on_delete=models.CASCADE, blank=True, null=True)
+    test_request = models.OneToOneField('essays.ArtRequest', on_delete=models.CASCADE, blank=True, null=True)
     date = models.DateField(null=True)
     
     observation = QuillField(blank=True, null=True)
@@ -1141,7 +1141,7 @@ class TechnicalSpecs(models.Model):
     history = HistoricalRecords()
 
 class Annex(models.Model):
-    test_request = models.ForeignKey('essays.TestRequest', on_delete=models.CASCADE, blank=True, null=True)
+    test_request = models.ForeignKey('essays.ArtRequest', on_delete=models.CASCADE, blank=True, null=True)
     production_order = models.ForeignKey("production.Order", on_delete=models.CASCADE, blank=True, null=True)
     image = models.ImageField(upload_to="annex", null=True)
     identification = models.TextField(blank=False, null=True)

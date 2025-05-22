@@ -12,7 +12,7 @@ class TestRequestFilter(django_filters.FilterSet):
     product = CharFilter(field_name="product", lookup_expr="icontains", widget=TextInput(attrs={'name':'search_product', 'form':'filter', 'autocomplete':'off', 'class':'form-control myform-search', 'aria-label':'', 'placeholder':'Nombre del Producto', 'id':'s_pr'}))
     date = DateFilter(field_name="date", lookup_expr="gte", widget=TextInput(attrs={'name':'search_date','title':'A partir de la fecha selecionada', 'form':'filter', 'autocomplete':'off', 'class':'form-control myform-search', 'maxlength':'9', 'placeholder':'D/M/A', 'id':'s_dt'}))
     class Meta:
-        model = TestRequest
+        model = ArtRequest
         fields = (  
             'product',          
             'number',

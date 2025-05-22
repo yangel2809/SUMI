@@ -263,7 +263,7 @@ class ExitElementForm(ModelForm):
 
 class TestRequestForm(ModelForm):
     class Meta:
-        model = TestRequest
+        model = ArtRequest
         fields = (
             #'format', 
             'number', 
@@ -399,7 +399,7 @@ class TestRequestForm(ModelForm):
             'logistics': CheckboxInput(attrs={'class': 'form-check-input justify-content-center', 'aria-label':'Seleccionar Planificación y Logística', 'id':'logistics'}),
             'quality': CheckboxInput(attrs={'class': 'form-check-input justify-content-center', 'aria-label':'Seleccionar Calidad', 'id':'quality'}),
         }     
-TestStructureFormset = inlineformset_factory(TestRequest, TestStructure,
+TestStructureFormset = inlineformset_factory(ArtRequest, TestStructure,
         fields = (
             #'test_material_check',
             #'test_material',

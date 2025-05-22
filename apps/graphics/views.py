@@ -10,7 +10,7 @@ from django.utils.html import strip_tags
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required, permission_required
 
-from apps.essays.models import TestRequest
+from apps.essays.models import ArtRequest
 from apps.graphics.models import *
 from apps.production.models import Order, PrinterBoot, LaminatorBoot, CutterBoot
 from apps.sales.models import SaleOrder
@@ -130,7 +130,7 @@ def update_pre_print_status(request):
 @login_required(login_url='/login/')
 @permission_required('production.view_printerboot', raise_exception=True)
 def test_email(request):
-    test_request = get_object_or_404(TestRequest, pk=6)
+    test_request = get_object_or_404(ArtRequest, pk=6)
     context= {
         'request': request,
         'obj':test_request,
