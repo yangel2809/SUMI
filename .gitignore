@@ -1,1 +1,25 @@
 /---USUARIOS POR DEFECTO.txt
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+
+# Django migrations cache
+**/migrations/__pycache__/
+**/migrations/*.pyc
+
+# SQLite database
+*.sqlite3
+
+# VS Code settings
+.vscode/
+
+# Environment
+.env
+*.env
+venv/
+ENV/
+env/
