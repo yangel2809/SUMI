@@ -93,9 +93,9 @@
       <div class="col-12 p-2 text-center">{{ test_request_obj.exit_element.functionallity_and_performance }} </div>
     {% endif %}
   
-    {% if test_request_obj.exit_element.replicavility %}
+  
     <div class="col-12 p-2 text-center"><x class="fw-bold">El producto o servicio es reproducible para garantizar su provisión</x>:&thinsp;{{ test_request_obj.exit_element.replicavility_description }}</div>
-    {% endif %}
+    
 
     <hr class="mx-2 my-2">
 
@@ -138,28 +138,28 @@
 
       <div class="d-flex flex-row">
         Servicio Post-Venta:&thinsp;<x class="fw-bold text-dark">{{ test_request_obj.exit_element.get_after_sales_service_display }}</x>
-      </div>
+      </div>  
       
       
     </div>
     
-    {% if test_request_obj.exit_element.failure %}
+    
     <hr class="mx-2 my-2">
     <div class="d-flex flex-wrap flex-column col-12 mt-3 text-center fs-5">
       <div class="fw-bold text-primary">Existieron fallas sobre el diseño y desarrollo</div>
-      <div class="col-12 ">{{ test_request_obj.exit_element.failure_description|default_if_none:"" }}</div>
+      <div class="col-12 ">{{ test_request_obj.exit_element.failure_description|default_if_none:"No" }}</div>
       <div class="fw-bold text-primary mt-2">Consecuencias de esas fallas</div>
-      <div class="col-12 ">{{ test_request_obj.exit_element.failure_consequence|default_if_none:"" }}</div>
+      <div class="col-12 ">{{ test_request_obj.exit_element.failure_consequence|default_if_none:"No" }}</div>
     </div>
-    {% endif %}
     
-    {% if test_request_obj.exit_element.guarantee %}
+    
+
     <hr class="mx-2 my-2">
     <div class="d-flex flex-wrap flex-column col-12 mt-3 text-center fs-5">
       <div class="fw-bold text-primary">Se garantiza que los productos y servicios cumplan con su propósito y su provisión sea segura y correcta</div>
-      <div class="col-12 ">{{ test_request_obj.exit_element.guarantee_description|default_if_none:"" }}</div>
+      <div class="col-12 ">{{ test_request_obj.exit_element.guarantee_description|default_if_none:"No" }}</div>
     </div>
-    {% endif %}
+
       
     {% if test_request_obj.exit_element.observation.html %}
     {% if test_request_obj.exit_element.observation.html != '<p><br></p>' %}

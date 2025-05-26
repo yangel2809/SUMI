@@ -105,28 +105,28 @@
     
     <div class="px-2">
       
-      {% if entry_element_obj.ssmtc %}
+      
         <div class="d-flex flex-wrap flex-column col-12 mt-3">
           <div class="fw-bold text-primary">Se requieren condiciones de almacenamiento, manipulación, transporte o entrega específica</div>
-          <div class="col-12 ">{{ entry_element_obj.ssmtc_description|default_if_none:"" }}</div>
+          <div class="col-12 ">{{ entry_element_obj.ssmtc_description|default_if_none:"No" }}</div>
         </div>
-      {% endif %}
+   
       
-      {% if entry_element_obj.nmp %}
+   
         <div class="d-flex flex-wrap flex-column col-12 mt-3">
           <div class="fw-bold text-primary">Se requiere desarrollo de nuevas materias primas y/o proveedores</div>
-          <div class="col-12 ">{{ entry_element_obj.nmp_description|default_if_none:"" }}</div>
+          <div class="col-12 ">{{ entry_element_obj.nmp_description|default_if_none:"No" }}</div>
         </div>
-      {% endif %}
+    
       
-      {% if entry_element_obj.norms %}
+     
       <h5 class="text-start text-md-center text-primary fw-bold mb-0 mt-3">Normas Nacionales y/o Internacionales</h5>
       <div class="d-flex justify-content-start justify-content-md-center flex-wrap gap-4">
         {% if entry_element_obj.iso %}<div class="text-dark fw-bold">Norma ISO 9001-2015</div>{% endif %}
         {% if entry_element_obj.gazette %}<div class="text-dark fw-bold"><abbr title="Normas sobre Prácticas para la Fabricación, Almacenamiento y Transporte de Envases, Empaques y/o Artículos Destinados a estar en Contacto con Alimentos">Gaceta Oficial Nº 38.678 del 8 de mayo de 2007</abbr></div>{% endif %}
         {% if entry_element_obj.norms_other %}<div>Otros:&thinsp;<x class="fw-bold text-dark">{{ entry_element_obj.norms_description }}</x></div>{% endif %}
       </div>
-      {% endif %}
+   
 
     </div>
     
@@ -149,26 +149,25 @@
       {% endif %}
   
       <div class="px-2">
-        {% if entry_element_obj.tech_inv %}
+    
           <div class="d-flex flex-wrap flex-column col-12 mt-3">
             <div class="fw-bold text-primary">Se requiere inversión tecnológica para este desarrollo</div>
-            <div class="col-12 ">{{ entry_element_obj.tech_inv_description|default_if_none:"" }}</div>
+            <div class="col-12 ">{{ entry_element_obj.tech_inv_description|default_if_none:"No" }}</div>
           </div>
-        {% endif %}
+     
   
-        {% if entry_element_obj.hr %}
           <div class="d-flex flex-wrap flex-column col-12 mt-3">
             <div class="fw-bold text-primary">Se requiere de recursos humanos para el diseño y desarrollo</div>
-            <div class="col-12 ">{{ entry_element_obj.hr_description|default_if_none:"" }}</div>
+            <div class="col-12 ">{{ entry_element_obj.hr_description|default_if_none:"No" }}</div>
           </div>
-        {% endif %}
+     
   
-        {% if entry_element_obj.similar_products %}
+      
           <div class="d-flex flex-wrap flex-column col-12 mt-3">
             <div class="fw-bold text-primary">Se tienen registros de productos similares</div>
-            <div class="col-12 ">{% if entry_element_obj.op %}OP-{{ entry_element_obj.op }} - {{ entry_element_obj.product_client|default_if_none:"" }} - {{ entry_element_obj.description|default_if_none:"" }}{% endif %}</div>
+            <div class="col-12 ">{% if entry_element_obj.op %}OP-{{ entry_element_obj.op }} - {{ entry_element_obj.product_client|default_if_none:"No" }} - {{ entry_element_obj.description|default_if_none:"No" }}{% endif %}</div>
           </div>
-        {% endif %}
+ 
         
       </div>
       {% endif %}
@@ -181,25 +180,23 @@
   
       <div class="d-flex flex-wrap px-2 gap-2 pb-2">
         
-        {% if entry_element_obj.ambiental %}
+  
         <div class="d-flex flex-wrap flex-column col-12 mt-3">
           <div class="fw-bold text-primary">Se requiere de condiciones ambientales especiales para mantener el producto</div>
-          <div class="col-12 ">{{ entry_element_obj.ambiental_description|default_if_none:"" }}</div>
+          <div class="col-12 ">{{ entry_element_obj.ambiental_description|default_if_none:"No" }}</div>
         </div>
-        {% endif %}
+     
   
         
-        {% if entry_element_obj.failure %}
+       
         <div class="d-flex flex-wrap flex-column col-12 mt-3">
           <div class="fw-bold text-primary">Existen fallas potenciales</div>
-          <div class="col-12 ">{{ entry_element_obj.failure_description|default_if_none:"" }}</div>        
+          <div class="col-12 ">{{ entry_element_obj.failure_description|default_if_none:"No" }}</div>        
           
-          {% if entry_element_obj.fail_consequence %}
+        
             <div class="col-12 "><x class="fw-bold">Esto trae cómo consecuencia:</x>&thinsp;{{ entry_element_obj.fail_consequence}}</div>
-          {% endif %}
-            
         </div>
-        {% endif %}
+    
   
       </div>
       {% endif %}
