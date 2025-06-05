@@ -52,7 +52,9 @@ def test_case(request):
     if test_data == None:
         result = None
     return result
-
+#-----------------------------------------------------------------------------------------
+#Esto lista los elementos de entrada de una solicitud de ensayo
+#Ademas de manejar el estado de las entradas en la tabla (eliminado editado o aprobado [Parece no estarse usando esto ultimo])
 class indexEntryElement(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     login_url = '/login/'
     permission_required = 'essays.view_entryelement'
