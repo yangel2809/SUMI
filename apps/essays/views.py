@@ -212,6 +212,8 @@ def deleteEntryElement(request, pk):
 
 
 #-----------------------------------------------------------------------------------------
+#Esto lista los elementos de salida de una solicitud de ensayo
+#Ademas de manejar el estado de las entradas en la tabla (eliminado editado o aprobado [Parece no estarse usando esto ultimo])
 class indexExitElement(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     login_url = '/login/'
     permission_required = 'essays.view_exitelement'

@@ -398,7 +398,147 @@ class TestRequestForm(ModelForm):
             'plan_mcl': CheckboxInput(attrs={'class': 'form-check-input justify-content-center', 'aria-label':'Seleccionar Prod. Morrocel', 'id':'plan_mcl'}),
             'logistics': CheckboxInput(attrs={'class': 'form-check-input justify-content-center', 'aria-label':'Seleccionar Planificación y Logística', 'id':'logistics'}),
             'quality': CheckboxInput(attrs={'class': 'form-check-input justify-content-center', 'aria-label':'Seleccionar Calidad', 'id':'quality'}),
-        }     
+        }   
+   
+class ArtRequestForm(ModelForm):
+
+        class Meta:
+            model = ArtRequest
+            fields = (
+                #'format', 
+                'number', 
+                'company', 
+                'origin', 
+                'check_test_client', 
+                'test_client', 
+                'client', 
+                #art
+                'art_number', 
+                'art_date', 
+                'product', 
+                'design', 
+                #TestStructure
+                'lamination_process', 
+                'print_selector',
+                'printer', 
+                'surface_selector',
+                #'surface_over',
+                'reverse_selector',
+                #'reverse_over',
+                'sindex',
+                'sustrate_width',
+                'print_width',
+                'print_width_unit',
+                'colors',
+                #Lamination
+                #'lamination_selector',
+                #dimendiosns
+                'dist_boder_cell_material',
+                'repetition',
+                'repetition_unit',
+                'width_photo',
+                'lenght_photo',
+                'unit_photo',
+                #bobbin
+                'check_bobbin',
+                'width_bobbin',
+                'width_bobbin_unit',
+                'develop',
+                'develop_unit',
+                'exterior_dia_bobbin',
+                'exterior_dia_bobbin_unit',
+                'core_dia_bobbin',
+                'winding',
+                'photocell_side',
+                'winding_description',
+                #ream
+                'check_ream',
+                'width_ream',
+                'lenght_ream',
+                'weight_ream',
+                #production
+                'quantity', 
+                'unit', 
+                'tolerance',
+                'packaging',
+                'tie_color',
+                'observation', 
+                #production
+                'applicant', 
+                'elaborator', 
+                'reviewer',
+                #checks 
+                'pre_print', 
+                'colorimetry', 
+                'plan_crx', 
+                'plan_mcl', 
+                'logistics', 
+                'quality'
+                )
+            widgets ={
+            #'format': Select(attrs={'class': 'form-control myform-focus text-center', 'aria-label':'Formato', 'id':'format'}),
+            'number': TextInput(attrs={'class':'form-control align-items-center myform-focus text-center', 'style':'text-transform: uppercase !important;', 'pattern':'^[0-9]{2}[-][0-9]{6}$', 'Title':'Sólo se admite el formato 00-000000', 'placeholder':'00-000000', 'id':'number'}),
+            'company': Select(attrs={'class': 'form-control myform-focus text-center', 'aria-label':'Empresa', 'id':'company'}),
+            'origin': Select(attrs={'class': 'form-control myform-focus text-center', 'aria-label':'Origen', 'id':'origin'}),
+            'check_test_client': CheckboxInput(attrs={'aria-label':'Cliente de Prueba', 'id':'check_test_client', 'style':'display: none'}),
+            'test_client':TextInput(attrs={'class':'form-control align-items-center myform-focus text-center', 'placeholder':'Nombre...', 'id':'test_client'}),
+            'client': Select(attrs={'class': 'form-control myform-focus text-center', 'aria-label':'Cliente', 'required':'','id':'client'}),
+            #art
+            'art_number': TextInput(attrs={'class':'form-control align-items-center myform-focus text-center', 'style':'text-transform: uppercase !important;', 'placeholder':'00000000', 'id':'art_number'}),
+            'art_date': DateInput(attrs={'class':'form-control align-items-center myform-focus text-center', 'autocomplete':'off', 'placeholder':'DD/MM/AAAA', 'id':'art_date'}),
+            'product': TextInput(attrs={'class':'form-control align-items-center myform-focus', 'placeholder':'Nombre completo del Producto', 'id':'product' }),
+            'design': TextInput(attrs={'class':'form-control align-items-center myform-focus', 'aria-label':'Diseño', 'placeholder':'', 'id':'design' }),
+            'print_selector': CheckboxInput(attrs={'class':'form-check-input justify-content-center', 'aria-label':'En superficie', 'id':'print_selector'}),
+            'printer': Select(attrs={'class': 'form-control myform-focus text-center', 'aria-label':'Impresora', 'id':'printer'}),
+            'surface_selector': CheckboxInput(attrs={'class':'form-check-input justify-content-center', 'type':'radio', 'aria-label':'En superficie', 'id':'surface_selector'}),
+            'reverse_selector': CheckboxInput(attrs={'class':'form-check-input justify-content-center', 'type':'radio', 'aria-label':'En reverso', 'id':'reverse_selector'}),
+            'sindex':HiddenInput(attrs={'id':'sindex'}),
+            'sustrate_width': NumberInput(attrs={'class':'form-control align-items-center myform-focus', 'aria-label':'Sustrato', 'placeholder':'0', 'id':'sustrate_width' }),
+            'print_width': TextInput(attrs={'class':'form-control align-items-center myform-focus flat-right', 'placeholder':'0', 'id':'print_width', 'style':'padding-right: 1.3em !important'}),
+            'print_width_unit': Select(attrs={'class':'text-center form-control myform-focus text-center flat-left', 'id':'print_width_unit' }),
+            'colors': TextInput(attrs={'class':'form-control align-items-center myform-focus', 'placeholder':'Colores', 'id':'colors' }),
+            'dist_boder_cell_material': TextInput(attrs={'class':'form-control align-items-center myform-focus', 'placeholder':'0', 'id':'dist_boder_cell_material'}),
+            'repetition': TextInput(attrs={'class':'form-control align-items-center myform-focus flat-right', 'style':'padding-right: 1.4em !important;', 'placeholder':'0', 'id':'repetition', 'style':'padding-right: 1.3em !important'}),
+            'repetition_unit': Select(attrs={'class':'text-center form-control myform-focus text-center flat-left', 'id':'repetition_unit' }),
+            'width_photo': NumberInput(attrs={'class': 'form-control myform-focus text-center justify-content-center', 'min':'0', 'placeholder':'0', 'id':'width_photo'}),
+            'lenght_photo': NumberInput(attrs={'class': 'form-control align-items-center myform-focus justify-content-center flat-right', 'min':'0', 'placeholder':'0', 'id':'lenght_photo'}),
+            'unit_photo': Select(attrs={'class':'text-center form-control align-items-center myform-focus flat-left', 'id':'unit_photo'}),
+            #bobbin
+            'check_bobbin': CheckboxInput(attrs={'class': 'form-check-input justify-content-center', 'aria-label':'Bobina', 'id':'check_bobbin'}),
+            'width_bobbin': TextInput(attrs={'class':'form-control align-items-center myform-focus flat-right', 'style':'padding-right: 1.4em !important;', 'placeholder':'0', 'id':'width_bobbin', 'style':'padding-right: 1.3em !important'}),
+            'width_bobbin_unit': Select(attrs={'class':'text-center form-control align-items-center myform-focus flat-left', 'id':'width_bobbin_unit'}),
+            'develop': TextInput(attrs={'class': 'form-control myform-focus flat-right', 'style':'padding-right: 1.4em !important;', 'placeholder':'', 'id':'develop', 'style':'padding-right: 1.3em !important'}),
+            'develop_unit': Select(attrs={'class': 'form-control myform-focus flat-left', 'placeholder':'', 'id':'develop_unit'}),
+            'exterior_dia_bobbin': TextInput(attrs={'class':'form-control align-items-center myform-focus flat-right', 'style':'padding-right: 1.4em !important;', 'placeholder':'0', 'id':'exterior_dia_bobbin'}),
+            'exterior_dia_bobbin_unit': Select(attrs={'class':'text-center form-control align-items-center myform-focus flat-left', 'id':'exterior_dia_bobbin_unit'}),
+            'core_dia_bobbin': Select(attrs={'class': 'form-control myform-focus text-center', 'aria-label':'Diámetro de corte bobina', 'id':'core_dia_bobbin'}),
+            'winding': Select(attrs={'class': 'form-control myform-focus text-center', 'placeholder':'Sentido de embobinado', 'id':'winding' }),
+            'photocell_side': Select(attrs={'class': 'form-control myform-focus text-center', 'placeholder':'Lado de fotocelda', 'id':'photocell_side' }),
+            'winding_description': TextInput(attrs={'class': 'form-control myform-focus', 'placeholder':'', 'id':'winding_description'}),
+            #ream
+            'check_ream': CheckboxInput(attrs={'class': 'form-check-input justify-content-center', 'aria-label':'Resma', 'id':'check_ream'}),
+            'width_ream': TextInput(attrs={'class':'form-control align-items-center myform-focus', 'placeholder':'0', 'id':'width_ream'}),
+            'lenght_ream': TextInput(attrs={'class':'form-control align-items-center myform-focus', 'placeholder':'0', 'id':'lenght_ream'}),
+            'weight_ream': TextInput(attrs={'class':'form-control align-items-center myform-focus', 'placeholder':'0', 'id':'weight_ream'}),
+            'quantity': NumberInput(attrs={'class': 'form-control myform-focus text-center justify-content-center', 'min':'0', 'aria-label':'Cantidad', 'placeholder':'0', 'id':'quantity'}),
+            'unit': Select(attrs={'class': 'form-control myform-focus text-center', 'aria-label':'Unidad', 'id':'unit'}),
+            'tolerance': NumberInput(attrs={'class': 'form-control myform-focus text-center justify-content-center', 'min':'0', 'aria-label':'Tolerancia', 'placeholder':'0', 'id':'tolerance'}),
+            'packaging': TextInput(attrs={'class':'form-control align-items-center myform-focus', 'placeholder':'', 'id':'packaging'}),
+            'tie_color': TextInput(attrs={'class':'form-control align-items-center myform-focus', 'placeholder':'', 'id':'tie_color'}),
+            #'observation':
+            #evaluators
+            'applicant': TextInput(attrs={'class':'form-control align-items-center myform-focus', 'aria-label':'', 'placeholder':'Nombre/Departamento', 'id':'applicant'}),
+            'elaborator': TextInput(attrs={'class':'form-control align-items-center myform-focus', 'aria-label':'', 'placeholder':'Nombre, Apellido y/o Cargo', 'id':'elaborator'}),
+            'reviewer': TextInput(attrs={'class':'form-control align-items-center myform-focus', 'aria-label':'', 'placeholder':'Nombre, Apellido y/o Cargo', 'id':'reviewer'}),
+            #checks
+            'pre_print': CheckboxInput(attrs={'class': 'form-check-input justify-content-center', 'aria-label':'Seleccionar Pre-Prensa', 'id':'pre_print'}),
+            'colorimetry': CheckboxInput(attrs={'class': 'form-check-input justify-content-center', 'aria-label':'Seleccionar Colorimetría', 'id':'colorimetry'}),
+            'plan_crx': CheckboxInput(attrs={'class': 'form-check-input justify-content-center', 'aria-label':'Seleccionar Prod. Curex', 'id':'plan_crx'}),
+            'plan_mcl': CheckboxInput(attrs={'class': 'form-check-input justify-content-center', 'aria-label':'Seleccionar Prod. Morrocel', 'id':'plan_mcl'}),
+            'logistics': CheckboxInput(attrs={'class': 'form-check-input justify-content-center', 'aria-label':'Seleccionar Planificación y Logística', 'id':'logistics'}),
+            'quality': CheckboxInput(attrs={'class': 'form-check-input justify-content-center', 'aria-label':'Seleccionar Calidad', 'id':'quality'}),
+        }   
+               
 TestStructureFormset = inlineformset_factory(TestRequest, TestStructure,
         fields = (
             #'test_material_check',
@@ -444,8 +584,7 @@ LaminationFormset = inlineformset_factory(TestRequest, Lamination,
         extra=0,
         can_delete=True
         )
-        '''
-        
+        '''      
 class PrinterForm(ModelForm):
     class Meta:
         model = Printer

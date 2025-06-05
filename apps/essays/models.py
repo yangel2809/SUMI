@@ -1194,4 +1194,346 @@ class ProductionOperator (models.Model):
         verbose_name_plural = 'Operadores de producción'
     
     def __str__(self):
-        return (self.name) 
+        return (self.name)
+
+# Modelos De Arte
+class ArtEntryElement(models.Model):
+    #main data
+    check_test_client = models.BooleanField(default=False)
+    test_client = models.CharField(max_length=100, blank=True, null=True)
+    client = models.ForeignKey("home.Client", verbose_name=("Clientes"), related_name="art_ee_client", blank=True, on_delete=models.RESTRICT, null=True)
+    date = models.DateField(null=True)
+    #External elements---------------------------------->
+    #1.Client requirement
+    product = models.CharField(max_length=100, blank=False, null=True)
+    design = models.CharField(max_length=100, blank=True, null=True)
+    #2.Client suplied elements
+    samples = models.BooleanField(default=False)
+    mechanichal_plans = models.BooleanField(default=False)
+    technical_specs = models.BooleanField(default=False)
+    art = models.BooleanField(default=False)
+    ee_other = models.BooleanField(default=False)
+    ee_other_description = models.CharField(max_length=200, blank=True, null=True)
+    #3.Product Performance and requirements
+    product_performance = QuillField(blank=True, null=True)
+    #4.Service requirements
+    service_requirements = models.CharField(max_length=100, blank=True, null=True)
+    #5.Legal Requirements 
+    cpe = models.BooleanField(default=False)
+    barcode = models.BooleanField(default=False)
+    nutrituonal_table = models.BooleanField(default=False)
+    net_content = models.BooleanField(default=False)
+    sanitary_reg = models.BooleanField(default=False)
+    not_applicable = models.BooleanField(default=False)
+    lr_other = models.BooleanField(default=False)
+    lr_other_description = models.CharField(max_length=200, blank=True, null=True)
+    #6.Service COnditions
+    delivery_date = models.BooleanField(default=False)
+    quantity = models.BooleanField(default=False)
+    technical_assistance = models.BooleanField(default=False)
+    post_sale_service = models.BooleanField(default=False)
+    sc_other = models.BooleanField(default=False)
+    sc_other_description = models.CharField(max_length=200, blank=True, null=True)
+    #7.Specific storing, manipulation or transport Condition
+    ssmtc = models.BooleanField(default=False)
+    ssmtc_description = models.CharField(max_length=200, blank=True, null=True)
+    #8.New materials or providers
+    nmp = models.BooleanField(default=False)
+    nmp_description = models.CharField(max_length=200, blank=True, null=True)
+    #9.National/International norms
+    norms = models.BooleanField(default=False)
+    iso = models.BooleanField(default=False)
+    gazette = models.BooleanField(default=False)
+    norms_other = models.BooleanField(default=False) #change to False
+    norms_description = models.CharField(max_length=200, blank=True, null=True)
+    #Internal elements---------------------------------->
+    #1.Involved Process
+    mounting = models.BooleanField(default=False)
+    printing = models.BooleanField(default=False)
+    lamination = models.BooleanField(default=False)
+    covering = models.BooleanField(default=False)
+    cutting = models.BooleanField(default=False)
+    reaming = models.BooleanField(default=False)
+    bagging = models.BooleanField(default=False)
+    #2.Tech Inversion Requirement
+    tech_inv = models.BooleanField(default=False)
+    tech_inv_description = models.CharField(max_length=200, blank=True, null=True)
+    #3.Human Resource Requirement
+    hr = models.BooleanField(default=False)
+    hr_description = models.CharField(max_length=200, blank=True, null=True)
+    #4.similar products
+    similar_products = models.BooleanField(default=False)
+    op = models.CharField(max_length=9, blank=True, null=True)
+    description = models.CharField(max_length=100, blank=True, null=True)
+    product_client = models.ForeignKey("home.Client", verbose_name=("Clientes"), related_name="art_product_client", blank=True, on_delete=models.RESTRICT, null=True)
+    #Product Preservation Elements---------------------------------->
+    #1.Ambiental conditions
+    ambiental = models.BooleanField(default=False)
+    ambiental_description = models.CharField(max_length=200, blank=True, null=True)
+    #2.Potential Failure
+    failure = models.BooleanField(default=False)
+    failure_description = models.CharField(max_length=200, blank=True, null=True)
+    #3.Fail consequence
+    fail_consequence = models.CharField(max_length=200, blank=True, null=True)
+    #end
+    observation = QuillField(blank=True, null=True)
+
+    sales_test_request = models.OneToOneField('sales.SalesTestRequest', on_delete=models.SET_NULL, null=True, blank=True)
+
+    elaborator = models.CharField(max_length=100, blank=False, null=True)
+    reviewer = models.CharField(max_length=100, blank=True, null=True)
+    
+    documents = models.ManyToManyField(Document, blank=True)
+
+    def delete(self, *args, **kwargs):
+        # Delete all related Document objects
+        for document in self.documents.all():
+            document.delete()
+        super().delete(*args, **kwargs)
+
+    class Meta:
+        verbose_name = ("Elementos de entrada para el diseño y desarrollo de arte")
+        verbose_name_plural = ("Elementos de entrada para diseños y desarrollos de arte")
+
+    def __str__(self):
+        return f'{self.product} - {self.date}'
+
+    @property
+    def art_request(self):
+        from .models import ArtRequest
+        return ArtRequest.objects.get(entry_element=self) #type:ignore
+
+    @property
+    def has_art_request(self):
+        from .models import ArtRequest
+        return ArtRequest.objects.filter(entry_element=self).exists()
+
+class ArtRequest(models.Model):
+    ORG_OPT = TestRequest.ORG_OPT
+    CPN_OPT = TestRequest.CPN_OPT
+    COR_OPT = TestRequest.COR_OPT
+    UNT_OPT = TestRequest.UNT_OPT
+    UN2_OPT = TestRequest.UN2_OPT
+    UN3_OPT = TestRequest.UN3_OPT
+    DIA_OPT = TestRequest.DIA_OPT
+    WIN_OPT = TestRequest.WIN_OPT
+    PTC_OPT = TestRequest.PTC_OPT
+
+    entry_element = models.OneToOneField('essays.EntryElement', related_name='art_entry_element', blank=True, on_delete=models.CASCADE, null=True)
+
+    touched = models.BooleanField(default=False)
+
+    number = models.CharField(max_length=9, validators=[RegexValidator(r'^[0-9]{2}[-][0-9]{6}$')], blank=True, null=True)
+    date = models.DateField(null=True, blank=True)
+
+    production_order = models.CharField(max_length=7, blank=True, null=True)
+
+    company = models.CharField(max_length=3, choices=CPN_OPT, blank=True, null=True)
+    origin = models.CharField(max_length=3, choices=ORG_OPT, blank=False, null=True)
+
+    check_test_client = models.BooleanField(default=False)
+    test_client = models.CharField(max_length=100, blank=True, null=True)
+    client = models.ForeignKey("home.Client", verbose_name=("Clientes"), blank=True, on_delete=models.RESTRICT, null=True)
+
+    art_number = models.CharField(max_length=8, blank=True, null=True)
+    art_date = models.DateField(blank=True, null=True)
+
+    product = models.CharField(max_length=100, blank=False, null=True)
+    design = models.CharField(max_length=100, blank=True, null=True)
+
+    print_selector = models.BooleanField(default=False)
+    lamination_process = QuillField(blank=False, null=True)
+
+    printer = models.ForeignKey('essays.Printer', on_delete=models.RESTRICT, blank=True, null=True)
+
+    surface_selector = models.BooleanField(default=False)
+    reverse_selector = models.BooleanField(default=True)
+    sindex = models.IntegerField(default=-2)
+    sustrate_width = models.IntegerField(validators=[int_list_validator(allow_negative=False)], blank=True, null=True)
+    print_width = models.CharField(max_length=30, blank=True, null=True)
+    print_width_unit = models.CharField(max_length=3, choices=UN3_OPT, blank=True, null=True)
+
+    colors = models.CharField(max_length=200, blank=True, null=True)
+
+    dist_boder_cell_material = models.CharField(max_length=30, blank=True, null=True)
+    repetition = models.CharField(max_length=30, blank=True, null=True)
+    repetition_unit = models.CharField(max_length=3, choices=UN3_OPT, blank=True, null=True)
+    width_photo = models.IntegerField(validators=[int_list_validator(allow_negative=False)], blank=True, null=True)
+    lenght_photo = models.IntegerField(validators=[int_list_validator(allow_negative=False)], blank=True, null=True)
+    unit_photo = models.CharField(max_length=3, choices=UN3_OPT, blank=True, null=True)
+
+    check_bobbin = models.BooleanField(default=False)	
+    width_bobbin = models.CharField(max_length=30, blank=True, null=True)#cut_width
+    width_bobbin_unit = models.CharField(max_length=3, choices=UN3_OPT, blank=True, null=True)
+    develop = models.CharField(max_length=30, blank=True, null=True)
+    develop_unit = models.CharField(max_length=3, choices=UN3_OPT, blank=True, null=True)
+    core_dia_bobbin = models.CharField(max_length=1, choices = COR_OPT, blank=True, null=True)
+    exterior_dia_bobbin = models.CharField(max_length=30, blank=True, null=True)
+    exterior_dia_bobbin_unit = models.CharField(max_length=3, choices=DIA_OPT, blank=True, null=True)
+    winding = models.CharField(max_length=1, choices = WIN_OPT, blank=True, null=True)
+    photocell_side = models.CharField(max_length=1, choices = PTC_OPT, blank=True, null=True)
+    winding_description = models.CharField(max_length=100, blank=True, null=True)
+
+    check_ream = models.BooleanField(default=False)	
+    width_ream = models.CharField(max_length=30, blank=True, null=True)
+    lenght_ream = models.CharField(max_length=30, blank=True, null=True)
+    weight_ream = models.CharField(max_length=30, blank=True, null=True)
+
+    quantity = models.IntegerField(validators=[int_list_validator(allow_negative=False)], null=True)
+    unit = models.CharField(max_length=3, choices=UN2_OPT, blank=False, null=True)
+    tolerance = models.IntegerField(validators=[MinValueValidator(0.0), MaxValueValidator(100.0)], default=10, null=True)
+
+    observation = QuillField(blank=True, null=True)
+
+    packaging = models.CharField(max_length=100, blank=True, null=True)
+    tie_color = models.CharField(max_length=100, blank=True, null=True)
+
+    elaborator = models.CharField(max_length=100, blank=False, null=True)
+    applicant = models.CharField(max_length=100, blank=True, null=True)
+    reviewer = models.CharField(max_length=100, blank=True, null=True)
+
+    #checks
+    pre_print = models.BooleanField(default=False)		
+    colorimetry = models.BooleanField(default=False)	
+    plan_crx = models.BooleanField(default=False)		
+    plan_mcl = models.BooleanField(default=False)		
+    logistics = models.BooleanField(default=False)		
+    quality = models.BooleanField(default=False)
+
+    archived = models.BooleanField(default=False)
+    archived_time = models.DateTimeField(blank=True, null=True)
+
+    closed = models.BooleanField(default=False)
+    closed_time = models.DateTimeField(blank=True, null=True)
+
+    deleted = models.BooleanField(default=False, blank=True, null=True)
+    deleted_by = models.CharField(max_length=30, blank=True, null=True)
+    deleted_time = models.DateTimeField(blank=True, null=True)
+    deleted_reason = models.TextField(default='', blank=True, null=True)
+
+    history = HistoricalRecords()
+
+    class Meta:
+        verbose_name = 'Solicitud de Arte'
+        verbose_name_plural = 'Solicitudes de Arte'
+        permissions = [
+            (
+                "view_working_artrequest",
+                "Puede firmar una solicitud de arte cómo revisada"
+            ),
+            (
+                "sign_artrequest",
+                "Puede firmar una solicitud de arte cómo revisada"
+            ),
+            (
+                "view_archived_artrequest",
+                "Puede ver el archivo de solicitudes de arte"
+            ),
+            (
+                "archive_artrequest",
+                "Puede archivar una solicitud de arte"
+            ),
+            (
+                "unarchive_artrequest",
+                "Puede desarchivar una solicitud de arte"
+            ),
+            (
+                "view_deleted_artrequest",
+                "Puede ver la papelera de solicitudes de arte"
+            ),
+            (
+                "delete_true_artrequest",
+                "Puede eliminar permanentemenete una solicitud de arte"
+            ),
+            (
+                "restore_artrequest",
+                "Puede restaurar una solicitud de arte de la papelera"
+            ),
+            (
+                "close_artrequest",
+                "Puede Cerrar Un expediente de Arte y enviar a IDAT"
+            ),
+            (
+                "open_artrequest",
+                "Puede Abrir Un expediente de Arte y enviar a IDAT"
+            ),
+        ]
+
+    def __str__(self):
+        return (self.product)
+
+class ArtExitElement(models.Model):
+    ACC_OPT = (
+        ('apr', 'Aprobado'),
+        ('reg', 'Regular'),
+        ('def', 'Deficiente'),
+        ('noc', 'No cumple'),
+        ('noa', 'No aplica'),
+    )
+
+    EVA_OPT = ACC_OPT + (('eva', 'En evaluación'),)
+
+    art_request = models.OneToOneField(
+        "essays.ArtRequest",
+        verbose_name="Solicitud de arte",
+        related_name="art_exit_element",
+        blank=True,
+        on_delete=models.RESTRICT,
+        null=True
+    )
+    #client comes from ArtRequest
+    #PR comes from ArtRequest production_order
+    #product comes from ArtRequest
+
+    #accomplished entry elements
+    dimensions = models.BooleanField(default=False)
+    technical_specs = models.BooleanField(default=False)
+    delivery_time = models.BooleanField(default=False)
+    ae_other = models.BooleanField(default=False)
+    ae_other_description = models.CharField(max_length=200, blank=True, null=True)
+
+    functionallity_and_performance = models.TextField(default='', blank=True, null=True)
+
+    replicavility = models.BooleanField(default=False)
+    replicavility_description = models.CharField(max_length=200, blank=True, null=True)
+
+    #accept criteria
+    lab_analysis = models.CharField(max_length=3, choices=ACC_OPT, blank=False, null=True)
+    machinability = models.CharField(max_length=3, choices=ACC_OPT, blank=False, null=True)
+    handling = models.CharField(max_length=3, choices=ACC_OPT, blank=False, null=True)
+    shelf_life = models.CharField(max_length=3, choices=EVA_OPT, blank=False, null=True)
+    shelf_life_date = models.DateField(null=True, blank=True)
+    delivery = models.CharField(max_length=3, choices=ACC_OPT, blank=False, null=True)
+    storage = models.CharField(max_length=3, choices=ACC_OPT, blank=False, null=True)
+    technical_assistance = models.CharField(max_length=3, choices=ACC_OPT, blank=False, null=True)
+    after_sales_service = models.CharField(max_length=3, choices=ACC_OPT, blank=False, null=True)
+
+    failure = models.BooleanField(default=False)
+    failure_description = models.CharField(max_length=200, blank=True, null=True)
+    failure_consequence = models.CharField(max_length=200, blank=True, null=True)
+
+    guarantee = models.BooleanField(default=False)
+    guarantee_description = models.CharField(max_length=200, blank=True, null=True)
+
+    elaborator = models.CharField(max_length=100, blank=False, null=True)
+    reviewer = models.CharField(max_length=100, blank=True, null=True)
+
+    observation = QuillField(blank=True, null=True)
+
+    created = models.DateTimeField(auto_now_add=True, null=True)
+    modified = models.DateTimeField(auto_now=True, null=True)
+
+    documents = models.ManyToManyField(Document, blank=True)
+
+    def delete(self, *args, **kwargs):
+        # Delete all related Document objects
+        for document in self.documents.all():
+            document.delete()
+        super().delete(*args, **kwargs)
+
+    class Meta:
+        verbose_name = "Elementos de salida del diseño y desarrollo de arte"
+        verbose_name_plural = "Elementos de salida del diseño y desarrollo de arte"
+
+    def __str__(self):
+        return f'{self.art_request} - {self.elaborator}'

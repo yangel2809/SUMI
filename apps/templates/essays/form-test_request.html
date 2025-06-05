@@ -956,7 +956,7 @@ aria-labelledby="TrueDelete" aria-hidden="true" style="user-select: none;">
     $('#elaborator').val("{{ entry_element.elaborator }}");
     $('#product').val("{{ entry_element.product }}").prop('readonly', true);
     $('#design').val("{{ entry_element.design }}").prop('readonly', true);
-    if ({{ entry_element.check_test_client|yesno:"true,false" }}) {
+    if ("{{ entry_element.check_test_client|yesno:'true,false' }}" === "true") {
       $('#check_test_client').prop('checked', true);
       $('#test_client').val("{{ entry_element.test_client }}");
       $('#test-client').show();
