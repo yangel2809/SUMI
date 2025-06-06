@@ -22,6 +22,13 @@ urlpatterns = [
     path('x-test_requests/', ajaxTestRequest, name='x-test_requests'),
 
     #Entry Element
+    
+    #Entry Element Art
+    path('entry_elements/art/', indexArtEntryElement.as_view(), name='art_entry_element'),
+    path('entry_elements/art/add/', addArtEntryElement, name='add_art_entry_element'),
+    path('entry_elements/art/<str:pk>/edit/', editArtEntryElement, name='edit_art_entry_element'),
+    path('entry_elements/art/<str:pk>/delete/', deleteArtEntryElement, name='delete_art_entry_element'),
+
     path('entry_elements/add/', addEntryElement, name='add_entry_element'),
     path('entry_elements/<str:pk>/', viewEntryElement, name='view_entry_element'),
     path('entry_elements/<str:pk>/edit/', editEntryElement, name='edit_entry_element'),
@@ -112,4 +119,5 @@ urlpatterns = [
     path('test_requests/<str:pk>/annexes/', viewAnnex, name='view_annexes'),
     path('test_requests/<str:tr>/annexes/add/', addAnnex, name='add_annex'),
     path('test_requests/<str:tr>/annexes/<str:ck>/delete/', deleteAnnex, name='delete_annex'),
+
 ]

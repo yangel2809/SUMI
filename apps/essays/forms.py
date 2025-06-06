@@ -1033,3 +1033,159 @@ class AnnexForm(ModelForm):
         widgets = {
             'identification': Textarea(attrs={'class':'form-control align-items-center myform-focus', 'style':'transition: none !important;', 'rows':'2'}),
         }
+class ArtEntryElementForm(ModelForm):
+    class Meta:
+        model = ArtEntryElement
+        fields = '__all__'
+        widgets ={
+            'sales_test_request':   Select(attrs={'class':'form-control myform-focus text-center', 'id':'sales_test_request'}),
+            'product_client':       Select(attrs={'class':'form-control myform-focus text-center', 'id':'product_client'}),
+            'client':               Select(attrs={'class':'form-control myform-focus text-center', 'id':'client', 'required':''}),
+            'date':                 DateInput(attrs={'class':'form-control myform-focus text-center date-widget', 'value':dateformat.format(timezone.now(), 'd/m/Y'), 'placeholder':'DD/MM/AAAA', 'id':'date'}),
+            'ambiental_description':TextInput(attrs={'class':'form-control myform-focus d-none', 'placeholder':'Especifique', 'id':'ambiental_description'}),
+            'ee_other_description': TextInput(attrs={'class':'form-control myform-focus d-none', 'placeholder':'Especifique', 'id':'ee_other_description' }),
+            'lr_other_description': TextInput(attrs={'class':'form-control myform-focus d-none', 'placeholder':'Especifique', 'id':'lr_other_description' }),
+            'sc_other_description': TextInput(attrs={'class':'form-control myform-focus d-none', 'placeholder':'Especifique', 'id':'sc_other_description' }),
+            'ssmtc_description':    TextInput(attrs={'class':'form-control myform-focus d-none', 'placeholder':'Especifique', 'id':'ssmtc_description'    }),
+            'nmp_description':      TextInput(attrs={'class':'form-control myform-focus d-none', 'placeholder':'Especifique', 'id':'nmp_description'      }),
+            'norms_description':    TextInput(attrs={'class':'form-control myform-focus d-none', 'placeholder':'Indique',     'id':'norms_other_description'    }),
+            'tech_inv_description': TextInput(attrs={'class':'form-control myform-focus d-none', 'placeholder':'Especifique', 'id':'tech_inv_description' }),
+            'hr_description':       TextInput(attrs={'class':'form-control myform-focus d-none', 'placeholder':'Especifique', 'id':'hr_description'       }),
+            'failure_description':  TextInput(attrs={'class':'form-control myform-focus', 'placeholder':'', 'id':'failure_specification'  }),
+            'service_requirements': TextInput(attrs={'class':'form-control myform-focus', 'placeholder':'', 'id':'service_requirements'}),
+            'involved_processes':   TextInput(attrs={'class':'form-control myform-focus', 'placeholder':'', 'id':'involved_processes'  }),
+            'fail_consequence':     TextInput(attrs={'class':'form-control myform-focus', 'placeholder':'', 'id':'fail_consequence'    }),
+            'test_client':          TextInput(attrs={'class':'form-control myform-focus', 'placeholder':'', 'id':'test_client'         }),
+            'description':          TextInput(attrs={'class':'form-control myform-focus', 'placeholder':'', 'id':'description'         }),
+            'elaborator':           TextInput(attrs={'class':'form-control myform-focus', 'placeholder':'', 'id':'elaborator'          }),
+            'reviewer':             TextInput(attrs={'class':'form-control myform-focus', 'placeholder':'', 'id':'reviewer'            }),
+            'product':              TextInput(attrs={'class':'form-control myform-focus', 'placeholder':'', 'id':'product'             }),
+            'design':               TextInput(attrs={'class':'form-control myform-focus', 'placeholder':'', 'id':'design'              }),
+            'op':                   TextInput(attrs={'class':'form-control myform-focus', 'placeholder':'', 'id':'op'                  }),
+            'technical_assistance': CheckboxInput(attrs={'class':'form-check-input mt-2', 'id':'technical_assistance'}),
+            'check_test_client':    CheckboxInput(attrs={'class':'d-none',                'id':'check_test_client'   }),
+            'mechanichal_plans':    CheckboxInput(attrs={'class':'form-check-input mt-2', 'id':'mechanichal_plans'   }),
+            'post_sale_service':    CheckboxInput(attrs={'class':'form-check-input mt-2', 'id':'post_sale_service'   }),
+            'technical_specs':      CheckboxInput(attrs={'class':'form-check-input mt-2', 'id':'technical_specs'     }),
+            'delivery_date':        CheckboxInput(attrs={'class':'form-check-input mt-2', 'id':'delivery_date'       }),
+            'quantity':             CheckboxInput(attrs={'class':'form-check-input mt-2', 'id':'quantity'            }),
+            'mounting':             CheckboxInput(attrs={'class':'form-check-input mt-2', 'id':'mounting'            }),
+            'printing':             CheckboxInput(attrs={'class':'form-check-input mt-2', 'id':'printing'            }),
+            'lamination':           CheckboxInput(attrs={'class':'form-check-input mt-2', 'id':'lamination'          }),
+            'covering':             CheckboxInput(attrs={'class':'form-check-input mt-2', 'id':'covering'            }),
+            'cutting':              CheckboxInput(attrs={'class':'form-check-input mt-2', 'id':'cutting'             }),
+            'reaming':              CheckboxInput(attrs={'class':'form-check-input mt-2', 'id':'reaming'             }),
+            'bagging':              CheckboxInput(attrs={'class':'form-check-input mt-2', 'id':'bagging'             }),
+            'gazette':              CheckboxInput(attrs={'class':'form-check-input mt-2', 'id':'gazette'             }),
+            'iso':                  CheckboxInput(attrs={'class':'form-check-input mt-2', 'id':'iso'                 }),
+            'not_applicable':       CheckboxInput(attrs={'class':'form-check-input mt-2 na-check', 'childs':'lr-check', 'id':'not_applicable'}),
+            'cpe':                  CheckboxInput(attrs={'class':'form-check-input mt-2 lr-check', 'id':'cpe'                 }),
+            'barcode':              CheckboxInput(attrs={'class':'form-check-input mt-2 lr-check', 'id':'barcode'             }),
+            'nutrituonal_table':    CheckboxInput(attrs={'class':'form-check-input mt-2 lr-check', 'id':'nutrituonal_table'   }),
+            'net_content':          CheckboxInput(attrs={'class':'form-check-input mt-2 lr-check', 'id':'net_content'         }),
+            'sanitary_reg':         CheckboxInput(attrs={'class':'form-check-input mt-2 lr-check', 'id':'sanitary_reg'        }),
+            'lr_other':             CheckboxInput(attrs={'class':'form-check-input mt-2 lr-check description-selector', 'id':'lr_other'}),
+            'ee_other':             CheckboxInput(attrs={'class':'form-check-input mt-2 description-selector', 'id':'ee_other'}),
+            'sc_other':             CheckboxInput(attrs={'class':'form-check-input mt-2 description-selector', 'id':'sc_other'}),
+            'ssmtc':                CheckboxInput(attrs={'class':'form-check-input mt-2 description-selector', 'id':'ssmtc'   }),
+            'nmp':                  CheckboxInput(attrs={'class':'form-check-input mt-2 description-selector', 'id':'nmp'     }),
+            'norms':                CheckboxInput(attrs={'class':'form-check-input mt-2 description-selector', 'id':'norms'   }),
+            'norms_other':          CheckboxInput(attrs={'class':'form-check-input mt-2 description-selector', 'id':'norms_other'}),
+            'tech_inv':             CheckboxInput(attrs={'class':'form-check-input mt-2 description-selector', 'id':'tech_inv'}),
+            'failure':              CheckboxInput(attrs={'class':'form-check-input mt-2 description-selector', 'id':'failure' }),
+            'hr':                   CheckboxInput(attrs={'class':'form-check-input mt-2 description-selector', 'id':'hr'      }),
+            'similar_products':     CheckboxInput(attrs={'class':'form-check-input mt-2 description-selector', 'id':'similar_products'}),
+            'ambiental':            CheckboxInput(attrs={'class':'form-check-input mt-2 description-selector', 'id':'ambiental'       }),
+            'samples':              CheckboxInput(attrs={'class':'form-check-input mt-2', 'id':'samples'             }),
+            'art':                  CheckboxInput(attrs={'class':'form-check-input mt-2', 'id':'art'                 }),
+        }
+        labels = {
+            'check_test_client':'Usar Cliente de Prueba',
+            'test_client':'Cliente de Prueba',
+            'client':'Cliente',
+            'date':'Fecha',
+            'product':'Nombre Completo del Producto',
+            'design':'Diseño',
+            'samples':'Muestras del Cliente',
+            'mechanichal_plans':'Planos Mecánicos del Cliente',
+            'technical_specs':'Especificaciones Técnicas del Cliente',
+            'art':'Arte del Cliente',
+            'ee_other':'Otros',
+            'ee_other_description':'Especifique',
+            'product_performance':'Requisitos Funcionales del Producto',
+            'service_requirements':'Requisitos del Servicio',
+            'cpe':'C.P.E.',
+            'barcode':'Código de Barras',
+            'nutrituonal_table':'Tabla Nutricional',
+            'net_content':'Contenido Neto',
+            'sanitary_reg':'Registro Sanitario',
+            'lr_other':'Otros',
+            'lr_other_description':'Especifique',
+            'not_applicable':'No Aplica',
+            'delivery_date':'Fecha de entrega',
+            'quantity':'Cantidad',
+            'technical_assistance':'Asistencia Técnica',
+            'post_sale_service':'Servicio Post-Venta',
+            'sc_other':'Otro',
+            'sc_other_description':'Especifique',
+            'ssmtc':'¿Se requiere de alguna condición de almacenamiento, manipulación, transporte y entrega específica?',
+            'ssmtc_description':'Especifique',
+            'nmp':'¿Se Requiere Desarrollo de nuevas materias primas y/o proveedores?',
+            'nmp_description':'Especifique',
+            'norms':'Normas Nacionales y/o Internacionales',
+            'iso':'Norma ISO 9001-2015',
+            'gazette':'<abbr title="Normas sobre Prácticas para la Fabricación, Almacenamiento y Transporte de Envases, Empaques y/o Artículos Destinados a estar en Contacto con Alimentos">Gaceta Oficial Nº 38.678 del 8 de mayo de 2007</abbr>',
+            'norms_other':'Otras',
+            'mounting':'Montaje',
+            'printing':'Impresión',
+            'lamination':'Laminación',
+            'covering':'Recubrimiento',
+            'cutting':'Corte',
+            'reaming':'Resmado',
+            'bagging':'Bolseado',
+            'tech_inv':'¿Se requiere inversión tecnológica para este desarrollo?',
+            'tech_inv_description':'Especifique',
+            'hr':'¿Se requiere de recursos humanos para el diseño y desarrollo?',
+            'hr_description':'Especifique',
+            'similar_products':'¿Se tienen registros de productos similares?',
+            'op':'OP Nro.',
+            'description':'Descripción',
+            'product_client':'Cliente',
+
+            'ambiental':'¿Se requiere de condiciones ambientales especiales para mantener el producto?',
+            'ambiental_description':'Especifique',
+            'failure':'¿Existen fallas potenciales?',
+            'failure_description':'Especifique',
+            'fail_consequence':'¿Cuales serían las Consecuencias de éstas fallas?',
+
+            'sales_test_request':'Solicitud de Ventas',
+
+            'observation':'Observaciones',
+            'elaborator':'Realizado Por',
+            'reviewer':'Revisado Por',
+        }
+
+    documents = MultipleFileField(
+        required=False,
+        widget=MultipleFileInput(attrs={'multiple': True, 'class':'d-none', 'id': 'documents', 'accept': '.pdf,.doc,.docx,.xls,.xlsx,.xlsm,.jpeg,.jpg,.png'}),
+        label='Documentos'
+    )
+    def save(self, commit=True):
+        instance = super(ArtEntryElementForm, self).save(commit=False)
+        if commit:
+            instance.save()
+            files = self.cleaned_data.get('documents', [])
+            for file in files:
+                validate_file_type(file)
+                validate_file_size(file)
+
+                original_filename = file.name
+                extension = os.path.splitext(original_filename)[1]
+                new_filename = f"entry_element_{instance.id}-{uuid.uuid4()}{extension}"
+                file.name = new_filename
+
+                doc = Document.objects.create(file=file, label=limit_file_name(original_filename))
+
+                instance.documents.add(doc)
+            instance.save()
+        return instance
