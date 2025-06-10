@@ -1,0 +1,401 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<link href="{{ ASSETS_ROOT }}/css/plan-form.css" rel="stylesheet" />
+<style>
+  label{
+    margin-top: .6em;
+    margin-bottom: 0;
+  }
+</style>
+{% if test_request_obj.company == 'mcl' %}
+<style>:root {--mc-color: #946037;--mc-selection: #ad7e5a;--mc-shadow-color: #94603780;--mc-calendar-today: #94603780;--critical-color: #94603769;--mc-hover-color: #94603759;}</style>
+<script>$('meta[name="theme-color"]').attr('content', '#946037')</script>
+{% endif %}
+
+<div class="container pt-1 pb-3 px-sm-3 px-1">
+  <div class="row min-vh-80 justify-content-center h-100">
+    <div class="container-sm col-lg-10 col-12">
+
+      <div class="card justify-content-center my-4">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2" style="user-select: none">
+          <div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2">
+            <div class="mt-2 justify-content-center">
+              <h5 class="text-white text-center font-weight-bolder me-3">{% if 'edit' in request.get_full_path %}Editar {% endif %}Elelementos de Entrada</h5>
+            </div>
+          </div>
+        </div>
+        <div class="card-body container justify-content-center px-0 py-2">
+          <div class="form-group justify-content-center d-flex input-group input-group-outline px-3">
+            <form class="form col-12" action="" method="POST"  id="main-form" enctype="multipart/form-data">
+              {% csrf_token %}
+              <div class="p-0">
+                
+                <div class="d-flex flex-wrap px-1 user-select-none">
+                  {{ form.check_test_client }}
+                  <div class="p-1 col-sm-5 col-md-7 col-12 {% if form.client.errors %}border-error{% endif %}" id="normal-client">
+                    <label class="mb-n1 normal-client" for="client">
+                      {% if not lock %}<a class="a-deaf cursor-pointer client-swap"><i class="fa fa-exchange" aria-hidden="true"></i></a>{% endif %}
+                        {{ form.client.label }}
+                      </label>
+                      {{ form.client }}
+                    </div>
+                    <div class="p-1 col-sm-5 col-md-7 col-12 {% if form.test_client.errors %}border-error{% endif %}" id="test-client" style="display: none;">
+                      <label class="mb-n1" for="test_client">
+                        {% if not lock %}<a class="a-deaf cursor-pointer client-swap"><i class="fa fa-exchange" aria-hidden="true"></i></a>{% endif %}
+                      {{ form.test_client.label }}
+                    </label>
+                    {{ form.test_client }}
+                    </div>
+                    <div class="p-1 col" for="date">
+                      <label class="mb-n1" for="date">{{ form.date.label }}</label>
+                      {{ form.date }}
+                    </div>
+                </div>
+                <h6 class="mb-n2 mt-2 fw-bold ps-2 text-primary">Elementos Externos</h6>
+                <hr class="mx-2 my-2">
+                <h6 class="mb-n2 mt-2 fw-bold text-dark ps-2">Requerimiento del Cliente</h6>
+                <div class="d-flex flex-wrap px-1">
+                  <div class="col-sm-6 col-12 p-1 m-0 {% if form.product.errors %}border-error{% endif %}"><label class="mb-n1" for="product">{{ form.product.label }}</label> {{ form.product }}</div>
+                  <div class="col-sm-6 col-12 p-1 m-0 {% if form.design.errors %}border-error{% endif %}"><label class="mb-n1" for="design">{{ form.design.label }}</label> {{ form.design }}</div>
+                </div>
+                
+                <h6 class="mt-3 mb-0 fw-bold text-dark ps-2">Elementos Suministrados por el Cliente</h6>
+                <div class="d-flex flex-wrap px-1 gap-2 user-select-none">
+                  <div class="p-0 m-0"><label class="cursor-pointer mx-1" for="samples">{{ form.samples.label }}</label>{{ form.samples }}</div>
+                  <div class="p-0 m-0"><label class="cursor-pointer mx-1" for="mechanichal_plans">{{ form.mechanichal_plans.label }}</label>{{ form.mechanichal_plans }}</div>
+                  <div class="p-0 m-0"><label class="cursor-pointer mx-1" for="technical_specs">{{ form.technical_specs.label }}</label>{{ form.technical_specs }}</div>
+                  <div class="p-0 m-0"><label class="cursor-pointer mx-1" for="art">{{ form.art.label }}</label>{{ form.art }}</div>
+                  <div class="p-0 m-0"><label class="cursor-pointer mx-1" for="ee_other">{{ form.ee_other.label }}</label>{{ form.ee_other }}</div>
+                  <div class="col-12">{{ form.ee_other_description }}</div>
+                </div>
+                
+                <h6 class="mb-n1 mt-2 fw-bold text-dark ps-2">{{ form.product_performance.label }}</h6>
+                <div class="px-1 pt-2">
+                  {{ form.product_performance }}
+                </div>
+                
+                <h6 class="mt-3 mb-0 fw-bold text-dark ps-2">Requisistos Legales del Producto</h6>
+                <div class="d-flex flex-wrap px-1 gap-2 user-select-none">
+                  <div class="p-0 m-0"><label class="cursor-pointer mx-1" for="cpe">{{ form.cpe.label }}</label>{{ form.cpe }}</div>
+                  <div class="p-0 m-0"><label class="cursor-pointer mx-1" for="barcode">{{ form.barcode.label }}</label>{{ form.barcode }}</div>
+                  <div class="p-0 m-0"><label class="cursor-pointer mx-1" for="nutrituonal_table">{{ form.nutrituonal_table.label }}</label>{{ form.nutrituonal_table }}</div>
+                  <div class="p-0 m-0"><label class="cursor-pointer mx-1" for="net_content">{{ form.net_content.label }}</label>{{ form.net_content }}</div>
+                  <div class="p-0 m-0"><label class="cursor-pointer mx-1" for="sanitary_reg">{{ form.sanitary_reg.label }}</label>{{ form.sanitary_reg }}</div>
+                  <div class="p-0 m-0"><label class="cursor-pointer mx-1" for="lr_other">{{ form.lr_other.label }}</label>{{ form.lr_other }}</div>
+                  <div class="p-0 m-0"><label class="cursor-pointer mx-1" for="not_applicable">{{ form.not_applicable.label }}</label>{{ form.not_applicable }}</div>
+                  <div class="col-12">{{ form.lr_other_description }}</div>
+                </div>
+                
+                <h6 class="mt-3 mb-0 fw-bold text-dark ps-2">Condiciones del Servicio</h6>
+                <div class="d-flex flex-wrap px-1 gap-2 pb-2 user-select-none">
+                  <div class="p-0 m-0"><label class="cursor-pointer mx-1" for="delivery_date">{{ form.delivery_date.label }}</label>{{ form.delivery_date }}</div>
+                  <div class="p-0 m-0"><label class="cursor-pointer mx-1" for="quantity">{{ form.quantity.label }}</label>{{ form.quantity }}</div>
+                  <div class="p-0 m-0"><label class="cursor-pointer mx-1" for="technical_assistance">{{ form.technical_assistance.label }}</label>{{ form.technical_assistance }}</div>
+                  <div class="p-0 m-0"><label class="cursor-pointer mx-1" for="post_sale_service">{{ form.post_sale_service.label }}</label>{{ form.post_sale_service }}</div>
+                  <div class="p-0 m-0"><label class="cursor-pointer mx-1" for="sc_other">{{ form.sc_other.label }}</label>{{ form.sc_other }}</div>
+                  <div class="col-12">{{ form.sc_other_description }}</div>
+                </div>
+                
+                <div class="px-1 user-select-none">
+                  
+                  <div class="d-flex flex-wrap gap-2 col-12">
+                    <label for="ssmtc" class="cursor-pointer fs-6 mx-1 mt-1 fw-bold text-dark">{{ form.ssmtc.label }}</label>
+                    <div class="labeled-switch"><p class="no-label text-primary">no&ensp;</p><div class="form-switch">{{ form.ssmtc }}</div><p class="yes-label">&thinsp;si</p></div>
+                    <div class="col-12 mt-n3 mb-2">{{ form.ssmtc_description }}</div>
+                  </div>
+                
+                  <div class="d-flex flex-wrap gap-2 col-12">
+                    <label for="nmp" class="cursor-pointer fs-6 mx-1 mt-1 fw-bold text-dark">{{ form.nmp.label }}</label>
+                    <div class="labeled-switch"><p class="no-label text-primary">no&ensp;</p><div class="form-switch">{{ form.nmp }}</div><p class="yes-label">&thinsp;si</p></div>
+                    <div class="col-12 mt-n3 mb-2">{{ form.nmp_description }}</div>
+                  </div>
+                  
+                  <div class="d-flex flex-wrap gap-2 col-12">
+                    <label for="norms" class="cursor-pointer fs-6 mx-1 mt-1 fw-bold text-dark">{{ form.norms.label }}</label>
+                    <div class="labeled-switch"><p class="no-label text-primary">no&ensp;</p><div class="form-switch">{{ form.norms }}</div><p class="yes-label">&thinsp;si</p></div>
+                    <div class="col-12 d-none mt-n4" id="norms_description">
+                      <div class="d-flex flex-wrap gap-1 col-12 mb-2">
+                        <div class="p-0 m-0"><label class="cursor-pointer mx-1" for="iso">{{ form.iso.label }}</label>{{ form.iso }}</div>
+                        <div class="p-0 m-0"><label class="cursor-pointer mx-1" for="gazette">{{ form.gazette.label|safe }}</label>{{ form.gazette }}</div>
+                        <div class="p-0 m-0"><label class="cursor-pointer mx-1" for="norms_other">{{ form.norms_other.label }}</label>{{ form.norms_other }}</div>
+                      </div>
+                      <div class="col-12">{{ form.norms_description }}</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <h6 class="mb-n2 mt-2 fw-bold text-primary ps-2">Elementos Internos</h6>
+                <hr class="mx-2 my-2">
+
+                <h6 class="mt-3 mb-0 fw-bold text-dark ps-2 col-12">Procesos Involucrados</h6>
+                <div class="d-flex flex-wrap px-1 gap-2 pb-2 mb-1 user-select-none">
+                  <div class="p-0 m-0"><label class="cursor-pointer mx-1" for="mounting">{{ form.mounting.label }}</label>{{ form.mounting }}</div>
+                  <div class="p-0 m-0"><label class="cursor-pointer mx-1" for="printing">{{ form.printing.label }}</label>{{ form.printing }}</div>
+                  <div class="p-0 m-0"><label class="cursor-pointer mx-1" for="lamination">{{ form.lamination.label }}</label>{{ form.lamination }}</div>
+                  <div class="p-0 m-0"><label class="cursor-pointer mx-1" for="covering">{{ form.covering.label }}</label>{{ form.covering }}</div>
+                  <div class="p-0 m-0"><label class="cursor-pointer mx-1" for="cutting">{{ form.cutting.label }}</label>{{ form.cutting }}</div>
+                  <div class="p-0 m-0"><label class="cursor-pointer mx-1" for="reaming">{{ form.reaming.label }}</label>{{ form.reaming }}</div>
+                  <div class="p-0 m-0"><label class="cursor-pointer mx-1" for="bagging">{{ form.bagging.label }}</label>{{ form.bagging }}</div>
+                </div>
+                <div class="px-1 gap-2 user-select-none">
+
+                  <div class="d-flex flex-wrap gap-2 col-12">
+                    <label for="tech_inv" class="cursor-pointer fs-6 mx-1 mt-1 fw-bold text-dark">{{ form.tech_inv.label }}</label>
+                    <div class="labeled-switch"><p class="no-label text-primary">no&ensp;</p><div class="form-switch">{{ form.tech_inv }}</div><p class="yes-label">&thinsp;si</p></div>
+                    <div class="col-12 mt-n3 mb-2">{{ form.tech_inv_description }}</div>
+                  </div>
+
+                  <div class="d-flex flex-wrap gap-2 col-12">
+                    <label for="hr" class="cursor-pointer fs-6 mx-1 mt-1 fw-bold text-dark">{{ form.hr.label }}</label>
+                    <div class="labeled-switch"><p class="no-label text-primary">no&ensp;</p><div class="form-switch">{{ form.hr }}</div><p class="yes-label">&thinsp;si</p></div>
+                    <div class="col-12 mt-n3 mb-2">{{ form.hr_description }}</div>
+                  </div>
+
+                  <div class="d-flex flex-wrap gap-2 col-12">
+                    <label for="similar_products" class="cursor-pointer fs-6 mx-1 mt-1 fw-bold text-dark">{{ form.similar_products.label }}</label>
+                    <div class="labeled-switch"><p class="no-label text-primary">no&ensp;</p><div class="form-switch">{{ form.similar_products }}</div><p class="yes-label">&thinsp;si</p></div>
+                    <div class="col-12 mt-n4 mb-2 p-0 d-none d-flex flex-row flex-wrap" id="similar_products_description">
+                      <div class="col-md-2 pe-1 col-4">
+                        <label for="op">{{ form.op.label }}</label>
+                        {{ form.op }}
+                      </div>
+                      <div class="col-md-4 px-1 col-8">
+                        <label for="product_client">{{ form.product_client.label }}</label>
+                        {{ form.product_client }}
+                      </div>
+                      <div class="col-md-6 px-1 col-12">
+                        <label for="description">{{ form.description.label }}</label>
+                        {{ form.description }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <h6 class="mb-n2 mt-2 fw-bold text-primary ps-2">Elementos para mantener las características del producto</h6>
+                <hr class="mx-2 my-2">
+
+                <div>
+                  <div class="d-flex flex-wrap px-1 gap-2 user-select-none">
+                    <label for="ambiental" class="cursor-pointer fs-6 mx-1 mt-1 fw-bold text-dark">{{ form.ambiental.label }}</label>
+                    <div class="labeled-switch"><p class="no-label text-primary">no&ensp;</p><div class="form-switch">{{ form.ambiental }}</div><p class="yes-label">&thinsp;si</p></div>
+                    <div class="col-12 mt-n3 mb-2">{{ form.ambiental_description }}</div>
+                  </div>
+                  <div class="d-flex flex-wrap gap-1 user-select-none">
+                    <label for="failure" class="cursor-pointer fs-6 mx-1 ps-1 mt-1 mb-0 fw-bold text-dark">{{ form.failure.label }}</label>
+                    <div class="labeled-switch"><p class="no-label text-primary">no&ensp;</p><div class="form-switch">{{ form.failure }}</div><p class="yes-label">&thinsp;si</p></div>
+                    <div class="col-12 mt-n4 mb-2 p-0 d-none d-flex flex-row flex-wrap" id="failure_description">
+                      <div class="col-md-6 px-1 col-12">
+                        <label for="failure_description">{{ form.failure_description.label }}</label>
+                        {{ form.failure_description }}
+                      </div>
+                      <div class="col-md-6 px-1 col-12">
+                        <label for="fail_consequence">{{ form.fail_consequence.label }}</label>
+                        {{ form.fail_consequence }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="px-2 col-12">
+                  <label for="sales_test_request">{{ form.sales_test_request.label }}</label>
+                  {{ form.sales_test_request }}
+                </div>
+
+                <hr class="mx-2 mt-2 mb-3">
+
+                {% include 'includes/document_dropper.html' with documents=form.documents existing=object.documents.all %}
+
+                <label class="ps-1 mb-0" for="observation">{{ form.observation.label }}</label>
+                <div class="px-1 pt-2">
+                  {{ form.observation }}
+                </div>
+
+                <div class="col-12 mb-2 p-0 d-flex flex-row flex-wrap">
+                  <div class="col-md-6 px-1 col-12">
+                    <label for="elaborator">{{ form.elaborator.label }}</label>
+                    {{ form.elaborator }}
+                  </div>
+                  <div class="col-md-6 px-1 col-12">
+                    <label for="reviewer">{{ form.reviewer.label }}</label>
+                    {{ form.reviewer }}
+                  </div>
+                </div>
+
+                <div class="col-12 mb-2 px-1">
+                  <label for="test_request">Solicitud de Prueba</label>
+                  <select class="form-control myform-focus" id="test_request" name="test_request">{{ selected_tr|safe }}</select>
+                  <p class="text-xs text-grey fst-italic ps-2 pt-1">Las solicitudes de prueba asociadas a un elemento de entrada no se mostrarán</p>
+                </div>
+
+                <div style="user-select: none;" class="text-center">
+                  <button type="submit" class="btn btn-primary mx-1 my-2">Guardar</button>
+                  <a onClick="window.history.back();return false;">
+                    <button type="button" class="btn btn-secondary mx-1 my-2">Cancelar</button>
+                  </a>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  $(document).ready(function() {
+      // Find all input checkboxes
+      $('input[type="checkbox"]').each(function() {
+          // Add the "form-check" class to the parent <td>
+          $(this).closest('td').addClass('form-check');
+          $(this).closest('div').addClass('form-check');
+      });
+      if($('#check_test_client').is(':checked')) {
+        $('#test-client').show();
+        $('#normal-client').hide();
+        $('#test_client').prop('required', true);
+        $('#client').prop('required', false);
+        $('#client').val(null).trigger('change');
+      }
+      $('.client-swap').click(function () {
+          if($('#check_test_client').is(':checked')) {
+            $('#check_test_client').prop('checked', false);
+            $('#normal-client').show();
+            $('#test-client').hide();
+            $('#client').prop('required', true);
+            $('#test_client').prop('required', false);
+            $('#test_client').val(null);
+          }else{
+            $('#check_test_client').prop('checked', true);
+            $('#test-client').show();
+            $('#normal-client').hide();
+            $('#test_client').prop('required', true);
+            $('#client').prop('required', false);
+            $('#client').val(null).trigger('change');
+          };
+        });
+
+      $('.description-selector').each(function(){
+        if($(this).is(':checked')) {
+          $('#'+ $(this).attr('name') + '_description').removeClass('d-none')
+          $(this).closest('.labeled-switch').find('.no-label, .yes-label').toggleClass('text-primary');
+        };
+      })
+
+      $('.na-check').on('change', function(){
+        $('.'+ $(this).attr('childs')).each(function(){
+          if($(this).is(':checked')) {
+            $(this).trigger('change').prop('checked', false)
+          }
+          $(this).prop('disabled', !$(this).prop('disabled'));
+        })
+      });
+      
+      $('.description-selector').on('change', function() {
+        // Determine the target description div based on the checkbox ID
+        var target = $('#' + $(this).attr('id') + '_description');
+        target.toggleClass('d-none');
+        console.log(target);
+    
+        // Toggle the label colors
+        $(this).closest('.labeled-switch').find('.no-label, .yes-label').toggleClass('text-primary');
+    
+        if (target.hasClass('d-none')) {
+          target.parent().find('input, select').each(function() {
+            $(this).val('');
+            $(this).prop('checked', false);
+    
+            var sub = $('#' + $(this).attr('id') + '_other_description');
+            if (!sub.hasClass('d-none')) {
+              sub.addClass('d-none');
+            }
+            if ($(this).is('select')) {
+              $(this).trigger('change');
+            }
+          });
+        }
+      });
+        
+      $('#client').select2({
+        allowClear: true,
+        placeholder: 'Seleccione...',
+        width: '100%',
+        selectionCssClass: ':all:',
+        dropdownCssClass: ':all:'
+      });
+      $('#product_client').select2({
+        allowClear: true,
+        placeholder: 'Seleccione...',
+        width: '100%',
+        selectionCssClass: ':all:',
+        dropdownCssClass: ':all:'
+      });
+      $('#sales_test_request').select2({
+        allowClear: true,
+        placeholder: 'Seleccione...',
+        width: '100%',
+        selectionCssClass: ':all:',
+        dropdownCssClass: ':all:'
+      });
+      
+      $('#test_request').select2({
+        width: '100%',
+        placeholder:'Seleccione...',
+        selectionCssClass: ':all:',
+        dropdownCssClass: ':all:',
+        allowClear: true,
+        ajax: {
+          url: '{% url "x-test_requests" %}',
+          dataType: 'json',
+          data: function (params) {
+            var queryParameters = {
+              f: params.term, exclude_ee: true
+            }
+            return queryParameters;
+          },
+          processResults: function (data) {
+            return {
+              results: JSON.parse(data).map(function(item) {
+                return { id: item.pk, text: item.fields.number + ' - ' + item.fields.product };
+              })
+            };
+          },
+        },
+        language: {
+          noResults: function () {
+            return "No hay resultados";
+          },
+          searching: function () {
+            return "Buscando...";
+          }
+        }
+      })
+  });
+
+</script>
+
+{% if lock %}
+<script>
+  $(document).ready(function () {
+    $('#product').prop('readonly', true);
+    $('#design').prop('readonly', true);
+    if ({{ lock.check_test_client|yesno:"true,false" }}) {
+      $('#check_test_client').prop('checked', true);
+      //$('#test_client').val("{{ entry_element.test_client }}");
+      $('#test-client').show();
+      $('#normal-client').hide();
+      $('#test_client').prop('required', true);
+      $('#client').prop('required', false);
+      //$('#client').val(null).trigger('change');
+      $('#test_client').prop('readonly', true);
+    } else {
+      $('#client').select2({allowClear: false, width: '100%',selectionCssClass: ':all:'});
+      $('#client').next('.select2-container').addClass('select2-container--readonly');
+      $('#client').on('select2:opening select2:unselecting', function(e) { e.preventDefault(); });
+      } 
+  });
+</script>
+{% endif %}
+{% endblock content %}
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}
