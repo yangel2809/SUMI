@@ -212,23 +212,67 @@ def editEntryElement(request, pk):
 
     obj = get_object_or_404(EntryElement, pk=pk)
 
-    lock = None
-    if obj.has_test_request:
-        lock = obj
-        
-    try:
-        tr = ArtRequest.objects.get(entry_element__pk=obj.pk)
-        selected_tr = f'<option value="{tr.pk}" selected>{tr.number} - {tr.product}</option>'
-    except:
-        tr = None
-        selected_tr = ''
-
     if request.method == 'POST':
-        form = EntryElementForm(request.POST, request.FILES, instance=obj)
+        obj.delete()
+        if 'next' in request.GET:
+            return redirect(request.GET.get('next'))
+        return redirect('test_request')
+
+    return render(request, 'essays/form-entry_element.html')
+#-----------------------------------------------------------------------------------------
+#Esto lista los elementos de entrada de una solicitud de ensayo de arte
+class indexEntryElementArt(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    login_url = '/login/'
+    permission_required = 'essays.view_artentryelement'
+    model = ArtEntryElement
+    template_name = 'essays/tables-test_request_art.html'
+    ordering = ['-date']
+    context_object_name = 'objects'
+    paginate_by = 15
+    orphans = 2
+
+    def get(self, request, *args, **kwargs):
+        self.object_list = self.get_queryset()
+        
+        context = self.get_context_data()
+        return self.render_to_response(context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Elementos de Entrada de Arte'
+        context['segment'] = 'requests_art'
+        context['tab'] = 'art_entry'
+        context['search'] = True
+        context['table'] = 'essays/tables/entry_element_art.html'
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search_text = self.request.GET.get('search_text', None)
+        if search_text:
+            queryset = queryset.filter(
+                Q(product__icontains=search_text)|
+                Q(client__name__icontains=search_text)|
+                Q(test_client__icontains=search_text)|
+                Q(date__icontains=search_text)
+            )
+        return queryset
+    def render_to_response(self, context, **response_kwargs):
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            table_html = render_to_string('essays/tables/entry_element_art.html', context, request=self.request)
+            paginator_html = render_to_string('essays/paginators/obj.html', context, request=self.request)
+            return JsonResponse({'table_html': table_html, 'paginator_html': paginator_html})
+        else:
+            return super().render_to_response(context, **response_kwargs)
+
+@login_required(login_url='/login/')
+@permission_required('essays.add_artentryelement', raise_exception=True)
+def addEntryElementArt(request):
+    if request.method == 'POST':
+        form = ArtEntryElementForm(request.POST, request.FILES)
         if form.is_valid():
             ee = form.save()
 
-            tr_id = request.POST.get('test_request')
+            tr_id = request.POST.get('art_request')
             if tr_id:
                 try:
                     tr = ArtRequest.objects.get(pk=tr_id)
@@ -239,7 +283,7 @@ def editEntryElement(request, pk):
 
             response_data = {
                 'success': True,
-                'url': '/entry_elements/'
+                'url': '/entry_elements_art/'
             }
             return JsonResponse(response_data)
         else:
@@ -250,33 +294,13 @@ def editEntryElement(request, pk):
             }
             return JsonResponse(response_data, status=400)
     else:
-        form = EntryElementForm(instance=obj)
+        form = ArtEntryElementForm()
         context ={
-            'object':obj,
             'form':form,
-            'selected_tr':selected_tr,
-            'test_request_obj':tr,
-            'segment':'requests',
-            'back':True,
-            'lock':lock
+            'segment':'requests_art',
+            'back':True
         }
-        return render(request, 'essays/form-entry_element.html', context)
-    
-
-@login_required(login_url='/login/')
-@permission_required('essays.add_entryelement', raise_exception=True)
-def deleteEntryElement(request, pk):
-
-    obj = get_object_or_404(EntryElement, pk=pk)
-
-    if request.method == 'POST':
-        obj.delete()
-        if 'next' in request.GET:
-            return redirect(request.GET.get('next'))
-        return redirect('test_request')
-
-    return render(request, 'essays/form-entry_element.html')
-
+        return render(request, 'essays/form-entry_element_art.html', context)
 
 #-----------------------------------------------------------------------------------------
 class indexExitElement(LoginRequiredMixin, PermissionRequiredMixin, ListView):

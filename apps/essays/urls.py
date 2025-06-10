@@ -12,6 +12,8 @@ urlpatterns = [
 
     # The index
     path('entry_elements/', indexEntryElement.as_view(), name='entry_element'),
+    path('entry_elements_art/', indexEntryElementArt.as_view(), name='entry_element_art'),
+
     path('entry_elements_art/', indexEntryElementArt.as_view(), name='add_entry_element_art'),
 
     path('test_requests/', views.indexTestRequest, name='test_request'),
@@ -22,7 +24,12 @@ urlpatterns = [
 
     #ajax
     path('x-test_requests/', ajaxTestRequest, name='x-test_requests'),
-
+    
+    #Entry Element Art
+    path('entry_elements_art/add/', addEntryElementArt, name='add_entry_element_art'),
+    path('entry_elements_art/<str:pk>/', viewEntryElement, name='view_entry_element_art'),
+    path('entry_elements_art/<str:pk>/edit/', editEntryElement, name='edit_entry_element_art'),
+    path('entry_elements_art/<str:pk>/delete/', deleteEntryElement, name='delete_entry_element_art'),
     #Entry Element
     path('entry_elements/add/', addEntryElement, name='add_entry_element'),
     path('entry_elements/<str:pk>/', viewEntryElement, name='view_entry_element'),
