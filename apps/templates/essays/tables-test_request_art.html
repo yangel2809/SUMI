@@ -22,12 +22,12 @@
   </h5>
   <div class="ms-auto my-auto text-nowrap">
     {% if perms.essays.add_artentryelement and segment == 'requests_art' %}
-    <a id="add_ee" title="Crear Elemento de Entrada de Arte" {% if not tab == 'art_entry' %} style="display: none;" {% endif %}
-      href="{% url 'add_entry_element_art' %}">
-      <i class="material-symbols-rounded text-white" style="font-size: 21px !important;">new_window</i>
-    </a>
+      <a id="add_ee" title="Crear Elemento de Entrada de Arte" {% if not tab == 'art_entry' %} style="display: none;" {% endif %}
+        href="{% url 'add_entry_element_art' %}">
+        <i class="material-symbols-rounded text-white" style="font-size: 21px !important;">new_window</i>
+      </a>
     {% endif %}
-    
+   
     {% comment %}
       {% if perms.essays.add_testrequest and segment == 'requests' %}
       <a id="add_tr" title="Crear Solicitud de Prueba" {% if tab == 'entry' %} style="display: none;" {% endif %}
@@ -70,7 +70,7 @@
         address = $(this).attr("redirect");
         $('#toggle-s').hide()
 
-        if($(this).attr("value") == 'entry'){
+        if($(this).attr("value") == 'art_entry'){
           $('#add_ee').show()
         }
     
