@@ -12,6 +12,8 @@ urlpatterns = [
 
     # The index
     path('entry_elements/', indexEntryElement.as_view(), name='entry_element'),
+    path('entry_elements_art/', indexEntryElementArt.as_view(), name='add_entry_element_art'),
+
     path('test_requests/', views.indexTestRequest, name='test_request'),
     path('test_requests_art/', views.indexTestRequestArt, name='test_request_art'),
     path('exit_elements/', indexExitElement.as_view(), name='exit_element'),
@@ -58,6 +60,14 @@ urlpatterns = [
     path('test_requests_art/<str:pk>/open/', openTestRequestArt, name='open_test_request_art'),
     path('test_requests_art/<str:pk>/archive/', archiveTestRequestArt, name='archive_test_request_art'),
     path('test_requests_art/<str:pk>/unarchive/', unarchiveTestRequestArt, name='unarchive_test_request_art'),
+
+      #Entry Element
+      
+    path('entry_elements_art/add/', addEntryElementArt, name='add_entry_element_art'),
+    path('entry_elements_art/<str:pk>/', viewEntryElement, name='view_entry_element'),
+    path('entry_elements_art/<str:pk>/edit/', editEntryElement, name='edit_entry_element'),
+    path('entry_elements_art/<str:pk>/delete/', deleteEntryElement, name='delete_entry_element'),
+    
 
     #Printer Boot
     path('test_requests/<str:pk>/printer/<str:ck>/', viewPrinterBoot, name='view_printer_boot_tr'),
@@ -112,4 +122,6 @@ urlpatterns = [
     path('test_requests/<str:pk>/annexes/', viewAnnex, name='view_annexes'),
     path('test_requests/<str:tr>/annexes/add/', addAnnex, name='add_annex'),
     path('test_requests/<str:tr>/annexes/<str:ck>/delete/', deleteAnnex, name='delete_annex'),
+
+ 
 ]

@@ -100,6 +100,37 @@ class indexEntryElement(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         else:
             return super().render_to_response(context, **response_kwargs)
 
+class indexEntryElementArt(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    login_url = '/login/'
+    permission_required = 'essays.view_entryelement'
+    model = EntryElement
+    template_name = 'essays/tables-test_request_art.html'
+    ordering = ['-date']
+    context_object_name = 'objects'
+    paginate_by = 15
+    orphans = 2
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Elementos de Entrada de Arte'
+        context['segment'] = 'requests_art'
+        context['tab'] = 'entry'
+        context['search'] = True
+        context['table'] = 'essays/tables/entry_element_art.html'
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search_text = self.request.GET.get('search_text', None)
+        if search_text:
+            queryset = queryset.filter(
+                Q(product__icontains=search_text)|
+                Q(client__name__icontains=search_text)|
+                Q(test_client__icontains=search_text)|
+                Q(date__icontains=search_text)
+            )
+        return queryset
+
 @login_required(login_url='/login/')
 @permission_required('essays.add_entryelement', raise_exception=True)
 def addEntryElement(request):
@@ -137,6 +168,42 @@ def addEntryElement(request):
             'back':True
         }
         return render(request, 'essays/form-entry_element.html', context)
+    
+def addEntryElementArt(request):
+    if request.method == 'POST':
+        form = EntryElementForm(request.POST, request.FILES)
+        if form.is_valid():
+            ee = form.save()
+
+            tr_id = request.POST.get('test_request')
+            if tr_id:
+                try:
+                    tr = ArtRequest.objects.get(pk=tr_id)
+                    tr.entry_element = ee
+                    tr.save()  
+                except ArtRequest.DoesNotExist:
+                    pass
+
+            response_data = {
+                'success': True,
+                'url': '/entry_elements/'
+            }
+            return JsonResponse(response_data)
+        else:
+            errors = form.errors.as_json()
+            response_data = {
+                'success': False,
+                'form_errors': errors,
+            }
+            return JsonResponse(response_data, status=400)
+    else:
+        form = EntryElementForm()
+        context ={
+            'form':form,
+            'segment':'requests',
+            'back':True
+        }
+        return render(request, 'essays/form-entry_element_art.html', context)
     
 
 @login_required(login_url='/login/')

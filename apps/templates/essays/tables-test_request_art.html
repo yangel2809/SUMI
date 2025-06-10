@@ -5,11 +5,11 @@
     {% if 'closed_test_request' in segment %}
     Expedientes de IDAT
     {% elif 'test_request' in segment %}
-    Expedientes de artes
+    Expedientes de pruebas
     {% else %}
     {% if perms.essays.view_entryelement %}
     <a class="title-tab text-white {% if tab != 'entry' %}faded-title cursor-pointer{% endif %}" redirect="{% url 'entry_element' %}" value="entry">Elementos de Entrada</a> | {% endif %}
-    <a class="title-tab text-white {% if tab != 'main' %}faded-title cursor-pointer{% endif %}" value="main">Solicitudes de Arte</a>
+    <a class="title-tab text-white {% if tab != 'main' %}faded-title cursor-pointer{% endif %}" value="main">Solicitudes de Prueba</a>
     {% if perms.essays.add_testrequest %} | <a class="title-tab text-white {% if tab != 'review' %}faded-title cursor-pointer{% endif %}" value="review">Pendientes
       por Aprobar</a>{% endif %}
     {% if perms.essays.view_exitelement %} | 
@@ -23,7 +23,7 @@
   <div class="ms-auto my-auto text-nowrap">
     {% if perms.essays.add_entryelement and segment == 'requests_art' %}
     <a id="add_ee" title="Crear Elemento de Entrada" {% if not tab == 'entry' %} style="display: none;" {% endif %}
-      href="{% url 'add_entry_element' %}">
+      href="{% url 'add_entry_element_art' %}">
       <i class="material-symbols-rounded text-white" style="font-size: 21px !important;">new_window</i>
     </a>
     {% endif %}
@@ -60,7 +60,7 @@
 {% block table_scripts %}
 
 <script>
-    var address = "{% url 'test_request' %}";
+    var address = "{% url 'add_entry_element_art' %}";
     $(document).on('click', '.title-tab', function() {
       if($(this).attr("value") == $('#tab').attr("value")){
         return
