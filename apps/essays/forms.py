@@ -570,6 +570,37 @@ TestStructureFormset = inlineformset_factory(TestRequest, TestStructure,
         extra=0,
         can_delete=True
         )
+ArtStructureFormset = inlineformset_factory(ArtRequest, ArtStructure,
+        fields = (
+            #'test_material_check',
+            #'test_material',
+            'material_type',
+            'provider',
+            'weight',
+            'w_counts',
+            'code',
+            'thickness',
+            't_counts',
+            'description',
+            'from_production'
+        ),
+        formset=BaseInlineFormset,
+        widgets = { 
+            #'test_material_check': CheckboxInput(attrs={'class': 'form-check-input justify-content-center', 'aria-label':'Usar Material de prueba'}),
+            #'test_material': TextInput(attrs={'class': 'form-control myform-focus text-center justify-content-center', 'autocomplete':'off', 'aria-label':'Material de prueba', 'placeholder':'Material...'}),
+            'code': TextInput(attrs={'class': 'form-control myform-focus text-center justify-content-center text-uppercase', 'autocomplete':'off', 'aria-label':'Material de prueba', 'placeholder':'Código...'}),
+            'material_type': Select(attrs={'class': 'form-control myform-focus text-center', 'aria-label':'Tipo de material'}),
+            'provider': Select(attrs={'class': 'form-control myform-focus text-center', 'aria-label':'Proveedor'}),
+            'weight':  TextInput(attrs={'class': 'form-control myform-focus text-center justify-content-center', 'min':'0', 'aria-label':'Peso', 'placeholder':'0'}),
+            'w_counts':CheckboxInput(attrs={'style':'display: none;'}),
+            'thickness': NumberInput(attrs={'class': 'form-control myform-focus text-center justify-content-center', 'min':'0', 'aria-label':'Espesor', 'placeholder':'0'}),
+            't_counts':CheckboxInput(attrs={'style':'display: none;'}),
+            'description': TextInput(attrs={'class': 'form-control myform-focus text-center justify-content-center', 'autocomplete':'off', 'aria-label':'Descripción', 'placeholder':'Descripción', 'style':'padding-right: 1.3em !important'}),
+            'from_production':  TextInput(attrs={'style':'display:none;'}),
+        }, 
+        extra=0,
+        can_delete=True
+        )
 '''
 LaminationFormset = inlineformset_factory(TestRequest, Lamination,
         fields = (

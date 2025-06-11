@@ -36,8 +36,8 @@
         {% elif not entry_element.has_test_request %}
         
         <i class="material-symbols-rounded text-danger">
-          {% if perms.essays.add_testrequest %}
-          <a title="Crear Solicitud de Prueba" href="{% url 'add_test_request' entry_element.id %}">addchart</a>
+          {% if perms.essays.add_artrequest %}
+          <a title="Crear Solicitud de Arte" href="{% url 'add_art_request' entry_element.id %}">addchart</a>
           {% else %}
           <x style="cursor: help;" title="Pendiente por solicitud de prueba">addchart</x>
           {% endif %}
