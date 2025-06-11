@@ -575,6 +575,29 @@ class TestStructure (models.Model):
 
     def __str__(self):
         return str(self.material_type)
+class ArtStructure (models.Model):
+
+    test_request = models.ForeignKey('essays.ArtRequest', on_delete=models.CASCADE, null=True)
+
+    material_type = models.ForeignKey('home.MaterialType', on_delete=models.RESTRICT, blank=False, null=True)
+    provider = models.ForeignKey('home.Provider', on_delete=models.RESTRICT, blank=False, null=True)
+    code = models.CharField(max_length=11, blank=True, null=True)
+    weight = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(9999.0)], null=True)
+    w_counts = models.BooleanField(default=True)
+    thickness = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(9999.0)], null=True)
+    t_counts = models.BooleanField(default=True)
+    description = models.CharField(max_length=100, blank=True, null=True)
+
+    from_production = models.CharField(max_length=100, blank=True, null=True)
+
+    history = HistoricalRecords()
+
+    class Meta:
+        verbose_name = 'Estructura'
+        verbose_name_plural = 'Estructuras'
+
+    def __str__(self):
+        return str(self.material_type)
 
 class PrinterBoot (models.Model):
     #Parent----------------------------------------------

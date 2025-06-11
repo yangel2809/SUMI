@@ -83,7 +83,7 @@
       }else{
         $('#add_ee').hide()
         $('#toggle-s').show()
-        address = "{% url 'test_request_art' %}"
+        address = "{% url 'test_requests_art' %}"
         var params = new URLSearchParams(window.location.search);
         var data = {};
         for (var pair of params.entries()) {

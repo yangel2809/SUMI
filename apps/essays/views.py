@@ -551,6 +551,7 @@ def indexTestRequestArt(request):
     elif header == "review":
         art_request_obj = ArtRequest.objects.exclude(Q(deleted=True)|Q(archived=True)|Q(closed=True)).filter(reviewer=None).order_by('-number')
         tab = 'review'
+        #Lista general de las solicitudes
     elif request.GET.get('touched') != 'closed':
         art_request_obj = ArtRequest.objects.exclude(Q(deleted=True)|Q(archived=True)|Q(closed=True)).exclude(reviewer=None).order_by('-number')
         tab = 'main'
@@ -1100,6 +1101,58 @@ def viewTechSpecs(request, pk):
     
     return render(request, 'essays/details-test_request.html', context)
 
+#Art Request Crud------------------------------------------------------------------------------------------------------------------------
+@login_required(login_url='/login/')    
+@permission_required('essays.add_artrequest', raise_exception=True)#type:ignore
+@transaction.atomic
+def addArtRequest (request, entry_element_id=None):
+    form = ArtRequestForm(request.POST or None)
+    sformset = ArtStructureFormset(request.POST or None, prefix='structures')
+
+    entry_element = get_object_or_404(ArtEntryElement, pk=entry_element_id) if entry_element_id else None
+    
+    context = {'form': form, 'sformset': sformset, 'segment':'requests_art', 'entry_element':entry_element, 'back': True}
+    last_tr = ArtRequest.objects.exclude(deleted=True).order_by('-number')
+    
+    last = last_tr[0].number if last_tr else "03-000000"
+
+    if request.method == 'POST':
+        if form.is_valid() and sformset.is_valid():
+            art_request = form.save(commit=False)
+            #validation
+            if art_request.art_number:
+                art_request.art_number = art_request.art_number.upper()
+
+            if not art_request.number:
+                art_request.number = set_tr_number(str(last)) 
+
+            if not request.user.has_perm('essays.sign_artrequest'):
+                art_request.reviewer = None
+            if entry_element:
+                art_request.entry_element = entry_element
+
+            art_request.id = get_id(ArtRequest)
+            art_request.date = timezone.now()
+
+            art_request.save()
+
+            sform = sformset.save(commit=False)
+            for structure in sform:
+                structure.test_request = art_request
+                if structure.code is not None:
+                    structure.code = structure.code.upper()
+                structure.save()
+
+            action = bool(request.POST.get('save_and_view'))
+            
+            if action == True:
+                return redirect('view_test_request_art', art_request.id)
+            
+            return redirect('/test_requests_art/?touched=False')
+        else:
+            print(form.errors)
+    return render(request, 'essays/form-test_request_art.html', context)
+
 #Test Request Crud------------------------------------------------------------------------------------------------------------------------>
 def set_tr_number(val: str) -> str:
     lead, string = val.split("-")
@@ -1188,6 +1241,7 @@ def cloneTestRequestArt(request, pk):
     request.session['header'] = 'review'
     return redirect('test_request_art')
 
+#------------------------------Crear una solicitud de ensayo------------------------------------------------------------------------------------------
 @login_required(login_url='/login/')
 @permission_required('essays.add_testrequest', raise_exception=True)#type:ignore
 @transaction.atomic

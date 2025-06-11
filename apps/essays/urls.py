@@ -40,6 +40,9 @@ urlpatterns = [
     path('exit_elements/<str:pk>/edit/', editExitElement, name='edit_exit_element'),
     path('exit_elements/<str:pk>/delete/', deleteExitElement, name='delete_exit_element'),
 
+    #Art Request
+    re_path(r'^art_requests/add(?:/(?P<entry_element_id>\d+))?/$', addArtRequest, name='add_art_request'),
+
     #Test Request
     re_path(r'^test_requests/add(?:/(?P<entry_element_id>\d+))?/$', addTestRequest, name='add_test_request'),
     path('test_requests/<str:pk>/', viewTestRequest, name='view_test_request'),
