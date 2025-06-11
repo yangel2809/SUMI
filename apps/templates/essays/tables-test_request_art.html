@@ -2,20 +2,20 @@
 
 {% block table_header %}
   <h5 class="text-white font-weight-bolder text-nowrap pe-3">
-    {% if 'closed_test_request' in segment %}
+    {% if 'closed_art_request' in segment %}
     Expedientes de IDAT
-    {% elif 'test_request' in segment %}
+    {% elif 'art_request' in segment %}
     Expedientes de pruebas
     {% else %}
     {% if perms.essays.view_artentryelement %}
     <a class="title-tab text-white {% if tab != 'art_entry' %}faded-title cursor-pointer{% endif %}" redirect="{% url 'entry_element_art' %}" value="art_entry">Elementos de Entrada de Arte</a> | {% endif %}
     <a class="title-tab text-white {% if tab != 'main' %}faded-title cursor-pointer{% endif %}" value="main">Solicitudes de Arte</a>
-    {% if perms.essays.add_testrequest %} | <a class="title-tab text-white {% if tab != 'review' %}faded-title cursor-pointer{% endif %}" value="review">Pendientes
+    {% if perms.essays.add_artrequest %} | <a class="title-tab text-white {% if tab != 'review' %}faded-title cursor-pointer{% endif %}" value="review">Pendientes
       por Aprobar</a>{% endif %}
     {% if perms.essays.view_exitelement %} | 
     <a class="title-tab text-white {% if tab != 'exit' %}faded-title cursor-pointer{% endif %}" redirect="{% url 'exit_element' %}" value="exit">Elementos de Salida</a>{% endif %}
-    {% if perms.essays.view_archived_testrequest %} | <a class="title-tab text-white {% if tab != 'archived' %}faded-title cursor-pointer{% endif %}" value="archived">Archivo</a>{% endif %}
-    {% if perms.essays.view_deleted_testrequest %} | <a
+    {% if perms.essays.view_archived_artrequest %} | <a class="title-tab text-white {% if tab != 'archived' %}faded-title cursor-pointer{% endif %}" value="archived">Archivo</a>{% endif %}
+    {% if perms.essays.view_deleted_artrequest %} | <a
       class="title-tab text-white {% if tab != 'deleted' %}faded-title cursor-pointer{% endif %}"
       value="deleted">Papelera</a>{% endif %}
     {% endif %}
@@ -83,7 +83,7 @@
       }else{
         $('#add_ee').hide()
         $('#toggle-s').show()
-        address = "{% url 'test_request' %}"
+        address = "{% url 'test_request_art' %}"
         var params = new URLSearchParams(window.location.search);
         var data = {};
         for (var pair of params.entries()) {

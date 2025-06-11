@@ -1319,7 +1319,7 @@ class ArtRequest(models.Model):
     WIN_OPT = TestRequest.WIN_OPT
     PTC_OPT = TestRequest.PTC_OPT
 
-    entry_element = models.OneToOneField('essays.EntryElement', related_name='art_entry_element', blank=True, on_delete=models.CASCADE, null=True)
+    entry_element = models.OneToOneField('essays.ArtEntryElement', related_name='art_entry_element', blank=True, on_delete=models.CASCADE, null=True)
 
     touched = models.BooleanField(default=False)
 
