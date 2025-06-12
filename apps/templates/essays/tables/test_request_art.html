@@ -131,11 +131,11 @@
             {% if perms.essays.change_testrequest %}
   
               {% if not test_request_art.reviewer or perms.essays.sign_testrequest and not test_request_art.archived %}
-                <a href="{% url 'edit_test_request_art' test_request_art.id %}{% if '?' in request.get_full_path %}?next=/test_request_arts/{{ request.GET | query_encode }}{% endif %}" class="text-primary" title="Editar">
+                <a href="{% url 'edit_test_request_art' test_request_art.id %}{% if '?' in request.get_full_path %}?next=/test_requests_art/{{ request.GET | query_encode }}{% endif %}" class="text-primary" title="Editar">
                   <i class="material-icons">drive_file_rename_outline</i>
                 </a>
               {% endif %}
-              <a href="{% url 'clone_test_request_art' test_request_art.id %}{% if '?' in request.get_full_path %}?next=/test_request_arts/{{ request.GET | query_encode }}{% endif %}" class="a-deaf clone-link" id="clone-{{ test_request_art.id }}" title="Duplicar">
+              <a href="{% url 'clone_test_request_art' test_request_art.id %}{% if '?' in request.get_full_path %}?next=/test_requests_arts/{{ request.GET | query_encode }}{% endif %}" class="a-deaf clone-link" id="clone-{{ test_request_art.id }}" title="Duplicar">
                 <i class="material-icons">difference</i>
               </a>
               <span class="loader" title="Si la carga no concluye, comoníquese con soporte" id="clone-{{ test_request_art.id }}-l" style="scale: 80%; display: none;"></span>

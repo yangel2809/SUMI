@@ -59,8 +59,8 @@ urlpatterns = [
     #Test Request Art
     #re_path(r'^test_requests_art/add(?:/(?P<entry_element_id>\d+))?/$', addTestRequestArt, name='add_test_request_art'),
     path('test_requests_art/<str:pk>/', viewTestRequestArt, name='view_test_request_art'),
-    path('test_requests_art/<str:pk>/clone/', cloneTestRequestArt, name='clone_test_request_art'),
-    path('test_requests_art/<str:pk>/edit/', editTestRequestArt, name='edit_test_request_art'),
+    path('test_requests_art/<str:pk>/clone/', cloneArtRequest, name='clone_test_request_art'),
+    path('test_requests_art/<str:pk>/edit/', editArtRequest, name='edit_test_request_art'),
     path('test_requests_art/<str:pk>/delete/', deleteTestRequestArt, name='delete_test_request_art'),
     path('test_requests_art/<str:pk>/restore/', restoreTestRequestArt, name='restore_test_request_art'),
     path('test_requests_art/<str:pk>/deleteTrue/', deleteTrueTestRequestArt, name='delete_true_test_request_art'),

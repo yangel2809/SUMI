@@ -1153,6 +1153,48 @@ def addArtRequest (request, entry_element_id=None):
             print(form.errors)
     return render(request, 'essays/form-art-request.html', context)
 
+@login_required(login_url='/login/')
+@permission_required('essays.add_artrequest', raise_exception=True)#type:ignore
+@transaction.atomic
+def cloneArtRequest(request, pk):
+    with CaptureQueriesContext(connection) as context:
+
+        test_request = ArtRequest.objects.get(id=pk)
+        test = ArtStructure.objects.filter(test_request__pk=pk)
+
+        test_request.id = get_id(ArtRequest) #type:ignore
+        test_request.entry_element = None
+        test_request.deleted = False
+        test_request.deleted_by = None
+        test_request.deleted_time = None
+        test_request.deleted_reason = None
+        test_request.archived = False
+        test_request.archived_time = None
+        test_request.closed = False
+        test_request.closed_time = None
+        test_request.touched = False
+        test_request.number = None
+        test_request.production_order = ''
+        test_request.reviewer = None
+
+        test_request.save()
+
+        test_request_id = test_request
+
+        new_tests = []
+        for ts in test:
+            ts.id = None #type:ignore
+            ts.test_request = test_request_id #type:ignore
+            new_tests.append(ts)
+
+        TestStructure.objects.bulk_create(new_tests)
+
+        #print(f"The function made {len(context)} queries.")
+
+    request.session['header'] = 'review'
+    return redirect('test_request_art')
+
+
 #Test Request Crud------------------------------------------------------------------------------------------------------------------------>
 def set_tr_number(val: str) -> str:
     lead, string = val.split("-")
@@ -1199,48 +1241,6 @@ def cloneTestRequest(request, pk):
 
     request.session['header'] = 'review'
     return redirect('test_request')
-
-@login_required(login_url='/login/')
-@permission_required('essays.add_testrequest', raise_exception=True)#type:ignore
-@transaction.atomic
-def cloneTestRequestArt(request, pk):
-    with CaptureQueriesContext(connection) as context:
-
-        test_request = TestRequest.objects.get(id=pk)
-        test = TestStructure.objects.filter(test_request__pk=pk)
-
-        test_request.id = get_id(TestRequest) #type:ignore
-        test_request.entry_element = None
-        test_request.deleted = False
-        test_request.deleted_by = None
-        test_request.deleted_time = None
-        test_request.deleted_reason = None
-        test_request.archived = False
-        test_request.archived_time = None
-        test_request.closed = False
-        test_request.closed_time = None
-        test_request.touched = False
-        test_request.number = None
-        test_request.production_order = ''
-        test_request.reviewer = None
-
-        test_request.save()
-
-        test_request_id = test_request
-
-        new_tests = []
-        for ts in test:
-            ts.id = None #type:ignore
-            ts.test_request = test_request_id #type:ignore
-            new_tests.append(ts)
-
-        TestStructure.objects.bulk_create(new_tests)
-
-        #print(f"The function made {len(context)} queries.")
-
-    request.session['header'] = 'review'
-    return redirect('test_request_art')
-
 #------------------------------Crear una solicitud de ensayo------------------------------------------------------------------------------------------
 @login_required(login_url='/login/')
 @permission_required('essays.add_testrequest', raise_exception=True)#type:ignore
@@ -1371,9 +1371,9 @@ def editTestRequest (request, pk):
 @login_required(login_url='/login/')
 @permission_required('essays.change_testrequest', raise_exception=True)#type:ignore
 @transaction.atomic
-def editTestRequestArt(request, pk):
+def editArtRequest(request, pk):
     
-    obj = get_object_or_404(TestRequest, pk=pk)
+    obj = get_object_or_404(ArtRequest, pk=pk)
     
     try:
         entry_element = obj.entry_element
@@ -1382,14 +1382,14 @@ def editTestRequestArt(request, pk):
 
     segment = 'test_request_art'
     if obj.deleted or \
-    (obj.reviewer and not request.user.has_perm('essays.sign_testrequest')):
+    (obj.reviewer and not request.user.has_perm('essays.sign_arttrequest')):
         return render(request, 'errors/403.html', status=403)
     if obj.touched == False:
         segment = 'requests_art'
     #elif not request.user.is_superuser and obj.touched:
     #    return render(request, 'errors/403.html', status=403)
-    form = TestRequestForm(request.POST or None, instance=obj)
-    sformset = TestStructureFormset(request.POST or None, instance = obj, prefix='structures')
+    form = ArtRequestForm(request.POST or None, instance=obj)
+    sformset = ArtStructureFormset(request.POST or None, instance = obj, prefix='structures')
 
     context = {'form': form,'sformset': sformset, 'segment':segment, 'entry_element':entry_element, 'back': True}
     if request.method == 'POST':
@@ -1404,10 +1404,10 @@ def editTestRequestArt(request, pk):
                 test_request.date = timezone.now()
             
             if not test_request.number:
-                last = TestRequest.objects.exclude(deleted=True).exclude(pk=pk).order_by('-number')[0]
+                last = ArtRequest.objects.exclude(deleted=True).exclude(pk=pk).order_by('-number')[0]
                 test_request.number = set_tr_number(last.number) #type:ignore
 
-            if not request.user.has_perm('essays.sign_testrequest'):
+            if not request.user.has_perm('essays.sign_artrequest'):
                 test_request.reviewer = obj.reviewer or None
 
             test_request.save(force_update=True)
@@ -1427,16 +1427,19 @@ def editTestRequestArt(request, pk):
             action = bool(request.POST.get('save_and_view'))
             
             if action == True:
+                print("Redirigiendo a view_test_request_art")
                 return redirect('view_test_request_art', test_request.id)
             
             if 'next' in request.GET:
+                print("Redirigiendo a next")
                 return redirect(request.GET.get('next'))
             
+            print("Redirigiendo a /test_requests_art/?touched=False")
             return redirect('/test_requests_art/?touched=False')
         else:
             for err in form.errors:
                 print(err)
-    return render(request, 'essays/form-test_request.html', context)
+    return render(request, 'essays/form-art-request.html', context)
 def deleteTestRequest(request, pk):
     test_request = get_object_or_404(TestRequest, pk=pk)
      
