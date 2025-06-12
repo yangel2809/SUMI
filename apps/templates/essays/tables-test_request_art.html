@@ -31,7 +31,7 @@
     {% comment %}
       {% if perms.essays.add_testrequest and segment == 'requests' %}
       <a id="add_tr" title="Crear Solicitud de Prueba" {% if tab == 'entry' %} style="display: none;" {% endif %}
-        href="{% url 'add_test_request' %}">
+        href="{% url 'add_art_request' %}">
         <i class="material-icons text-white ">addchart</i>
       </a>
       {% endif %}
@@ -83,7 +83,7 @@
       }else{
         $('#add_ee').hide()
         $('#toggle-s').show()
-        address = "{% url 'test_requests_art' %}"
+        address = "{% url 'test_request_art' %}"
         var params = new URLSearchParams(window.location.search);
         var data = {};
         for (var pair of params.entries()) {

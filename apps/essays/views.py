@@ -556,9 +556,9 @@ def indexTestRequestArt(request):
         art_request_obj = ArtRequest.objects.exclude(Q(deleted=True)|Q(archived=True)|Q(closed=True)).exclude(reviewer=None).order_by('-number')
         tab = 'main'
         segment = 'requests_art'
-        print(art_request_obj.query)
-        print(segment)
-        print(art_request_obj)
+ #       print(art_request_obj.query)
+  #      print(segment)
+   #     print(art_request_obj)
 
     
     if request.session.get('header'):
@@ -1151,7 +1151,7 @@ def addArtRequest (request, entry_element_id=None):
             return redirect('/test_requests_art/?touched=False')
         else:
             print(form.errors)
-    return render(request, 'essays/form-test_request_art.html', context)
+    return render(request, 'essays/form-art-request.html', context)
 
 #Test Request Crud------------------------------------------------------------------------------------------------------------------------>
 def set_tr_number(val: str) -> str:
