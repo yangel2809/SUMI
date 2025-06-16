@@ -691,22 +691,29 @@ def viewEntryElement(request, pk):
 def viewTestRequest(request, pk):
     
     test_request_obj = get_object_or_404(TestRequest, pk=pk)
+    print("objeto2",test_request_obj)
     segment = 'test_request'
     back = '/test_requests/?touched=True'
 
     if test_request_obj.closed == True:
+        print("Condición: closed == True")
         segment = 'closed_test_request'
     elif test_request_obj.touched == False:
+        print("Condición: touched == False")
         segment = 'requests'
         back = '/test_requests/?touched=False'
     if 'next' in request.GET:
+        print("Condición: 'next' en request.GET")
         back =+ request.GET.get('next')
     if 'back' in request.GET:
+        print("Condición: 'back' en request.GET")
         back = request.GET.get('back')
     if test_request_obj.deleted and not request.user.has_perm('essays.view_deleted_testrequest'):
+        print("Condición: deleted y sin permiso")
         return render(request, 'errors/404.html', status=404)
-    
+        
     structure_list = TestStructure.objects.filter(test_request__pk=pk)
+    print("Estructura de prueba:", structure_list)
     sustrate = None
     if structure_list and test_request_obj.sindex >= 0:
         sustrate = structure_list[test_request_obj.sindex]
@@ -744,32 +751,38 @@ def viewTestRequest(request, pk):
 
 @login_required(login_url='/login/')
 @permission_required('essays.view_testrequest', raise_exception=True)
-def viewTestRequestArt(request, pk):
+def viewArtRequest(request, pk):
     
-    test_request_obj = get_object_or_404(TestRequest, pk=pk)
+    test_request_obj = get_object_or_404(ArtRequest, pk=pk)
     segment = 'test_request_art'
     back = '/test_requests_art/?touched=True'
-
+    print("objeto",test_request_obj)
     if test_request_obj.closed == True:
+        print("Condición: closed == True")
         segment = 'closed_test_request_art'
     elif test_request_obj.touched == False:
+        print("Condición: touched == False")
         segment = 'requests_art'
         back = '/test_requests_art/?touched=False'
     if 'next' in request.GET:
+        print("Condición: 'next' en request.GET")
         back =+ request.GET.get('next')
     if 'back' in request.GET:
+        print("Condición: 'back' en request.GET")
         back = request.GET.get('back')
-    if test_request_obj.deleted and not request.user.has_perm('essays.view_deleted_testrequest'):
+    if test_request_obj.deleted and not request.user.has_perm('essays.view_deleted_artrequest'):
+        print("Condición: deleted y sin permiso")
         return render(request, 'errors/404.html', status=404)
     
-    structure_list = TestStructure.objects.filter(test_request__pk=pk)
+    structure_list = ArtStructure.objects.filter(test_request__pk=pk)
+    print("estructura",structure_list)
     sustrate = None
     if structure_list and test_request_obj.sindex >= 0:
         sustrate = structure_list[test_request_obj.sindex]
     printer_boot = PrinterBoot.objects.filter(test_request__pk=pk)
     lamination_boot = LaminatorBoot.objects.filter(test_request__pk=pk)
     cutter_boot = CutterBoot.objects.filter(test_request__pk=pk)
-    spec_extra = TechnicalSpecs.objects.filter(test_request=test_request_obj).first()
+    spec_extra = ArtTechnicalSpecs.objects.filter(art_request=test_request_obj).first()
     annexes = Annex.objects.filter(test_request__pk=pk)
 
     content = 'essays/details/test_request_art.html'
@@ -1241,6 +1254,79 @@ def cloneTestRequest(request, pk):
 
     request.session['header'] = 'review'
     return redirect('test_request')
+
+@login_required(login_url='/login/')
+@permission_required('essays.change_testrequest', raise_exception=True)#type:ignore
+@transaction.atomic
+def editArtRequest(request, pk):
+    
+    obj = get_object_or_404(ArtRequest, pk=pk)
+    
+    try:
+        entry_element = obj.entry_element
+    except:
+        entry_element = None
+
+    segment = 'test_request_art'
+    if obj.deleted or \
+    (obj.reviewer and not request.user.has_perm('essays.sign_arttrequest')):
+        return render(request, 'errors/403.html', status=403)
+    if obj.touched == False:
+        segment = 'requests_art'
+    #elif not request.user.is_superuser and obj.touched:
+    #    return render(request, 'errors/403.html', status=403)
+    form = ArtRequestForm(request.POST or None, instance=obj)
+    sformset = ArtStructureFormset(request.POST or None, instance = obj, prefix='structures')
+
+    context = {'form': form,'sformset': sformset, 'segment':segment, 'entry_element':entry_element, 'back': True}
+    if request.method == 'POST':
+        if form.is_valid() and sformset.is_valid():
+            test_request = form.save(commit=False)
+            #validation
+            if test_request.art_number:
+                test_request.art_number = test_request.art_number.upper()
+            
+            #add if update date true from the request
+            if request.POST.get('update_date'):
+                test_request.date = timezone.now()
+            
+            if not test_request.number:
+                last = ArtRequest.objects.exclude(deleted=True).exclude(pk=pk).order_by('-number')[0]
+                test_request.number = set_tr_number(last.number) #type:ignore
+
+            if not request.user.has_perm('essays.sign_artrequest'):
+                test_request.reviewer = obj.reviewer or None
+
+            test_request.save(force_update=True)
+
+            sform = sformset.save(commit=False)
+
+            for rms in sformset.deleted_objects:
+                rms.delete()
+
+            for structure in sform:
+                if not structure.id:
+                    structure.test_request = test_request
+                if structure.code is not None:
+                    structure.code = structure.code.upper()
+                structure.save() 
+
+            action = bool(request.POST.get('save_and_view'))
+            
+            if action == True:
+                print("Redirigiendo a view_test_request_art")
+                return redirect('view_test_request_art', test_request.id)
+            
+            if 'next' in request.GET:
+                print("Redirigiendo a next")
+                return redirect(request.GET.get('next'))
+            
+            print("Redirigiendo a /test_requests_art/?touched=False")
+            return redirect('/test_requests_art/?touched=False')
+        else:
+            for err in form.errors:
+                print(err)
+    return render(request, 'essays/form-art-request.html', context)
 #------------------------------Crear una solicitud de ensayo------------------------------------------------------------------------------------------
 @login_required(login_url='/login/')
 @permission_required('essays.add_testrequest', raise_exception=True)#type:ignore
@@ -1368,78 +1454,6 @@ def editTestRequest (request, pk):
             print(err)
     return render(request, 'essays/form-test_request.html', context)
 
-@login_required(login_url='/login/')
-@permission_required('essays.change_testrequest', raise_exception=True)#type:ignore
-@transaction.atomic
-def editArtRequest(request, pk):
-    
-    obj = get_object_or_404(ArtRequest, pk=pk)
-    
-    try:
-        entry_element = obj.entry_element
-    except:
-        entry_element = None
-
-    segment = 'test_request_art'
-    if obj.deleted or \
-    (obj.reviewer and not request.user.has_perm('essays.sign_arttrequest')):
-        return render(request, 'errors/403.html', status=403)
-    if obj.touched == False:
-        segment = 'requests_art'
-    #elif not request.user.is_superuser and obj.touched:
-    #    return render(request, 'errors/403.html', status=403)
-    form = ArtRequestForm(request.POST or None, instance=obj)
-    sformset = ArtStructureFormset(request.POST or None, instance = obj, prefix='structures')
-
-    context = {'form': form,'sformset': sformset, 'segment':segment, 'entry_element':entry_element, 'back': True}
-    if request.method == 'POST':
-        if form.is_valid() and sformset.is_valid():
-            test_request = form.save(commit=False)
-            #validation
-            if test_request.art_number:
-                test_request.art_number = test_request.art_number.upper()
-            
-            #add if update date true from the request
-            if request.POST.get('update_date'):
-                test_request.date = timezone.now()
-            
-            if not test_request.number:
-                last = ArtRequest.objects.exclude(deleted=True).exclude(pk=pk).order_by('-number')[0]
-                test_request.number = set_tr_number(last.number) #type:ignore
-
-            if not request.user.has_perm('essays.sign_artrequest'):
-                test_request.reviewer = obj.reviewer or None
-
-            test_request.save(force_update=True)
-
-            sform = sformset.save(commit=False)
-
-            for rms in sformset.deleted_objects:
-                rms.delete()
-
-            for structure in sform:
-                if not structure.id:
-                    structure.test_request = test_request
-                if structure.code is not None:
-                    structure.code = structure.code.upper()
-                structure.save() 
-
-            action = bool(request.POST.get('save_and_view'))
-            
-            if action == True:
-                print("Redirigiendo a view_test_request_art")
-                return redirect('view_test_request_art', test_request.id)
-            
-            if 'next' in request.GET:
-                print("Redirigiendo a next")
-                return redirect(request.GET.get('next'))
-            
-            print("Redirigiendo a /test_requests_art/?touched=False")
-            return redirect('/test_requests_art/?touched=False')
-        else:
-            for err in form.errors:
-                print(err)
-    return render(request, 'essays/form-art-request.html', context)
 def deleteTestRequest(request, pk):
     test_request = get_object_or_404(TestRequest, pk=pk)
      

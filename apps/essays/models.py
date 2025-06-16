@@ -1163,6 +1163,16 @@ class TechnicalSpecs(models.Model):
     
     history = HistoricalRecords()
 
+class ArtTechnicalSpecs(models.Model):
+    
+    art_request = models.OneToOneField('essays.ArtRequest', on_delete=models.CASCADE, blank=True, null=True)
+    date = models.DateField(null=True)
+    
+    observation = QuillField(blank=True, null=True)
+    quality_analist = models.ForeignKey('essays.QualityAnalyst', blank=False, on_delete=models.SET_NULL, null=True)
+    boss = models.CharField(max_length=30, blank=True, null=True)
+    
+   
 class Annex(models.Model):
     test_request = models.ForeignKey('essays.TestRequest', on_delete=models.CASCADE, blank=True, null=True)
     production_order = models.ForeignKey("production.Order", on_delete=models.CASCADE, blank=True, null=True)

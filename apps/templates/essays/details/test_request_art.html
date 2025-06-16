@@ -2,7 +2,7 @@
 {% load home_tags %}
 
 <!---------------------------------[Content Start]--------------------------------->
-{% if test_request_art_obj.company == 'mcl' %}
+{% if test_request_obj.company == 'mcl' %}
 <style>:root {--mc-color: #946037;--mc-selection: #ad7e5a;--mc-shadow-color: #94603780;--mc-calendar-today: #94603780;--critical-color: #94603769;--mc-hover-color: #94603759;}</style>
 <script>$('meta[name="theme-color"]').attr('content', '#946037')</script>
 {% endif %}
@@ -11,13 +11,13 @@
 {% include 'essays/details/entry_element.html' %}
 {% include 'essays/details/exit_element.html' %}
 
-{% if test_request_art_obj %}
+{% if test_request_obj %}
   <!------------------------------[Test Request Start]------------------------------>
   <div class="tabbed-content" id="test-request-art" {% if entry_first or exit_first %}style="display: none;"{% endif %}>
     <div class="d-flex flex-row flex-wrap justify-content-between">
       <div class="d-flex flex-sm-row flex-column user-select-none">
         <div class="p-1">
-          {% if test_request_art_obj.company == 'mcl' %}
+          {% if test_request_obj.company == 'mcl' %}
             <img alt="Morrocel c.a RIF:J-06000377-6" width="220rem" src="{{ ASSETS_ROOT }}/img/logo_mcl.svg" />
           {% else %}
             <img alt="Curex c.a RIF:J-00074598-6" width="220rem" src="{{ ASSETS_ROOT }}/img/logo_crx.svg" />
@@ -39,30 +39,30 @@
     </div>
     <!---------------------------------[Initial Info]--------------------------------->
     <div class="d-flex flex-row justify-content-between flex-wrap mt-3 gap-2">
-      <div class="d-flex flex-row">Fecha de Solicitud:&thinsp;<abbr title="{{ test_request_art_obj.date|date:'l - ' }}{{ test_request_art_obj.date }}" class="fw-bold text-dark-hover">{{ test_request_art_obj.date|date:"d/m/Y" }}</abbr></div>
-      <div class="d-flex flex-row">Número de Solicitud:&thinsp;<x class="fw-bold text-dark">{{ test_request_art_obj.number }}</x></div>
+      <div class="d-flex flex-row">Fecha de Solicitud:&thinsp;<abbr title="{{ test_request_obj.date|date:'l - ' }}{{ test_request_obj.date }}" class="fw-bold text-dark-hover">{{ test_request_obj.date|date:"d/m/Y" }}</abbr></div>
+      <div class="d-flex flex-row">Número de Solicitud:&thinsp;<x class="fw-bold text-dark">{{ test_request_obj.number }}</x></div>
     </div>
     <hr class="my-2">
     <!---------------------------------[Product Info]--------------------------------->
     <div class="d-flex flex-row flex-wrap justify-content-between pb-2 gap-2">
       <div class="d-flex flex-row overflow-scroll hide-bar">
-        {% if test_request_art_obj.check_test_client %}
-          Cliente:&thinsp;<x title="Cliente de Prueba" style="cursor:help" class="fw-bold font-italic text-dark">{{ test_request_art_obj.test_client }}&thinsp;</x>
+        {% if test_request_obj.check_test_client %}
+          Cliente:&thinsp;<x title="Cliente de Prueba" style="cursor:help" class="fw-bold font-italic text-dark">{{ test_request_obj.test_client }}&thinsp;</x>
         {% else %}
-          Cliente:&thinsp;<a href="/test_request_arts?client={{ test_request_art_obj.client.id }}" class="fw-bold">{{ test_request_art_obj.client }}</a>
+          Cliente:&thinsp;<a href="/test_request_arts?client={{ test_request_obj.client.id }}" class="fw-bold">{{ test_request_obj.client }}</a>
         {% endif %}
       </div>
       <div class="d-flex flex-row">
         Origen:&thinsp;
         <x class="mb-0 text-dark fw-bold ">
-          {{ test_request_art_obj.get_origin_display }}
+          {{ test_request_obj.get_origin_display }}
         </x>
       </div>
       <div class="d-flex flex-row overflow-scroll hide-bar">
-        Producto:&thinsp;<x class="fw-bold text-dark">{{ test_request_art_obj.product }}</x>
+        Producto:&thinsp;<x class="fw-bold text-dark">{{ test_request_obj.product }}</x>
       </div>
       <div class="d-flex flex-row overflow-scroll hide-bar">
-        Diseño:&thinsp;<x class="fw-bold text-dark">{{ test_request_art_obj.design }}</x>
+        Diseño:&thinsp;<x class="fw-bold text-dark">{{ test_request_obj.design }}</x>
       </div>
     </div>
     
@@ -164,59 +164,59 @@
     <!--------------------------------------[Plan]------------------------------------->
     <h4 class="text-start text-md-center text-primary fw-bold mb-3">Plan de Producción</h4>
     <div class="d-flex flex-row mt-3">
-      <h6 class="text-primary m-0 me-2 fw-bold">Cantidad a Producir:</h6><x class="fw-bold text-dark">{{ test_request_art_obj.quantity }}{{ test_request_art_obj.unit|default_if_none:"" }} / Tolerancia: {{ test_request_art_obj.tolerance }}%</x>
+      <h6 class="text-primary m-0 me-2 fw-bold">Cantidad a Producir:</h6><x class="fw-bold text-dark">{{ test_request_obj.quantity }}{{ test_request_obj.unit|default_if_none:"" }} / Tolerancia: {{ test_request_obj.tolerance }}%</x>
     </div>
     <hr class="mb-3">
     <!-------------------------------------[Print]------------------------------------->
-    {% if test_request_art_obj.print_selector %}
+    {% if test_request_obj.print_selector %}
     <h5 class="text-start text-sm-center text-primary fw-bold mb-2">Proceso de Impresión</h5>
     <!---------------------------------[Design Info]--------------------------------->
     <div class="d-flex flex-row flex-wrap justify-content-between gap-3 pb-2">
-      {% if test_request_art_obj.design %}
+      {% if test_request_obj.design %}
         <div class="d-flex flex-row overflow-scroll hide-bar me-1">
-          Diseño:&thinsp;<x class="fw-bold text-dark">{{ test_request_art_obj.design }}</x>
+          Diseño:&thinsp;<x class="fw-bold text-dark">{{ test_request_obj.design }}</x>
         </div>
       {% endif %}
-      {% if test_request_art_obj.art_number %}
+      {% if test_request_obj.art_number %}
         <div class="d-flex flex-row overflow-scroll hide-bar me-1">
-          N° de Sol. de Arte:&thinsp;<x class="fw-bold text-dark">{{ test_request_art_obj.art_number }}</x>
+          N° de Sol. de Arte:&thinsp;<x class="fw-bold text-dark">{{ test_request_obj.art_number }}</x>
         </div>
       {% endif %}
-      {% if test_request_art_obj.art_date %}
+      {% if test_request_obj.art_date %}
       <div class="d-flex flex-row overflow-scroll hide-bar me-1">
-          Fecha de Sol. de Arte:&thinsp;<abbr title="{{ test_request_art_obj.art_date|date:'l - ' }}{{ test_request_art_obj.art_date }}" class="fw-bold text-dark-hover">{{ test_request_art_obj.art_date|date:"d/m/Y" }}</abbr>
+          Fecha de Sol. de Arte:&thinsp;<abbr title="{{ test_request_obj.art_date|date:'l - ' }}{{ test_request_obj.art_date }}" class="fw-bold text-dark-hover">{{ test_request_obj.art_date|date:"d/m/Y" }}</abbr>
         </div>
       {% endif %}
     
-      {% if test_request_art_obj.printer %}
+      {% if test_request_obj.printer %}
       <div class="d-flex flex-row fw-bold">
-        Máquina impresora:&thinsp;<x class="fw-bold text-dark">{{ test_request_art_obj.printer }}</x>
+        Máquina impresora:&thinsp;<x class="fw-bold text-dark">{{ test_request_obj.printer }}</x>
       </div>
-      {% if test_request_art_obj.colors %}
+      {% if test_request_obj.colors %}
       <div class="d-flex flex-row">
-        Colores:&thinsp;<x class="fw-bold text-dark">{{ test_request_art_obj.colors }}</x>
+        Colores:&thinsp;<x class="fw-bold text-dark">{{ test_request_obj.colors }}</x>
       </div>
       {% endif %}
       <div class="d-flex flex-row">
-        Ancho del Sustrato:&thinsp;<x class="fw-bold text-dark">{{ test_request_art_obj.sustrate_width }}mm</x>
+        Ancho del Sustrato:&thinsp;<x class="fw-bold text-dark">{{ test_request_obj.sustrate_width }}mm</x>
       </div>
-      {% if test_request_art_obj.print_width %}
+      {% if test_request_obj.print_width %}
       <div class="d-flex flex-row">
-        Ancho útil de Impresión:&thinsp;<x class="fw-bold text-dark">{{ test_request_art_obj.print_width }}{{ test_request_art_obj.print_width_unit|default_if_none:'-' }}</x>
+        Ancho útil de Impresión:&thinsp;<x class="fw-bold text-dark">{{ test_request_obj.print_width }}{{ test_request_obj.print_width_unit|default_if_none:'-' }}</x>
       </div>
       {% endif %}
       <div class="d-flex flex-row">
-        Ancho de Ejemplar:&thinsp;<x class="fw-bold text-dark">{{ test_request_art_obj.width_bobbin }}{{ test_request_art_obj.width_bobbin_unit }}</x>
+        Ancho de Ejemplar:&thinsp;<x class="fw-bold text-dark">{{ test_request_obj.width_bobbin }}{{ test_request_obj.width_bobbin_unit }}</x>
       </div>
       {% endif %}
-      {% if test_request_art_obj.surface_selector %}
+      {% if test_request_obj.surface_selector %}
         <div class="d-flex flex-row">
           <x class="fw-bold text-primary">Imprimir en Superficie del Sustrato</x>
           {% if sustrate %}
           :&thinsp;{{ sustrate.material_type }}
           {% endif %}
         </div>
-      {% elif test_request_art_obj.reverse_selector %}
+      {% elif test_request_obj.reverse_selector %}
       <div class="d-flex flex-row">
           <x class="fw-bold text-primary">Imprimir en Reverso del Sustrato</x>
           {% if sustrate %}
@@ -224,105 +224,105 @@
           {% endif %}
         </div>
       {% endif %}
-      {% if test_request_art_obj.repetition %}
+      {% if test_request_obj.repetition %}
       <div class="d-flex flex-row fw-bold">
-        Repetición:&thinsp;<x class="text-dark">{{ test_request_art_obj.repetition }}{{ test_request_art_obj.repetition_unit|default_if_none:"" }}</x>
+        Repetición:&thinsp;<x class="text-dark">{{ test_request_obj.repetition }}{{ test_request_obj.repetition_unit|default_if_none:"" }}</x>
       </div>
       {% endif %}
-      {% if test_request_art_obj.develop %}
+      {% if test_request_obj.develop %}
       <div class="d-flex flex-row fw-bold">
-        Desarrollo:&thinsp;<x class="text-dark">{{ test_request_art_obj.develop }}{{ test_request_art_obj.develop_unit|default_if_none:"" }}</x>
+        Desarrollo:&thinsp;<x class="text-dark">{{ test_request_obj.develop }}{{ test_request_obj.develop_unit|default_if_none:"" }}</x>
       </div>
       {% endif %}
-      {% if test_request_art_obj.dist_boder_cell_material %}
+      {% if test_request_obj.dist_boder_cell_material %}
       <div class="d-flex flex-row fw-bold">
         <abbr title="Distancia entre el borde del Material y el borde de la Fotocelda">
-          Distancia Borde de Material/Borde Fotocelda</abbr>:&thinsp;<x class="text-dark">{{ test_request_art_obj.dist_boder_cell_material }}mm</x>
+          Distancia Borde de Material/Borde Fotocelda</abbr>:&thinsp;<x class="text-dark">{{ test_request_obj.dist_boder_cell_material }}mm</x>
       </div>
       {% endif %}
-      {% if test_request_art_obj.width_photo %}
+      {% if test_request_obj.width_photo %}
       <div class="d-flex flex-row fw-bold">
-        Ancho&thinsp;Fotocelda:&thinsp;<x class="text-dark">{{ test_request_art_obj.width_photo }}{{ test_request_art_obj.unit_photo|default_if_none:"" }}</x>
+        Ancho&thinsp;Fotocelda:&thinsp;<x class="text-dark">{{ test_request_obj.width_photo }}{{ test_request_obj.unit_photo|default_if_none:"" }}</x>
       </div>
       {% endif %}
-      {% if test_request_art_obj.lenght_photo %}
+      {% if test_request_obj.lenght_photo %}
       <div class="d-flex flex-row fw-bold">
-        Largo&thinsp;Fotocelda:&thinsp;<x class="text-dark">{{ test_request_art_obj.lenght_photo }}{{ test_request_art_obj.unit_photo|default_if_none:"" }}</x>
+        Largo&thinsp;Fotocelda:&thinsp;<x class="text-dark">{{ test_request_obj.lenght_photo }}{{ test_request_obj.unit_photo|default_if_none:"" }}</x>
       </div>
       {% endif %}
     </div>
     <hr class="mt-4 mb-3">
     {% endif %}
     <!----------------------------------[Lamination]----------------------------------->
-    {% if test_request_art_obj.lamination_process.html %}
-    {% if test_request_art_obj.lamination_process.html != '<p><br></p>' %}
+    {% if test_request_obj.lamination_process.html %}
+    {% if test_request_obj.lamination_process.html != '<p><br></p>' %}
     {% comment %}
     <h5 class="text-start text-md-center text-primary fw-bold m-0">Proceso de Laminación</h5>
     {% endcomment %}
     <div>
-      {{ test_request_art_obj.lamination_process.html|safe }}
+      {{ test_request_obj.lamination_process.html|safe }}
     </div>
     <hr class="mt-2">
     {% endif %}
     {% endif %}
     <!--------------------------------[Cutting Process]-------------------------------->
-    {% if test_request_art_obj.dist_boder_cell_material or test_request_art_obj.packaging or test_request_art_obj.tie_color %}
+    {% if test_request_obj.dist_boder_cell_material or test_request_obj.packaging or test_request_obj.tie_color %}
     <h5 class="text-start text-sm-center text-primary fw-bold pb-2 mb-0" style="page-break-before: auto;">Proceso de Corte/Despacho</h5>
     <div class="d-flex flex-row flex-wrap justify-content-start gap-4 mb-4">
-      {% if test_request_art_obj.dist_boder_cell_material %}
+      {% if test_request_obj.dist_boder_cell_material %}
       <div class="d-flex flex-row mb-n3 fw-bold">
         <abbr title="Distancia entre el borde del Material y el borde de la Fotocelda">
-          Distancia Borde de Material/Borde Fotocelda</abbr>:&thinsp;<x class="text-dark">{{ test_request_art_obj.dist_boder_cell_material }}mm</x>
+          Distancia Borde de Material/Borde Fotocelda</abbr>:&thinsp;<x class="text-dark">{{ test_request_obj.dist_boder_cell_material }}mm</x>
       </div>
       {% endif %}
-      {% if test_request_art_obj.packaging %}
+      {% if test_request_obj.packaging %}
       <div class="d-flex flex-row mb-n3 fw-bold">
-          Embalaje:&thinsp;<x class="text-dark">{{ test_request_art_obj.packaging }}</x>
+          Embalaje:&thinsp;<x class="text-dark">{{ test_request_obj.packaging }}</x>
       </div>
       {% endif %}
-      {% if test_request_art_obj.tie_color %}
+      {% if test_request_obj.tie_color %}
       <div class="d-flex flex-row mb-n3 fw-bold">
-          Color de Empate:&thinsp;<x class="text-dark">{{ test_request_art_obj.tie_color }}</x>
+          Color de Empate:&thinsp;<x class="text-dark">{{ test_request_obj.tie_color }}</x>
       </div>
       {% endif %}
     </div>
     {% endif %}
     <!-----------------------------[Bobbin, Ream, Winding]----------------------------->
     <div class="d-flex flex-row flex-wrap">
-      {% if test_request_art_obj.check_bobbin or test_request_art_obj.check_ream %}
-      <div class="d-flex flex-row flex-wrap gap-sm-5 gap-3 col-12 pb-3 {% if test_request_art_obj.winding or test_request_art_obj.winding_description or test_request_art_obj.photocell_side %}col-sm-6{% endif %}">
-        {% if test_request_art_obj.check_bobbin %}
+      {% if test_request_obj.check_bobbin or test_request_obj.check_ream %}
+      <div class="d-flex flex-row flex-wrap gap-sm-5 gap-3 col-12 pb-3 {% if test_request_obj.winding or test_request_obj.winding_description or test_request_obj.photocell_side %}col-sm-6{% endif %}">
+        {% if test_request_obj.check_bobbin %}
           <div class="d-flex flex-column flex-grow-1">
             <h6 class="text-primary m-0 text-center fw-bold">Bobinas</h6>
             <div class="d-flex flex-row justify-content-between">
-              Ancho:<span class="dotted-separator"></span><x class="fw-bold text-dark">{{ test_request_art_obj.width_bobbin }}{{ test_request_art_obj.width_bobbin_unit|default_if_none:"" }}</x>
+              Ancho:<span class="dotted-separator"></span><x class="fw-bold text-dark">{{ test_request_obj.width_bobbin }}{{ test_request_obj.width_bobbin_unit|default_if_none:"" }}</x>
             </div>
     
             <div class="d-flex flex-row justify-content-between">
-              <x><abbr title="Diámetro Exterior">Dia. Ext.:</abbr></x><span class="dotted-separator"></span><x class="fw-bold text-dark">{{ test_request_art_obj.exterior_dia_bobbin }}{{ test_request_art_obj.exterior_dia_bobbin_unit }}</x>
+              <x><abbr title="Diámetro Exterior">Dia. Ext.:</abbr></x><span class="dotted-separator"></span><x class="fw-bold text-dark">{{ test_request_obj.exterior_dia_bobbin }}{{ test_request_obj.exterior_dia_bobbin_unit }}</x>
             </div>
             <div class="d-flex flex-row justify-content-between">
-              <x><abbr title="Diámetro">Dia.</abbr>de Core:</x><span class="dotted-separator"></span><x class="fw-bold text-dark-hover"><abbr title="{{ test_request_art_obj.core_dia_bobbin }} Pulgadas">{{ test_request_art_obj.core_dia_bobbin }}"</abbr></x>
+              <x><abbr title="Diámetro">Dia.</abbr>de Core:</x><span class="dotted-separator"></span><x class="fw-bold text-dark-hover"><abbr title="{{ test_request_obj.core_dia_bobbin }} Pulgadas">{{ test_request_obj.core_dia_bobbin }}"</abbr></x>
             </div>
           </div>
         {% endif %}
-        {% if test_request_art_obj.check_ream %}
-        {% if test_request_art_obj.width_ream or test_request_art_obj.lenght_ream or test_request_art_obj.weight_ream %}
+        {% if test_request_obj.check_ream %}
+        {% if test_request_obj.width_ream or test_request_obj.lenght_ream or test_request_obj.weight_ream %}
           <div class="d-flex flex-column flex-grow-1">
             <h6 class="text-primary m-0 text-center fw-bold">Resmas</h6>
-            {% if test_request_art_obj.width_ream %}
+            {% if test_request_obj.width_ream %}
             <div class="d-flex flex-row justify-content-between">
-              Ancho:<span class="dotted-separator"></span><x class="fw-bold text-dark">{{ test_request_art_obj.width_ream }}</x>
+              Ancho:<span class="dotted-separator"></span><x class="fw-bold text-dark">{{ test_request_obj.width_ream }}</x>
             </div>
             {% endif %}
-            {% if test_request_art_obj.lenght_ream %}
+            {% if test_request_obj.lenght_ream %}
             <div class="d-flex flex-row justify-content-between">
-              Largo:<span class="dotted-separator"></span><x class="fw-bold text-dark">{{ test_request_art_obj.lenght_ream }}</x>
+              Largo:<span class="dotted-separator"></span><x class="fw-bold text-dark">{{ test_request_obj.lenght_ream }}</x>
             </div>
             {% endif %}
-            {% if test_request_art_obj.weight_ream %}
+            {% if test_request_obj.weight_ream %}
             <div class="d-flex flex-row justify-content-between">
-              Peso:<span class="dotted-separator"></span><x class="fw-bold text-dark">{{ test_request_art_obj.weight_ream }}</x>
+              Peso:<span class="dotted-separator"></span><x class="fw-bold text-dark">{{ test_request_obj.weight_ream }}</x>
             </div>
             {% endif %}
           </div>
@@ -332,67 +332,67 @@
       </div>
       {% endif %}
       <!------------------------[winding]------------------------>
-      {% if test_request_art_obj.check_bobbin %}
-      <div class="col-12 col-sm-6 {% if test_request_art_obj.check_bobbin or test_request_art_obj.check_ream %}ps-sm-5{% endif %}">
-        {% include 'essays/icons/render.html' with title="Embobinado al Cliente" description=test_request_art_obj.winding_description winding=test_request_art_obj.winding photocell=test_request_art_obj.photocell_side photocell_dsp=test_request_art_obj.get_photocell_side_display set=test_request_art_obj.company %}
+      {% if test_request_obj.check_bobbin %}
+      <div class="col-12 col-sm-6 {% if test_request_obj.check_bobbin or test_request_obj.check_ream %}ps-sm-5{% endif %}">
+        {% include 'essays/icons/render.html' with title="Embobinado al Cliente" description=test_request_obj.winding_description winding=test_request_obj.winding photocell=test_request_obj.photocell_side photocell_dsp=test_request_obj.get_photocell_side_display set=test_request_obj.company %}
       </div>
       {% endif %}
     </div>
     <hr>
     <!----------------------------------[Observation]---------------------------------->
-    {% if test_request_art_obj.observation.html %}
-    {% if test_request_art_obj.observation.html != '<p><br></p>' %}
+    {% if test_request_obj.observation.html %}
+    {% if test_request_obj.observation.html != '<p><br></p>' %}
     <h5 class="text-start text-md-center text-primary fw-bold m-0">Observaciones</h5>
-    <div>{{ test_request_art_obj.observation.html|safe }}</div>
+    <div>{{ test_request_obj.observation.html|safe }}</div>
     <hr class="mt-2">
     {% endif %}
     {% endif %}
     
     <!-----------------------------------[Personal]----------------------------------->
     <div class="d-flex flex-row flex-wrap justify-content-between gap-3">
-      {% if test_request_art_obj.applicant %}
+      {% if test_request_obj.applicant %}
       <div class="d-flex flex-column">
         <h6 class="m-0 text-primary fw-bold">Solicitante:</h6>
-        <p class="m-0 fw-bold">{{ test_request_art_obj.applicant }}</p>
+        <p class="m-0 fw-bold">{{ test_request_obj.applicant }}</p>
       </div>
       {% endif %}
       <div class="d-flex flex-column">
         <h6 class="m-0 text-primary fw-bold">Realizado por:</h6>
-        <p class="m-0 fw-bold">{{ test_request_art_obj.elaborator }}</p>
+        <p class="m-0 fw-bold">{{ test_request_obj.elaborator }}</p>
       </div>
       <div class="d-flex flex-column">
         <h6 class="m-0 text-primary fw-bold">Revisado por:</h6>
-        <p class="m-0 fw-bold {% if test_request_art_obj.reviewer %}">{{ test_request_art_obj.reviewer }}{% else %}fst-italic">Pendiente por Revisión{% endif %}</p>
+        <p class="m-0 fw-bold {% if test_request_obj.reviewer %}">{{ test_request_obj.reviewer }}{% else %}fst-italic">Pendiente por Revisión{% endif %}</p>
       </div>
     </div>
     <hr>
     <!------------------------------------[Checks]------------------------------------>
     <div class="d-flex flex-row flex-wrap me-1">
       Departamentos:&ensp;
-      {% if test_request_art_obj.pre_print %}<x class="mb-0 fw-bold text-primary">Pre-Prensa</x>&thinsp;/&thinsp;{% endif %}
-      {% if test_request_art_obj.colorimetry %}<x class="mb-0 fw-bold text-primary">Colorimetría</x>&thinsp;/&thinsp;{% endif %}
-      {% if test_request_art_obj.plan_crx %}<x class="mb-0 fw-bold text-primary">Producción Curex</x>&thinsp;/&thinsp;{% endif %}
-      {% if test_request_art_obj.plan_mcl %}<x class="mb-0 fw-bold text-primary">Producción Morrocel</x>&thinsp;/&thinsp;{% endif %}
-      {% if test_request_art_obj.logistics %}<x class="mb-0 fw-bold text-primary">Planificación y Logística</x>&thinsp;/&thinsp;{% endif %}
-      {% if test_request_art_obj.quality %}<x class="mb-0 fw-bold text-primary">ASCA</x>&thinsp;/&thinsp;{% endif %}
+      {% if test_request_obj.pre_print %}<x class="mb-0 fw-bold text-primary">Pre-Prensa</x>&thinsp;/&thinsp;{% endif %}
+      {% if test_request_obj.colorimetry %}<x class="mb-0 fw-bold text-primary">Colorimetría</x>&thinsp;/&thinsp;{% endif %}
+      {% if test_request_obj.plan_crx %}<x class="mb-0 fw-bold text-primary">Producción Curex</x>&thinsp;/&thinsp;{% endif %}
+      {% if test_request_obj.plan_mcl %}<x class="mb-0 fw-bold text-primary">Producción Morrocel</x>&thinsp;/&thinsp;{% endif %}
+      {% if test_request_obj.logistics %}<x class="mb-0 fw-bold text-primary">Planificación y Logística</x>&thinsp;/&thinsp;{% endif %}
+      {% if test_request_obj.quality %}<x class="mb-0 fw-bold text-primary">ASCA</x>&thinsp;/&thinsp;{% endif %}
     </div>
   </div>
   <!-------------------------------[Test Request end]------------------------------->
 {% endif %}  
 
 <!----------------------------------[Delete info]--------------------------------->
-{% if test_request_art_obj.deleted and perms.essays.view_deleted_testrequest %}
+{% if test_request_obj.deleted and perms.essays.view_deleted_testrequest %}
   <div class="my-0 py-0 px-5">
     <hr class="my-1 py-0">
   </div>
   <div class="col-12 text-center px-0 pb-0 pt-2">
-    <h6 class="font-weight-bolder">Eliminado por: <b class="text-primary">{{ test_request_art_obj.deleted_by }}</b> el <b class="text-primary">{{ test_request_art_obj.deleted_time }}</b></h6>
+    <h6 class="font-weight-bolder">Eliminado por: <b class="text-primary">{{ test_request_obj.deleted_by }}</b> el <b class="text-primary">{{ test_request_obj.deleted_time }}</b></h6>
   </div>
   <div class="col-12 text-center px-0 pb-2 mb-1 pt-0">
     <h6 class="font-weight-bolder text-primary">Razón</h6>
   </div>
   <div class="text-center mt-n5 mb-1 px-5" style="white-space: pre-line; overflow-wrap: break-word;">
-    {{ test_request_art_obj.deleted_reason }}
+    {{ test_request_obj.deleted_reason }}
   </div>
 {% endif %}
 <!---------------------------------[Content END]--------------------------------->
