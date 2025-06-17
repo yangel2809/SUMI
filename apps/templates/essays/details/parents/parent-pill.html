@@ -31,7 +31,7 @@
         
           {% if perms.essays.change_testrequest %}
             {% if not test_request_obj.reviewer or perms.essays.sign_testrequest %}
-              <a class="d-flex" title="Editar" href="{% url 'edit_test_request' test_request_obj.id %}">
+              <a class="d-flex" title=" " href="{% url 'edit_test_request' test_request_obj.id %}">
                 <i class="pill-child-action fas fa-pen"></i>
               </a>
               &ensp;
