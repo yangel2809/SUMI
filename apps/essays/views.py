@@ -197,6 +197,19 @@ def editEntryElement(request, pk):
         }
         return render(request, 'essays/form-entry_element.html', context)
     
+@login_required(login_url='/login/')
+@permission_required('essays.add_artentryelement', raise_exception=True)
+def deleteEntryElementArt(request, pk):
+
+    obj = get_object_or_404(ArtEntryElement, pk=pk)
+
+    if request.method == 'POST':
+        obj.delete()
+        if 'next' in request.GET:
+            return redirect(request.GET.get('next'))
+        return redirect('test_request_art')
+
+    return render(request, 'essays/form-entry_element_art.html')
 
 @login_required(login_url='/login/')
 @permission_required('essays.add_entryelement', raise_exception=True)
@@ -284,6 +297,7 @@ def addEntryElementArt(request):
                 'success': False,
                 'form_errors': errors,
             }
+            print(errors)
             return JsonResponse(response_data, status=400)
     else:
         form = ArtEntryElementForm()
@@ -293,6 +307,63 @@ def addEntryElementArt(request):
             'back':True
         }
         return render(request, 'essays/form-entry_element_art.html', context)
+
+@login_required(login_url='/login/')
+@permission_required('essays.change_artentryelement', raise_exception=True)
+def editEntryElementArt(request, pk):
+
+    obj = get_object_or_404(ArtEntryElement, pk=pk)
+
+    lock = None
+    if obj.has_art_request:
+        lock = obj
+        
+    try:
+        tr = ArtRequest.objects.get(entry_element__pk=obj.pk)
+        selected_tr = f'<option value="{tr.pk}" selected>{tr.number} - {tr.product}</option>'
+    except:
+        tr = None
+        selected_tr = ''
+
+    if request.method == 'POST':
+        form = ArtEntryElementForm(request.POST, request.FILES, instance=obj)
+        if form.is_valid():
+            ee = form.save()
+
+            tr_id = request.POST.get('art_request')
+            if tr_id:
+                try:
+                    tr = ArtRequest.objects.get(pk=tr_id)
+                    tr.entry_element = ee
+                    tr.save()  
+                except ArtRequest.DoesNotExist:
+                    pass
+
+            response_data = {
+                'success': True,
+                'url': '/entry_elements_art/'
+            }
+            return JsonResponse(response_data)
+        else:
+            errors = form.errors.as_json()
+            response_data = {
+                'success': False,
+                'form_errors': errors,
+            }
+            return JsonResponse(response_data, status=400)
+    else:
+        form = ArtEntryElementForm(instance=obj)
+        context ={
+            'object':obj,
+            'form':form,
+            'selected_tr':selected_tr,
+            'test_request_obj':tr,
+            'segment':'requests',
+            'back':True,
+            'lock':lock
+        }
+        return render(request, 'essays/form-entry_element_art.html', context)
+    
 
 #-----------------------------------------------------------------------------------------
 #Esto lista los elementos de salida de una solicitud de ensayo
@@ -622,6 +693,70 @@ def indexTestRequestArt(request):
         return JsonResponse({'table_html': table_html, 'paginator_html': paginator_html})
     
     return render(request, 'essays/tables-test_request_art.html', context)
+
+@login_required(login_url='/login/')
+@permission_required('essays.view_artentryelement', raise_exception=True)
+def viewEntryElementArt(request, pk):
+    
+    entry_element_obj = get_object_or_404(ArtEntryElement, pk=pk)
+    segment = 'test_requests_art'
+    back = '/entry_elements_art/'
+
+    test_request_obj = None
+    if entry_element_obj.has_art_request:
+        test_request_obj = entry_element_obj.art_request
+        if test_request_obj.closed == True:
+            segment = 'closed_art_request'
+        elif test_request_obj.touched == False:
+            segment = 'requests'
+            back = '/test_requests_art/?touched=False'
+        if 'next' in request.GET:
+            back =+ request.GET.get('next')
+        if 'back' in request.GET:
+            back = request.GET.get('back')
+        if test_request_obj.deleted and not request.user.has_perm('essays.view_deleted_artrequest'):
+            return render(request, 'errors/404.html', status=404)
+        
+        structure_list = ArtStructure.objects.filter(test_request__pk=pk)
+        sustrate = None
+        if structure_list and test_request_obj.sindex >= 0:
+            sustrate = structure_list[test_request_obj.sindex]
+        printer_boot = PrinterBoot.objects.filter(test_request__pk=pk)
+        lamination_boot = LaminatorBoot.objects.filter(test_request__pk=pk)
+        cutter_boot = CutterBoot.objects.filter(test_request__pk=pk)
+        spec_extra = ArtTechnicalSpecs.objects.filter(art_request=test_request_obj).first()
+        annexes = Annex.objects.filter(test_request__pk=pk)
+
+    content = 'essays/details/test_request_art.html'
+    
+    context = {
+        'test_request_obj':test_request_obj,
+        'entry_element_obj':entry_element_obj,
+        'tab':'main',
+        'back': back,
+        'content':content,
+        'entry_first':True,
+        'segment': segment,
+    }
+    print("contexto desde arte",context)
+    print("elemento de entrada", entry_element_obj)
+    if entry_element_obj.has_art_request:
+        context.update({
+            'structure_list':structure_list,
+            'sustrate':sustrate,
+            #'lamination_list':lamination_list,
+            'printer_boot':printer_boot,
+            'lamination_boot':lamination_boot,
+            'cutter_boot':cutter_boot,
+            'spec_extra':spec_extra,
+            'annexes':annexes,
+        })
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        content_html = render_to_string(content, context, request)
+        
+        return JsonResponse({'content_html': content_html})
+    
+    return render(request, 'essays/details-test_request_art.html', context)
 
 @login_required(login_url='/login/')
 @permission_required('essays.view_entryelement', raise_exception=True)
@@ -1201,6 +1336,7 @@ def viewArtRequest(request, pk):
         'content':content
     }
 
+    print("contexto desde prueba",context)
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         content_html = render_to_string(content, context, request)
