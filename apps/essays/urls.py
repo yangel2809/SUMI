@@ -25,9 +25,9 @@ urlpatterns = [
     
     #Entry Element Art
     path('entry_elements_art/add/', addEntryElementArt, name='add_entry_element_art'),
-    path('entry_elements_art/<str:pk>/', viewEntryElement, name='view_entry_element_art'),
-    path('entry_elements_art/<str:pk>/edit/', editEntryElement, name='edit_entry_element_art'),
-    path('entry_elements_art/<str:pk>/delete/', deleteEntryElement, name='delete_entry_element_art'),
+    path('entry_elements_art/<str:pk>/', viewEntryElementArt, name='view_entry_element_art'),
+    path('entry_elements_art/<str:pk>/edit/', editEntryElementArt, name='edit_entry_element_art'),
+    path('entry_elements_art/<str:pk>/delete/', deleteEntryElementArt, name='delete_entry_element_art'),
     #Entry Element
     path('entry_elements/add/', addEntryElement, name='add_entry_element'),
     path('entry_elements/<str:pk>/', viewEntryElement, name='view_entry_element'),

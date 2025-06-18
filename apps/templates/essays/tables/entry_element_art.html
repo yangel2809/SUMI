@@ -8,7 +8,7 @@
       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 px-2">Cliente</th>
       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">Fecha</th>
 
-      {% if perms.essays.change_entryelement %}
+      {% if perms.essays.change_artentryelement %}
       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center" style="user-select: none">Editar</th>
       {% endif %}
 
@@ -18,7 +18,7 @@
     {% for entry_element in objects %}
     <tr>
       <td class="fw-bold ps-3">
-        <a href="{% url 'view_entry_element' entry_element.id %}" class="fw-bold">
+        <a href="{% url 'view_entry_element_art' entry_element.id %}" class="fw-bold">
           {{ entry_element.product }}
         </a>
       </td>
@@ -26,8 +26,8 @@
         {% if not entry_element.reviewer %}
           <i class="material-symbols-rounded text-danger">
             
-            {% if perms.essays.change_entryelement %}
-              <a title="Revisar y aprobar" href="{% url 'edit_entry_element' entry_element.id %}">draw</a>  
+            {% if perms.essays.change_artentryelement %}
+              <a title="Revisar y aprobar" href="{% url 'edit_entry_element_art' entry_element.id %}">draw</a>  
             {% else %}
               <x style="cursor: help;" title="Pendiente por revisión y aprobación">draw</x>
             {% endif %}
@@ -68,8 +68,8 @@
       {% if perms.essays.change_entryelement or perms.essays.delete_entryelement %}
       <td class="text-center icon-container" style="user-select: none;">
 
-        {% if perms.essays.change_entryelement %}
-        <a href="{% url 'edit_entry_element' entry_element.id %}" class="text-primary" data-toggle="tooltip"
+        {% if perms.essays.change_artentryelement %}
+        <a href="{% url 'edit_entry_element_art' entry_element.id %}" class="text-primary" data-toggle="tooltip"
           data-original-title="Eliminar">
           <i class="material-icons">drive_file_rename_outline</i>
         </a>
@@ -89,7 +89,7 @@
               <div class="bg-primary modal-header px-4 mx-n3">
                 <h4 class="modal-title font-weight-bolder text-white" id="exampleModalLabel">¡Advertencia!</h4>
               </div>
-              <form method="POST" action="{% url 'delete_entry_element' entry_element.id %}">
+              <form method="POST" action="{% url 'delete_entry_element_art' entry_element.id %}">
                 {% csrf_token %}
                 <div class="modal-body text-start px-1">
                   <p class="mb-1 font-weight-bold" style="line-height: 1.25;">
