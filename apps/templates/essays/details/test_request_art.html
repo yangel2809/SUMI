@@ -49,7 +49,7 @@
         {% if test_request_obj.check_test_client %}
           Cliente:&thinsp;<x title="Cliente de Prueba" style="cursor:help" class="fw-bold font-italic text-dark">{{ test_request_obj.test_client }}&thinsp;</x>
         {% else %}
-          Cliente:&thinsp;<a href="/test_request_arts?client={{ test_request_obj.client.id }}" class="fw-bold">{{ test_request_obj.client }}</a>
+          Cliente:&thinsp;<a href="/test_requests_arts?client={{ test_request_obj.client.id }}" class="fw-bold">{{ test_request_obj.client }}</a>
         {% endif %}
       </div>
       <div class="d-flex flex-row">

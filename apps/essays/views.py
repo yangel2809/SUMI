@@ -1152,7 +1152,7 @@ def cloneArtRequest(request, pk):
 def viewArtRequest(request, pk):
     
     test_request_obj = get_object_or_404(ArtRequest, pk=pk)
-    segment = 'test_request_art'
+    segment = 'test_requests_art'
     back = '/test_requests_art/?touched=True'
     print("objeto",test_request_obj)
     if test_request_obj.closed == True:
@@ -1200,11 +1200,14 @@ def viewArtRequest(request, pk):
         'back': back,
         'content':content
     }
-    
+
+
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         content_html = render_to_string(content, context, request)
         
         return JsonResponse({'content_html': content_html})
+    
+
     
     return render(request, 'essays/details-test_request_art.html', context)
 

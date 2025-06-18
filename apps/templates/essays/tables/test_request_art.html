@@ -26,18 +26,18 @@
       <tr>
         {% if 'test_request_art' in segment %}
         <td class="col-1 ps-4 ms-2">
-          <a title="Ver expediente" href="{% url 'view_test_request_art' test_request_art.id %}{% if '?' in request.get_full_path %}?back=/test_request_arts/{{ request.GET | query_encode }}{% endif %}" class="mb-0 fw-bold">{% if test_request_art.production_order %}PR-{{ test_request_art.production_order }}{% else %}-{% endif %}</a>
+          <a title="Ver expediente" href="{% url 'view_test_request_art' test_request_art.id %}{% if '?' in request.get_full_path %}?back=/test_requests_art/{{ request.GET | query_encode }}{% endif %}" class="mb-0 fw-bold">{% if test_request_art.production_order %}PR-{{ test_request_art.production_order }}{% else %}-{% endif %}</a>
         </td>
         {% endif %}
         
         <td class="text-center">
-          <a title="{% if not segment == 'test_request_art' %}Ver Solicitud{% endif %}" href="{% url 'view_test_request_art' test_request_art.id %}{% if '?' in request.get_full_path %}?back=/test_request_arts/{{ request.GET | query_encode }}{% endif %}" class="mb-0 fw-bold">{{ test_request_art.number|default_if_none:'Duplicado' }}</a>
+          <a title="{% if not segment == 'test_request_art' %}Ver Solicitud{% endif %}" href="{% url 'view_test_request_art' test_request_art.id %}{% if '?' in request.get_full_path %}?back=/test_requests_art/{{ request.GET | query_encode }}{% endif %}" class="mb-0 fw-bold">{{ test_request_art.number|default_if_none:'Duplicado' }}</a>
         </td>
   
         <td class="ps-3">
           {% if test_request_art.check_test_client %}
           <x title="Cliente de Prueba" style="cursor:help" class="fw-bold font-italic text-secondary">{{ test_request_art.test_client }}&thinsp;</x>
-          {% else %}{% comment %}/test_request_arts?client={{ test_request_art.client.id }}&header={{ request.GET.header }}{% endcomment %}
+          {% else %}{% comment %}/test_requests_art?client={{ test_request_art.client.id }}&header={{ request.GET.header }}{% endcomment %}
           <a title="Filtrar por Cliente" hrefw="{{ test_request_art.client.id }}" class="fw-bold cursor-pointer client-filter">{{ test_request_art.client }}</a>
           {% endif %}
         </td>
@@ -60,11 +60,11 @@
           {% if not test_request_art.deleted %}
             {% if test_request_art.touched == True %}
               {% if perms.essays.change_testrequest %}
-              <a href="{% url 'edit_test_request_art' test_request_art.id %}{% if '?' in request.get_full_path %}?next=/test_request_arts/{{ request.GET | query_encode }}{% endif %}" class="text-primary" data-toggle="tooltip" title="Editar">
+              <a href="{% url 'edit_test_request_art' test_request_art.id %}{% if '?' in request.get_full_path %}?next=/test_requests_art/{{ request.GET | query_encode }}{% endif %}" class="text-primary" data-toggle="tooltip" title="Editar">
                 <i class="material-icons">drive_file_rename_outline</i>
               </a>
               
-              <a href="{% url 'clone_test_request_art' test_request_art.id %}{% if '?' in request.get_full_path %}?next=/test_request_arts/{{ request.GET | query_encode }}{% endif %}" class="a-deaf clone-link" id="clone-{{ test_request_art.id }}" title="Duplicar">
+              <a href="{% url 'clone_test_request_art' test_request_art.id %}{% if '?' in request.get_full_path %}?next=/test_requests_art/{{ request.GET | query_encode }}{% endif %}" class="a-deaf clone-link" id="clone-{{ test_request_art.id }}" title="Duplicar">
                 <i class="material-icons">difference</i>
               </a>
               <span class="loader" title="Si la carga no concluye, comoníquese con soporte" id="clone-{{ test_request_art.id }}-l" style="scale: 80%; display: none;"></span>
@@ -135,7 +135,7 @@
                   <i class="material-icons">drive_file_rename_outline</i>
                 </a>
               {% endif %}
-              <a href="{% url 'clone_test_request_art' test_request_art.id %}{% if '?' in request.get_full_path %}?next=/test_requests_arts/{{ request.GET | query_encode }}{% endif %}" class="a-deaf clone-link" id="clone-{{ test_request_art.id }}" title="Duplicar">
+              <a href="{% url 'clone_test_request_art' test_request_art.id %}{% if '?' in request.get_full_path %}?next=/test_requests_art/{{ request.GET | query_encode }}{% endif %}" class="a-deaf clone-link" id="clone-{{ test_request_art.id }}" title="Duplicar">
                 <i class="material-icons">difference</i>
               </a>
               <span class="loader" title="Si la carga no concluye, comoníquese con soporte" id="clone-{{ test_request_art.id }}-l" style="scale: 80%; display: none;"></span>
@@ -173,7 +173,7 @@
                     {% csrf_token %}
                     <div class="modal-body text-start px-1">
                       <p class="mb-1 font-weight-bold" style="line-height: 1.25;">
-                        ¿Seguro que desea eliminar la solicitud de prueba?</p>
+                        ¿Seguro que desea eliminar la solicitud de arte?</p>
                       <p class="mb-n1 text-xs">Esta acción no puede deshacerse</p>
                       <p class="mt-1 mb-0 font-weight-bold text-sm text-primary">Razón</p>
                       <textarea required name="deleted_reason" class="form-control align-items-center myform-focus py-1 px-2" style="transition: none !important;" id="id_deleted_reason"></textarea>
