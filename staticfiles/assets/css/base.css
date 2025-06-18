@@ -122,7 +122,9 @@ p img {
 .body-text::-webkit-scrollbar {
     display: none;
 }
-
+.select2-search__field {
+    min-height: auto !important;
+}
 .select2-search--dropdown .select2-search__field {
     background: inherit !important;
     color: inherit !important;

@@ -1874,7 +1874,7 @@ progress {
   font-size: 0.75rem; }
 
 textarea{
-  min-height: 39.8px !important;
+  min-height: 39.8px;
   height: 80px;
 }
 

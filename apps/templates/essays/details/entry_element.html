@@ -165,8 +165,14 @@
       
           <div class="d-flex flex-wrap flex-column col-12 mt-3">
             <div class="fw-bold text-primary">Se tienen registros de productos similares</div>
-            <div class="col-12 ">{% if entry_element_obj.op %}OP-{{ entry_element_obj.op }} - {{ entry_element_obj.product_client|default_if_none:"No" }} - {{ entry_element_obj.description|default_if_none:"No" }}{% endif %}</div>
-          </div>
+          <div class="col-12 ">
+            {% if entry_element_obj.op %}
+              OP-{{ entry_element_obj.op|default_if_none:"No" }} - {{ entry_element_obj.product_client|default_if_none:"No" }} - {{ entry_element_obj.description|default_if_none:"No" }}
+            {% else %}
+              No
+            {% endif %}
+          </div>         
+         </div>
  
         
       </div>
