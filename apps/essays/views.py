@@ -701,20 +701,26 @@ def viewEntryElementArt(request, pk):
     entry_element_obj = get_object_or_404(ArtEntryElement, pk=pk)
     segment = 'test_requests_art'
     back = '/entry_elements_art/'
-
+    print(entry_element_obj)
     test_request_obj = None
     if entry_element_obj.has_art_request:
+        print("1")
         test_request_obj = entry_element_obj.art_request
         if test_request_obj.closed == True:
+            print("2")
             segment = 'closed_art_request'
         elif test_request_obj.touched == False:
+            print("3")
             segment = 'requests'
             back = '/test_requests_art/?touched=False'
         if 'next' in request.GET:
+            print("4")
             back =+ request.GET.get('next')
         if 'back' in request.GET:
+            print("5")
             back = request.GET.get('back')
         if test_request_obj.deleted and not request.user.has_perm('essays.view_deleted_artrequest'):
+            print("6")
             return render(request, 'errors/404.html', status=404)
         
         structure_list = ArtStructure.objects.filter(test_request__pk=pk)
@@ -768,15 +774,15 @@ def viewEntryElement(request, pk):
 
     test_request_obj = None
     if entry_element_obj.has_test_request:
-        test_request_obj = entry_element_obj.test_request
-        if test_request_obj.closed == True:
+        test_request_obj = entry_element_obj.test_request        
+        if test_request_obj.closed == True:            
             segment = 'closed_test_request'
-        elif test_request_obj.touched == False:
+        elif test_request_obj.touched == False:            
             segment = 'requests'
             back = '/test_requests/?touched=False'
-        if 'next' in request.GET:
+        if 'next' in request.GET:            
             back =+ request.GET.get('next')
-        if 'back' in request.GET:
+        if 'back' in request.GET:            
             back = request.GET.get('back')
         if test_request_obj.deleted and not request.user.has_perm('essays.view_deleted_testrequest'):
             return render(request, 'errors/404.html', status=404)
@@ -827,7 +833,7 @@ def viewEntryElement(request, pk):
 def viewTestRequest(request, pk):
     
     test_request_obj = get_object_or_404(TestRequest, pk=pk)
-    print("objeto2",test_request_obj)
+    
     segment = 'test_request'
     back = '/test_requests/?touched=True'
 
@@ -849,7 +855,7 @@ def viewTestRequest(request, pk):
         return render(request, 'errors/404.html', status=404)
         
     structure_list = TestStructure.objects.filter(test_request__pk=pk)
-    print("Estructura de prueba:", structure_list)
+   
     sustrate = None
     if structure_list and test_request_obj.sindex >= 0:
         sustrate = structure_list[test_request_obj.sindex]
@@ -1310,8 +1316,10 @@ def viewArtRequest(request, pk):
     structure_list = ArtStructure.objects.filter(test_request__pk=pk)
     print("estructura",structure_list)
     sustrate = None
+
     if structure_list and test_request_obj.sindex >= 0:
         sustrate = structure_list[test_request_obj.sindex]
+        
     printer_boot = PrinterBoot.objects.filter(test_request__pk=pk)
     lamination_boot = LaminatorBoot.objects.filter(test_request__pk=pk)
     cutter_boot = CutterBoot.objects.filter(test_request__pk=pk)
@@ -1336,14 +1344,12 @@ def viewArtRequest(request, pk):
         'content':content
     }
 
-    print("contexto desde prueba",context)
+    #print("contexto desde prueba",context)
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         content_html = render_to_string(content, context, request)
         
         return JsonResponse({'content_html': content_html})
-    
-
     
     return render(request, 'essays/details-test_request_art.html', context)
 

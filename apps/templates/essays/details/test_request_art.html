@@ -1,19 +1,19 @@
 {% load tz %}
 {% load home_tags %}
 
-<!---------------------------------[Content Start]--------------------------------->
+<!--[Content Start]-->
 {% if test_request_obj.company == 'mcl' %}
 <style>:root {--mc-color: #946037;--mc-selection: #ad7e5a;--mc-shadow-color: #94603780;--mc-calendar-today: #94603780;--critical-color: #94603769;--mc-hover-color: #94603759;}</style>
 <script>$('meta[name="theme-color"]').attr('content', '#946037')</script>
 {% endif %}
-<!-------------------------------------[Head]------------------------------------->
+<!--[Head]-->
 <div class="px-0 px-md-2 px-xl-3">
 {% include 'essays/details/entry_element.html' %}
 {% include 'essays/details/exit_element.html' %}
 
 {% if test_request_obj %}
-  <!------------------------------[Test Request Start]------------------------------>
-  <div class="tabbed-content" id="test-request-art" {% if entry_first or exit_first %}style="display: none;"{% endif %}>
+  <!---[Test Request Start]-->
+  <div class="tabbed-content" id="test-request" {% if entry_first or exit_first %}style="display: none;"{% endif %}>
     <div class="d-flex flex-row flex-wrap justify-content-between">
       <div class="d-flex flex-sm-row flex-column user-select-none">
         <div class="p-1">
@@ -37,13 +37,13 @@
       </div>
       <h3 class="col-12 text-center mb-1 mt-2 fw-bold text-primary" style="line-height: 1;">Solicitud de Arte</h3>
     </div>
-    <!---------------------------------[Initial Info]--------------------------------->
+    <!--[Initial Info]-->
     <div class="d-flex flex-row justify-content-between flex-wrap mt-3 gap-2">
       <div class="d-flex flex-row">Fecha de Solicitud:&thinsp;<abbr title="{{ test_request_obj.date|date:'l - ' }}{{ test_request_obj.date }}" class="fw-bold text-dark-hover">{{ test_request_obj.date|date:"d/m/Y" }}</abbr></div>
       <div class="d-flex flex-row">Número de Solicitud:&thinsp;<x class="fw-bold text-dark">{{ test_request_obj.number }}</x></div>
     </div>
     <hr class="my-2">
-    <!---------------------------------[Product Info]--------------------------------->
+    <!--[Product Info]-->
     <div class="d-flex flex-row flex-wrap justify-content-between pb-2 gap-2">
       <div class="d-flex flex-row overflow-scroll hide-bar">
         {% if test_request_obj.check_test_client %}
@@ -66,7 +66,7 @@
       </div>
     </div>
     
-    <!-----------------------------------[Structure]----------------------------------->
+    <!--[Structure]-->
     {% if structure_list %}
     <div class="card mx-n1 mx-md-n2 my-3 mt-4">
       <div class="card-header p-0 mt-n4 position-relative mx-2 z-index-2">
@@ -161,16 +161,16 @@
       </div>
     </div>
     {% endif %}
-    <!--------------------------------------[Plan]------------------------------------->
+    <!--[Plan]-->
     <h4 class="text-start text-md-center text-primary fw-bold mb-3">Plan de Producción</h4>
     <div class="d-flex flex-row mt-3">
       <h6 class="text-primary m-0 me-2 fw-bold">Cantidad a Producir:</h6><x class="fw-bold text-dark">{{ test_request_obj.quantity }}{{ test_request_obj.unit|default_if_none:"" }} / Tolerancia: {{ test_request_obj.tolerance }}%</x>
     </div>
     <hr class="mb-3">
-    <!-------------------------------------[Print]------------------------------------->
+    <!--[Print]-->
     {% if test_request_obj.print_selector %}
     <h5 class="text-start text-sm-center text-primary fw-bold mb-2">Proceso de Impresión</h5>
-    <!---------------------------------[Design Info]--------------------------------->
+    <!--[Design Info]-->
     <div class="d-flex flex-row flex-wrap justify-content-between gap-3 pb-2">
       {% if test_request_obj.design %}
         <div class="d-flex flex-row overflow-scroll hide-bar me-1">
@@ -253,7 +253,7 @@
     </div>
     <hr class="mt-4 mb-3">
     {% endif %}
-    <!----------------------------------[Lamination]----------------------------------->
+    <!--[Lamination]-->
     {% if test_request_obj.lamination_process.html %}
     {% if test_request_obj.lamination_process.html != '<p><br></p>' %}
     {% comment %}
@@ -265,7 +265,7 @@
     <hr class="mt-2">
     {% endif %}
     {% endif %}
-    <!--------------------------------[Cutting Process]-------------------------------->
+    <!--[Cutting Process]-->
     {% if test_request_obj.dist_boder_cell_material or test_request_obj.packaging or test_request_obj.tie_color %}
     <h5 class="text-start text-sm-center text-primary fw-bold pb-2 mb-0" style="page-break-before: auto;">Proceso de Corte/Despacho</h5>
     <div class="d-flex flex-row flex-wrap justify-content-start gap-4 mb-4">
@@ -287,7 +287,7 @@
       {% endif %}
     </div>
     {% endif %}
-    <!-----------------------------[Bobbin, Ream, Winding]----------------------------->
+    <!--[Bobbin, Ream, Winding]-->
     <div class="d-flex flex-row flex-wrap">
       {% if test_request_obj.check_bobbin or test_request_obj.check_ream %}
       <div class="d-flex flex-row flex-wrap gap-sm-5 gap-3 col-12 pb-3 {% if test_request_obj.winding or test_request_obj.winding_description or test_request_obj.photocell_side %}col-sm-6{% endif %}">
@@ -331,7 +331,7 @@
     
       </div>
       {% endif %}
-      <!------------------------[winding]------------------------>
+      <!--[winding]-->
       {% if test_request_obj.check_bobbin %}
       <div class="col-12 col-sm-6 {% if test_request_obj.check_bobbin or test_request_obj.check_ream %}ps-sm-5{% endif %}">
         {% include 'essays/icons/render.html' with title="Embobinado al Cliente" description=test_request_obj.winding_description winding=test_request_obj.winding photocell=test_request_obj.photocell_side photocell_dsp=test_request_obj.get_photocell_side_display set=test_request_obj.company %}
@@ -339,7 +339,7 @@
       {% endif %}
     </div>
     <hr>
-    <!----------------------------------[Observation]---------------------------------->
+    <!--[Observation]-->
     {% if test_request_obj.observation.html %}
     {% if test_request_obj.observation.html != '<p><br></p>' %}
     <h5 class="text-start text-md-center text-primary fw-bold m-0">Observaciones</h5>
@@ -348,7 +348,7 @@
     {% endif %}
     {% endif %}
     
-    <!-----------------------------------[Personal]----------------------------------->
+    <!--[Personal]-->
     <div class="d-flex flex-row flex-wrap justify-content-between gap-3">
       {% if test_request_obj.applicant %}
       <div class="d-flex flex-column">
@@ -366,7 +366,7 @@
       </div>
     </div>
     <hr>
-    <!------------------------------------[Checks]------------------------------------>
+    <!--[Checks]-->
     <div class="d-flex flex-row flex-wrap me-1">
       Departamentos:&ensp;
       {% if test_request_obj.pre_print %}<x class="mb-0 fw-bold text-primary">Pre-Prensa</x>&thinsp;/&thinsp;{% endif %}
@@ -377,10 +377,10 @@
       {% if test_request_obj.quality %}<x class="mb-0 fw-bold text-primary">ASCA</x>&thinsp;/&thinsp;{% endif %}
     </div>
   </div>
-  <!-------------------------------[Test Request end]------------------------------->
+  <!--[Test Request end]-->
 {% endif %}  
 
-<!----------------------------------[Delete info]--------------------------------->
+<!--[Delete info]-->
 {% if test_request_obj.deleted and perms.essays.view_deleted_testrequest %}
   <div class="my-0 py-0 px-5">
     <hr class="my-1 py-0">
@@ -395,7 +395,7 @@
     {{ test_request_obj.deleted_reason }}
   </div>
 {% endif %}
-<!---------------------------------[Content END]--------------------------------->
+<!--[Content END]-->
 </div>
 {% if perms.essays.view_entryelement %}
 <div class="card-body p-1 md-2 mx-0 mx-md-2 px-1">

@@ -89,7 +89,7 @@
 
 {% if entry_element_obj %}
   {% if perms.essays.delete_entryelement %}
-  <!------------------------------------------------------Delete------------------------------------------------------->
+  <!--Delete-->
   <div class="modal fade" id="delete-ee-{{ entry_element_obj.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="user-select: none;">
     <div class="modal-dialog">
       <div class="modal-content px-3">
@@ -118,7 +118,7 @@
 {% if test_request_obj %}
   
   {% if perms.essays.delete_testrequest %}
-  <!------------------------------------------------------Delete------------------------------------------------------->
+  <!--Delete-->
   <div class="modal fade" id="delete-{{ test_request_obj.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="user-select: none;">
     <div class="modal-dialog">
       <div class="modal-content px-3">
@@ -146,7 +146,7 @@
   {% endif %}
 {% if test_request_obj.exit_element %}
   {% if perms.essays.delete_entryelement %}
-  <!------------------------------------------------------Delete------------------------------------------------------->
+  <!--Delete-->
   <div class="modal fade" id="delete-ex-{{ test_request_obj.exit_element.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="user-select: none;">
     <div class="modal-dialog">
       <div class="modal-content px-3">
@@ -172,7 +172,7 @@
   {% endif %}
 {% endif %}
   {% if perms.essays.restore_testrequest %}
-  <!----------------------------------------------------Restore TR----------------------------------------------------->
+  <!--Restore TR-->
   <div class="modal fade" id="restore-{{ test_request_obj.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="user-select: none;">
     <div class="modal-dialog">
       <div class="modal-content px-3">
@@ -196,7 +196,7 @@
   </div> 
   {% endif %}
   {% if perms.essays.delete_true_testrequest %}
-  <!----------------------------------------------------Delete FR------------------------------------------------------>
+  <!--Delete FR-->
   <div class="modal fade" id="delete_true-{{ test_request_obj.id }}" tabindex="-1" aria-labelledby="TrueDelete" aria-hidden="true" style="user-select: none;">
     <div class="modal-dialog">
       <form method="POST" action="{% url 'delete_true_test_request' test_request_obj.id %}">
@@ -252,6 +252,7 @@
             };
         },
         processResults: function (data) {
+            
             return {
                 results: data,
             };
@@ -283,9 +284,9 @@
       } else {
         tabbedContent.hide();
         $($(this).attr("tab")).show();
-  
+        
         $('main').animate({ scrollTop: 0 }, "fast");
-  
+
         pill.removeClass("pill-active");
         pillChild.removeClass("pill-child-active");
         $(this).addClass("pill-active");
