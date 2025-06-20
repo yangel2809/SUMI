@@ -23,6 +23,30 @@
   </p>
   {% endif %}
   
+  {% if art_entry_element_obj %}
+  <p class="pill {% if entry_first %}pill-active{% endif %}" tab="#entry-element-art">Elemento de Entrada (Arte)</p>
+  <p class="pill-child {% if entry_first %}pill-child-active{% endif %}">
+
+    &thinsp;
+    {% if perms.essays.change_artentryelement %}
+    <a class="d-flex" title="Editar" href="{% url 'edit_entry_element_art' art_entry_element_obj.id %}">
+      <i class="pill-child-action fas fa-pen"></i>
+    </a>
+    &ensp;
+    {% endif %}
+    
+    {% if perms.essays.delete_artentryelement %}
+    <i class="pill-child-action fas fa-trash" title="Eliminar" data-bs-toggle="modal" data-bs-target="#delete-art-ee-{{ art_entry_element_obj.id }}" ></i>
+    &ensp;
+    {% endif %}
+
+    <a class="d-flex" title="Guardar cómo PDF/Imprimir" href="javascript:window.print()">
+      <i class="pill-child-action fas fa-print"></i>
+    </a>
+    
+  </p>
+  {% endif %}
+
   {% if test_request_obj %}
     <p class="pill {% if not entry_first and not exit_first %}pill-active{% endif %}" tab="#test-request">Solicitud de Prueba</p>
     <p class="pill-child {% if not entry_first and not exit_first %}pill-child-active{% endif %}">
@@ -62,6 +86,49 @@
       </a>
     </p>
   {% endif %}
+
+  {% comment %} Added block for art_request_obj {% endcomment %}
+  {% if art_request_obj %}
+    <!-- BLOQUE 1: art_request_obj pill -->
+    <p class="pill {% if not entry_first and not exit_first and not test_request_obj %}pill-active{% endif %}" tab="#art-request">Solicitud de Arte</p>
+    <p class="pill-child {% if not entry_first and not exit_first and not test_request_obj %}pill-child-active{% endif %}">
+      &thinsp;
+      {% if not art_request_obj.deleted %}
+        
+          {% if perms.essays.change_artrequest %}
+            {% if not art_request_obj.reviewer or perms.essays.sign_artrequest %}
+              <a class="d-flex" title="Editar" href="{% url 'edit_test_request_art' art_request_obj.id %}">
+                <i class="pill-child-action fas fa-pen"></i>
+              </a>
+              &ensp;
+            {% endif %}
+          {% endif %}
+            
+        {% if request.user.is_superuser or not art_request_obj.touched %}
+          {% if perms.essays.delete_artrequest %}
+            {% if not art_request_obj.reviewer or perms.essays.sign_artrequest %}
+              <i class="pill-child-action fas fa-trash" title="Eliminar" data-bs-toggle="modal" data-bs-target="#delete-art-{{ art_request_obj.id }}" ></i>
+              &ensp;
+            {% endif %}
+          {% endif %}
+        {% endif %}
+        
+      {% else %}
+        {% if perms.essays.restore_artrequest %}
+          <i class="pill-child-action fas fa-undo-alt" title="Restaurar" data-bs-toggle="modal" data-bs-target="#restore-art-{{ art_request_obj.id }}" ></i>
+          &ensp;
+        {% endif %}
+        {% if perms.essays.delete_true_artrequest %}
+          <i class="pill-child-action fas fa-trash" title="Eliminar Permanentemente" data-bs-toggle="modal" data-bs-target="#delete_true-art-{{ art_request_obj.id }}" ></i>
+          &ensp;
+        {% endif %}
+      {% endif %}
+      <a class="d-flex" title="Guardar cómo PDF/Imprimir" href="javascript:window.print()">
+        <i class="pill-child-action fas fa-print"></i>
+      </a>
+    </p>
+  {% endif %}
+  {% comment %} End of added block for art_request_obj {% endcomment %}
     
   {% if test_request_obj.exit_element %}
     <p class="pill {% if exit_first %}pill-active{% endif %}" tab="#exit-element">Elemento de Salida</p>
@@ -84,12 +151,36 @@
   {% elif test_request_obj.closed %}
     <p class="pill" href="{% url 'add_exit_element' test_request_obj.id %}" redirect="true" >Crear Elemento de Salida +</p>
   {% endif %}
+
+  {% comment %} Check for art_request_obj.exit_element if applicable {% endcomment %}
+  {% if art_request_obj.exit_element %}
+    <!-- BLOQUE 2: art_request_obj.exit_element pill -->
+    <p class="pill {% if exit_first %}pill-active{% endif %}" tab="#exit-element">Elemento de Salida</p>
+    <p class="pill-child {% if exit_first %}pill-child-active{% endif %}">
+      &thinsp;
+      {% if perms.essays.change_exitelement %}
+      <a class="d-flex" title="Editar" href="{% url 'edit_exit_element' art_request_obj.exit_element.id %}">
+        <i class="pill-child-action fas fa-pen"></i>
+      </a>
+      &ensp;
+      {% endif %}
+      {% if perms.essays.delete_exitelement %}
+      <i class="pill-child-action fas fa-trash" title="Eliminar" data-bs-toggle="modal" data-bs-target="#delete-ex-art-{{ art_request_obj.exit_element.id }}" ></i>
+      &ensp;
+      {% endif %}
+      <a class="d-flex" title="Guardar cómo PDF/Imprimir" href="javascript:window.print()">
+        <i class="pill-child-action fas fa-print"></i>
+      </a>
+    </p>
+  {% elif art_request_obj.closed %}
+    <!-- BLOQUE 3: art_request_obj.closed pill -->
+    <p class="pill" href="{% url 'add_exit_element_art' art_request_obj.id %}" redirect="true" >Crear Elemento de Salida +</p>
+  {% endif %}
   
 </div>
 
 {% if entry_element_obj %}
   {% if perms.essays.delete_entryelement %}
-  <!--Delete-->
   <div class="modal fade" id="delete-ee-{{ entry_element_obj.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="user-select: none;">
     <div class="modal-dialog">
       <div class="modal-content px-3">
@@ -115,10 +206,36 @@
   {% endif %}
 {% endif %}
 
+{% if art_entry_element_obj %}
+  {% if perms.essays.delete_artentryelement %}
+  <div class="modal fade" id="delete-art-ee-{{ art_entry_element_obj.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="user-select: none;">
+    <div class="modal-dialog">
+      <div class="modal-content px-3">
+        <div class="bg-primary modal-header px-4 mx-n3">
+          <h4 class="modal-title font-weight-bolder text-white" id="exampleModalLabel">¡Advertencia!</h4>
+        </div>
+        <form method="POST" action="{% url 'delete_entry_element_art' art_entry_element_obj.id %}">
+          {% csrf_token %}
+          <div class="modal-body text-start px-1">
+            <p class="mb-1 font-weight-bold" style="line-height: 1.25;">
+              ¿Seguro que desea eliminar el elemento de entrada de arte?</p>
+            <p class="mb-n1 text-xs">Esta acción es irreversible</p>
+          </div>
+          <div class="modal-footer text-center justify-content-center py-2">
+            <button type="button" class="m-0 mx-1 btn btn-secondary"
+            data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="m-0 mx-1 btn btn-danger">Confirmar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+{% endif %}
+
 {% if test_request_obj %}
   
   {% if perms.essays.delete_testrequest %}
-  <!--Delete-->
   <div class="modal fade" id="delete-{{ test_request_obj.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="user-select: none;">
     <div class="modal-dialog">
       <div class="modal-content px-3">
@@ -146,7 +263,6 @@
   {% endif %}
 {% if test_request_obj.exit_element %}
   {% if perms.essays.delete_entryelement %}
-  <!--Delete-->
   <div class="modal fade" id="delete-ex-{{ test_request_obj.exit_element.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="user-select: none;">
     <div class="modal-dialog">
       <div class="modal-content px-3">
@@ -172,7 +288,6 @@
   {% endif %}
 {% endif %}
   {% if perms.essays.restore_testrequest %}
-  <!--Restore TR-->
   <div class="modal fade" id="restore-{{ test_request_obj.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="user-select: none;">
     <div class="modal-dialog">
       <div class="modal-content px-3">
@@ -196,7 +311,6 @@
   </div> 
   {% endif %}
   {% if perms.essays.delete_true_testrequest %}
-  <!--Delete FR-->
   <div class="modal fade" id="delete_true-{{ test_request_obj.id }}" tabindex="-1" aria-labelledby="TrueDelete" aria-hidden="true" style="user-select: none;">
     <div class="modal-dialog">
       <form method="POST" action="{% url 'delete_true_test_request' test_request_obj.id %}">
@@ -207,7 +321,112 @@
           </div>
           <div class="modal-body text-start px-1">
             <p class="mb-1 font-weight-bold" style="line-height: 1.25; font-weight: 500 !important;">
-              ¿Seguro que desea eliminar <b class="text-danger">permanentmente</b> la Solicitud de prueba <b style="color: var(--mc-color)">{{ test_request_obj.product }}</b>?</p>
+              ¿Seguro que desea eliminar <b class="text-danger">permanentemente</b> la Solicitud de prueba <b style="color: var(--mc-color)">{{ test_request_obj.product }}</b>?</p>
+            <p class="mb-0 text-xs">Los datos de estructura y ensayos se perderán, esta acción es totalmente irreversible</p>
+          </div>
+          <div class="modal-footer text-center justify-content-center py-2">
+            <button type="button" class="m-0 mx-1 btn btn-secondary"data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="m-0 mx-1 btn btn-danger">Confirmar</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+{% endif %}
+
+{% comment %} Modals for art_request_obj {% endcomment %}
+{% if art_request_obj %}
+  <!-- BLOQUE 4: art_request_obj modals -->
+  {% if perms.essays.delete_artrequest %}
+  <div class="modal fade" id="delete-art-{{ art_request_obj.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="user-select: none;">
+    <div class="modal-dialog">
+      <div class="modal-content px-3">
+        <div class="bg-primary modal-header px-4 mx-n3">
+          <h4 class="modal-title font-weight-bolder text-white" id="exampleModalLabel">¡Advertencia!</h4>
+        </div>
+        <form method="POST" action="{% url 'delete_test_request_art' art_request_obj.id %}">
+          {% csrf_token %}
+          <div class="modal-body text-start px-1">
+            <p class="mb-1 font-weight-bold" style="line-height: 1.25;">
+              ¿Seguro que desea eliminar la solicitud de arte?</p>
+            <p class="mb-n1 text-xs">Esta acción no puede deshacerse</p>
+            <p class="mt-1 mb-0 font-weight-bold text-sm text-primary">Razón</p>
+            <textarea required name="deleted_reason" class="form-control align-items-center myform-focus py-1 px-2" style="transition: none !important;" id="id_deleted_reason"></textarea>
+          </div>
+          <div class="modal-footer text-center justify-content-center py-2">
+            <button type="button" class="m-0 mx-1 btn btn-secondary"
+            data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="m-0 mx-1 btn btn-danger">Confirmar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if art_request_obj.exit_element %}
+  {% if perms.essays.delete_exitelement %}
+  <div class="modal fade" id="delete-ex-art-{{ art_request_obj.exit_element.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="user-select: none;">
+    <div class="modal-dialog">
+      <div class="modal-content px-3">
+        <div class="bg-primary modal-header px-4 mx-n3">
+          <h4 class="modal-title font-weight-bolder text-white" id="exampleModalLabel">¡Advertencia!</h4>
+        </div>
+        <form method="POST" action="{% url 'delete_exit_element' art_request_obj.exit_element.id %}">
+          {% csrf_token %}
+          <div class="modal-body text-start px-1">
+            <p class="mb-1 font-weight-bold" style="line-height: 1.25;">
+              ¿Seguro que desea eliminar el elemento de salida?</p>
+            <p class="mb-n1 text-xs">Esta acción es irreversible</p>
+          </div>
+          <div class="modal-footer text-center justify-content-center py-2">
+            <button type="button" class="m-0 mx-1 btn btn-secondary"
+            data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="m-0 mx-1 btn btn-danger">Confirmar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  {% endif %}
+
+  {% if perms.essays.restore_artrequest %}
+  <div class="modal fade" id="restore-art-{{ art_request_obj.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="user-select: none;">
+    <div class="modal-dialog">
+      <div class="modal-content px-3">
+        <div class="modal-header px-4 mx-n3" style="background-color: var(--mc-color) !important;">
+          <h4 class="modal-title font-weight-bolder text-white" id="exampleModalLabel">¡Alerta!</h4>  
+        </div>
+        <div class="modal-body text-start px-1">
+          <p class="mb-1 font-weight-bold" style="line-height: 1.25; font-weight: 500 !important;">
+            ¿Seguro que desea <b class="text-success">restaurar</b> la Solicitud de Arte <b style="color: var(--mc-color)">{{ art_request_obj.product }}</b>?</p>
+        </div>
+        <div class="modal-footer text-center justify-content-center py-2">
+          <form method="POST" action="{% url 'restore_test_request_art' art_request_obj.id %}">
+            {% csrf_token %}
+            <button type="button" class="m-0 btn btn-secondary"
+              data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="m-0 btn btn-success">Confirmar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div> 
+  {% endif %}
+  {% if perms.essays.delete_true_artrequest %}
+  <div class="modal fade" id="delete_true-art-{{ art_request_obj.id }}" tabindex="-1" aria-labelledby="TrueDelete" aria-hidden="true" style="user-select: none;">
+    <div class="modal-dialog">
+      <form method="POST" action="{% url 'delete_true_test_request_art' art_request_obj.id %}">
+        {% csrf_token %}
+        <div class="modal-content px-3">
+          <div class="modal-header px-4 mx-n3" style="background-color: var(--mc-color) !important;">
+            <h4 class="modal-title font-weight-bolder text-white" id="TrueDelete">¡Advertencia!</h4>
+          </div>
+          <div class="modal-body text-start px-1">
+            <p class="mb-1 font-weight-bold" style="line-height: 1.25; font-weight: 500 !important;">
+              ¿Seguro que desea eliminar <b class="text-danger">permanentemente</b> la Solicitud de Arte <b style="color: var(--mc-color)">{{ art_request_obj.product }}</b>?</p>
             <p class="mb-0 text-xs">Los datos de estructura y ensayos se perderán, esta acción es totalmente irreversible</p>
           </div>
           <div class="modal-footer text-center justify-content-center py-2">

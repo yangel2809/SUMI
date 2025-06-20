@@ -736,16 +736,14 @@ def viewEntryElementArt(request, pk):
     content = 'essays/details/test_request_art.html'
     
     context = {
-        'test_request_obj':test_request_obj,
-        'entry_element_obj':entry_element_obj,
+        'art_request_obj':test_request_obj,
+        'art_entry_element_obj':entry_element_obj,
         'tab':'main',
         'back': back,
         'content':content,
         'entry_first':True,
         'segment': segment,
     }
-    print("contexto desde arte",context)
-    print("elemento de entrada", entry_element_obj)
     if entry_element_obj.has_art_request:
         context.update({
             'structure_list':structure_list,
@@ -1329,9 +1327,9 @@ def viewArtRequest(request, pk):
     content = 'essays/details/test_request_art.html'
     
     context = {
-        'test_request_obj':test_request_obj,
+        'art_request_obj':test_request_obj,
         'structure_list':structure_list,
-        'entry_element_obj':test_request_obj.entry_element,
+        'art_entry_element_obj':test_request_obj.entry_element,
         'sustrate':sustrate,
         'printer_boot':printer_boot,
         'lamination_boot':lamination_boot,
