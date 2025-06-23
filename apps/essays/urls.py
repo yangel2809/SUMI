@@ -22,6 +22,7 @@ urlpatterns = [
 
     #ajax
     path('x-test_requests/', ajaxTestRequest, name='x-test_requests'),
+    path('x-art_request/', ajaxArtRequest, name='x-art_requests'),
     
     #Entry Element Art
     path('entry_elements_art/add/', addEntryElementArt, name='add_entry_element_art'),

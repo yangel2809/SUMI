@@ -223,9 +223,9 @@
                 </div>
 
                 <div class="col-12 mb-2 px-1">
-                  <label for="test_request">Solicitud de Prueba</label>
-                  <select class="form-control myform-focus" id="test_request" name="test_request">{{ selected_tr|safe }}</select>
-                  <p class="text-xs text-grey fst-italic ps-2 pt-1">Las solicitudes de prueba asociadas a un elemento de entrada no se mostrarán</p>
+                  <label for="art_request">Solicitud de Arte</label>
+                  <select class="form-control myform-focus" id="art_request" name="art_request">{{ selected_tr|safe }}</select>
+                  <p class="text-xs text-grey fst-italic ps-2 pt-1">Las solicitudes de arte asociadas a un elemento de entrada no se mostrarán</p>
                 </div>
 
                 <div style="user-select: none;" class="text-center">
@@ -338,14 +338,14 @@
         dropdownCssClass: ':all:'
       });
       
-      $('#test_request').select2({
+      $('#art_request').select2({
         width: '100%',
         placeholder:'Seleccione...',
         selectionCssClass: ':all:',
         dropdownCssClass: ':all:',
         allowClear: true,
         ajax: {
-          url: '{% url "x-test_requests" %}',
+          url: '{% url "x-art_requests" %}',
           dataType: 'json',
           data: function (params) {
             var queryParameters = {

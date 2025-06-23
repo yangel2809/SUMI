@@ -525,7 +525,23 @@ def ajaxTestRequest(request):
     tr_list = serializers.serialize('json', test_requests)#type: ignore
     #tr_list = list(test_requests)
     return JsonResponse(tr_list, safe=False)
-    
+
+
+@login_required(login_url="/login/")
+@permission_required('essays.view_artrequest', raise_exception=True)
+def ajaxArtRequest(request):
+    filtr = request.GET.get('f', None)
+
+    art_request = ArtRequest.objects.exclude(Q(deleted=True)|Q(number=None)).order_by('-number')
+    if request.GET.get('exclude_ee'):
+        art_request = art_request.filter(entry_element=None)
+    if filtr:
+        art_request = art_request.filter(Q(number__icontains=filtr)|Q(product__icontains=filtr)).only("pk", "number", "product", "date")
+
+    tr_list = serializers.serialize('json', art_request)#type: ignore
+    #tr_list = list(test_requests)
+    return JsonResponse(tr_list, safe=False)
+  
 @login_required(login_url="/login/")
 @permission_required('essays.view_testrequest', raise_exception=True)
 def indexTestRequest(request):
@@ -711,7 +727,7 @@ def viewEntryElementArt(request, pk):
             segment = 'closed_art_request'
         elif test_request_obj.touched == False:
             print("3")
-            segment = 'requests'
+            segment = 'requests_art'
             back = '/test_requests_art/?touched=False'
         if 'next' in request.GET:
             print("4")
@@ -831,7 +847,7 @@ def viewEntryElement(request, pk):
 def viewTestRequest(request, pk):
     
     test_request_obj = get_object_or_404(TestRequest, pk=pk)
-    
+    print("objeto",test_request_obj.signed_techspecs)
     segment = 'test_request'
     back = '/test_requests/?touched=True'
 
@@ -1291,6 +1307,7 @@ def cloneArtRequest(request, pk):
 def viewArtRequest(request, pk):
     
     test_request_obj = get_object_or_404(ArtRequest, pk=pk)
+    print("objeto",test_request_obj.signed_techspecs)
     segment = 'test_requests_art'
     back = '/test_requests_art/?touched=True'
     print("objeto",test_request_obj)
@@ -1934,7 +1951,7 @@ def openTestRequestArt(request, pk):
 def addPrinterBootTR (request, tr):
     
     test_request_obj = get_object_or_404(TestRequest, pk=tr)#Get the parent to render
-    
+   
     if test_request_obj.signed_techspecs and not (request.user.groups.filter(name = 'ASCA-Staff').exists() or request.user.is_superuser):
         return render(request, 'errors/403.html', status=403)
     
