@@ -1446,6 +1446,54 @@ class ArtRequest(models.Model):
 
     history = HistoricalRecords()
 
+    def get_technicalspecs(self):
+        try:
+            return self.arttechnicalspecs #type: ignore
+        except ObjectDoesNotExist:
+            return None
+
+    @property
+    def signed_techspecs(self):
+        if self.get_technicalspecs():
+            return bool(self.arttechnicalspecs.boss)#type:ignore
+        return False
+
+    @property
+    def status(self):
+        statuses = {}
+        # The following models are related to TestRequest, we need to find the equivalent for ArtRequest
+        # printer_boot = PrinterBoot.objects.filter(test_request__pk=self.id).last()#type:ignore
+        # laminator_boot = LaminatorBoot.objects.filter(test_request__pk=self.id).last()#type:ignore
+        # cutter_boot = CutterBoot.objects.filter(test_request__pk=self.id).last()#type:ignore
+
+        # For now, let's implement a simpler status logic based on the reviewer
+        if not self.reviewer:
+            statuses['code'] = 'not_reviewed'
+            statuses['message'] = 'Pendiente por revisión de IDAT'
+            statuses['color'] = 'danger'
+            statuses['icon'] = 'draw'
+            statuses['set'] = 'gmi'
+        elif self.get_technicalspecs(): # type: ignore
+            if self.arttechnicalspecs.boss:  # type: ignore
+                statuses['code'] = 'closed'
+                statuses['message'] = 'Expediente Completo'
+                statuses['color'] = 'success'
+                statuses['icon'] = 'checklist'
+                statuses['set'] = 'gmi'
+            else:
+                statuses['code'] = 'no_techspecs'
+                statuses['message'] = 'Especificaciones técnicas pendientes por revisión'
+                statuses['icon'] = 'unknown_document'
+                statuses['set'] = 'gmi'
+        else:
+            statuses['code'] = 'not_signed_techspecs'
+            statuses['message'] = 'Especificaciones técnicas pendientes por crear'
+            statuses['color'] = 'warning'
+            statuses['icon'] = 'unknown_document'
+            statuses['set'] = 'gmi'
+
+        return statuses
+
     class Meta:
         verbose_name = 'Solicitud de Arte'
         verbose_name_plural = 'Solicitudes de Arte'
