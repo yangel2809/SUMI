@@ -1307,7 +1307,7 @@ def cloneArtRequest(request, pk):
 def viewArtRequest(request, pk):
     
     test_request_obj = get_object_or_404(ArtRequest, pk=pk)
-    print("objeto",test_request_obj.signed_techspecs)
+    print("objeto arte",test_request_obj.signed_techspecs)
     segment = 'test_requests_art'
     back = '/test_requests_art/?touched=True'
     print("objeto",test_request_obj)

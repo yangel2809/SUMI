@@ -4,7 +4,7 @@
 <div class="container-fluid pt-1 px-sm-4 px-3 pb-6" >
   <div class="row" id="info-container">
     <div class="col-12 px-0 px-md-2">
-      <div class="card px-2 px-lg-3 pt-2 pt-md-3 pb-2 {% if test_request_obj %}sharp-b-l{% endif %}" style="background-color: #f3f3f3;">
+      <div class="card px-2 px-lg-3 pt-2 pt-md-3 pb-2 {% if art_request_obj %}sharp-b-l{% endif %}" style="background-color: #f3f3f3;">
         <div class="card-body p-1 py-3 py-md-2 mx-0 mx-md-1 py-xl-3" id="main-data-container">
          
           {% include content %}
@@ -15,59 +15,59 @@
       </div>
 
       
-      {% if test_request_obj %}
+      {% if art_request_obj %}
         <div class="card-tab" id="card_tab">
           
-          <p hrefx="/test_requests/{{ test_request_obj.id }}" class="printable tab text-dark fw-bold {% if tab == 'main' %}tab-active{% endif %}" value="edit_tr" value2="delete_tr">Solicitud de Prueba</p>
+          <p hrefx="/art_requests/{{ art_request_obj.id }}" class="printable tab text-dark fw-bold {% if tab == 'main' %}tab-active{% endif %}" value="edit_tr" value2="delete_tr">Solicitud de Prueba</p>
         
           <!--Printer-->
-          {% if perms.essays.add_printerboot and test_request_obj.print_selector %}
-            {% if not test_request_obj.signed_techspecs or request.user|is_asca_staff %}
-              <p hrefx="/test_requests_art/{{ test_request_obj.id }}/printer" class="tab fw-bold color-crx" redirect="true">+ <i class="fa fa-print" aria-hidden="true"></i></p>
+          {% if perms.essays.add_printerboot and art_request_obj.print_selector %}
+            {% if not art_request_obj.signed_techspecs or request.user|is_asca_staff %}
+              <p hrefx="/test_requests_art/{{ art_request_obj.id }}/printer" class="tab fw-bold color-crx" redirect="true">+ <i class="fa fa-print" aria-hidden="true"></i></p>
             {% endif %}
           {% endif %}
           
           {% if printer_boot  and perms.essays.view_printerboot  %}
             {% for boot in printer_boot %}      
-            <p hrefx="/test_requests_art/{{ test_request_obj.id }}/printer/{{ boot.id }}/" class="tab fw-bold color-crx {% if tab_p == boot.id %}tab-active{% endif %}">Arranque de Imp. {% if printer_boot|length > 1 %}#{{ forloop.counter }}{% endif %}</p>
+            <p hrefx="/test_requests_art/{{ art_request_obj.id }}/printer/{{ boot.id }}/" class="tab fw-bold color-crx {% if tab_p == boot.id %}tab-active{% endif %}">Arranque de Imp. {% if printer_boot|length > 1 %}#{{ forloop.counter }}{% endif %}</p>
             
             {% endfor %}
           {% endif %}
   
           <!--Laminator-->
           {% if perms.essays.add_laminatorboot %}
-            {% if not test_request_obj.signed_techspecs or request.user|is_asca_staff %}
-              <p hrefx="/test_requests_art/{{ test_request_obj.id }}/laminator/" class="tab fw-bold color-mcl" redirect="true">+ <i class="fas fa-scroll" aria-hidden="true"></i></p>
+            {% if not art_request_obj.signed_techspecs or request.user|is_asca_staff %}
+              <p hrefx="/test_requests_art/{{ art_request_obj.id }}/laminator/" class="tab fw-bold color-mcl" redirect="true">+ <i class="fas fa-scroll" aria-hidden="true"></i></p>
             {% endif %}
           {% endif %}
   
           {% if lamination_boot and perms.essays.view_laminatorboot %}
             {% for boot in lamination_boot %}
-              <p hrefx="{% url 'view_laminator_boot_tr' pk=test_request_obj.id ck=boot.id %}" class="tab fw-bold {% if boot.id == tab_l %}tab-active{% endif %} color-mcl">Arranque de Lam. P-{{ boot.step }}</p>
+              <p hrefx="{% url 'view_laminator_boot_tr' pk=art_request_obj.id ck=boot.id %}" class="tab fw-bold {% if boot.id == tab_l %}tab-active{% endif %} color-mcl">Arranque de Lam. P-{{ boot.step }}</p>
             {% endfor %}
           {% endif %}
   
           <!--Cutter-->
           {% if perms.essays.add_cutterboot  %}
-            {% if not test_request_obj.signed_techspecs or request.user|is_asca_staff %}
-              <p hrefx="/test_requests_art/{{ test_request_obj.id }}/cutter/" class="tab fw-bold color-cut" redirect="true">+ <i class="fa fa-scissors" aria-hidden="true"></i></p>
+            {% if not art_request_obj.signed_techspecs or request.user|is_asca_staff %}
+              <p hrefx="/test_requests_art/{{ art_request_obj.id }}/cutter/" class="tab fw-bold color-cut" redirect="true">+ <i class="fa fa-scissors" aria-hidden="true"></i></p>
             {% endif %}
           {% endif %}
   
           {% if cutter_boot and perms.essays.view_cutterboot %}
             {% for boot in cutter_boot %}
-              <p hrefx="{% url 'view_cutter_boot_tr' pk=test_request_obj.id ck=boot.id %}" class="printable tab fw-bold color-cut {% if boot.id == tab_c %}tab-active{% endif %}" value="edit_cut_{{ forloop.counter0 }}" value2="delete_cut_{{ forloop.counter0 }}">Arranque de Cort. {% if cutter_boot|length > 1 %}#{{ forloop.counter }}{% endif %}</p>
+              <p hrefx="{% url 'view_cutter_boot_tr' pk=art_request_obj.id ck=boot.id %}" class="printable tab fw-bold color-cut {% if boot.id == tab_c %}tab-active{% endif %}" value="edit_cut_{{ forloop.counter0 }}" value2="delete_cut_{{ forloop.counter0 }}">Arranque de Cort. {% if cutter_boot|length > 1 %}#{{ forloop.counter }}{% endif %}</p>
             {% endfor %}
           {% endif %}
           
           <!--Techspecs-->
           {% if printer_boot or lamination_boot or cutter_boot %}
-            <p hrefx="/test_requests_art/{{ test_request_obj.id }}/tech_specs" class="printable tab fw-bold color-tec {% if tab == 'tech_specs' %}tab-active{% endif %}" value="edit_ts_{{ spec_extra.id  }}" value2="delete_ts_{{ spec_extra.id  }}">Espec. T. de Pruebas <i class="fas fa-chart-bar" aria-hidden="true"></i></p>
+            <p hrefx="/test_requests_art/{{ art_request_obj.id }}/tech_specs" class="printable tab fw-bold color-tec {% if tab == 'tech_specs' %}tab-active{% endif %}" value="edit_ts_{{ spec_extra.id  }}" value2="delete_ts_{{ spec_extra.id  }}">Espec. T. de Pruebas <i class="fas fa-chart-bar" aria-hidden="true"></i></p>
           {% endif %}
   
           <!--Techspecs-->
           
-          <p hrefx="/test_requests_art/{{ test_request_obj.id }}/annexes" class="tab fw-bold color-anx {% if tab == 'annex' %}tab-active{% endif %}">Anexos <i class="material-symbols-rounded"  style="font-size:18px; vertical-align: text-bottom;">photo_library</i></p>
+          <p hrefx="/test_requests_art/{{ art_request_obj.id }}/annexes" class="tab fw-bold color-anx {% if tab == 'annex' %}tab-active{% endif %}">Anexos <i class="material-symbols-rounded"  style="font-size:18px; vertical-align: text-bottom;">photo_library</i></p>
           
         </div>
         
