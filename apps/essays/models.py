@@ -601,7 +601,8 @@ class ArtStructure (models.Model):
 
 class PrinterBoot (models.Model):
     #Parent----------------------------------------------
-    test_request = models.ForeignKey('essays.TestRequest', on_delete=models.CASCADE, blank=True, null=True)#Comes from test request
+    test_request = models.ForeignKey('essays.TestRequest', on_delete=models.CASCADE, blank=True, null=True)
+    art_request = models.ForeignKey('essays.ArtRequest', on_delete=models.CASCADE, blank=True, null=True)
     origin = models.CharField(max_length=15, blank=True, default=None, null=True) 
     
     CRW_OPT=(
@@ -753,6 +754,7 @@ class PrinterBoot (models.Model):
 
 class LaminatorBoot(models.Model):
     test_request = models.ForeignKey('essays.TestRequest', on_delete=models.CASCADE, blank=True, null=True)
+    art_request = models.ForeignKey('essays.ArtRequest', on_delete=models.CASCADE, blank=True, null=True)
     origin = models.CharField(max_length=15, blank=True, default=None, null=True)
     
     TRN_OPT=(
@@ -812,7 +814,12 @@ class LaminatorBoot(models.Model):
         verbose_name_plural = ("Arranques de Laminadora")
 
     def __str__(self):
-        return f'PR-{self.test_request.production_order} {self.test_request} - LAM paso: {self.step}'#type:ignore
+        if self.test_request:
+            return f'PR-{self.test_request.production_order} {self.test_request} - LAM paso: {self.step}'#type:ignore
+        elif self.art_request:
+            return f'AR-{self.art_request.production_order} {self.art_request} - LAM paso: {self.step}'#type:ignore
+        else:
+            return f'LAM paso: {self.step}'
     
 class LaminationEssay(models.Model):
 
@@ -862,7 +869,8 @@ class CutterBoot(models.Model):
         ('3','3"'),
         ('6','6"')
     )
-    test_request = models.ForeignKey('essays.TestRequest', on_delete=models.CASCADE, blank=True, null=True)#Comes from test request
+    test_request = models.ForeignKey('essays.TestRequest', on_delete=models.CASCADE, blank=True, null=True)
+    art_request = models.ForeignKey('essays.ArtRequest', on_delete=models.CASCADE, blank=True, null=True)
     #format = models.ForeignKey('home.Format', on_delete=models.RESTRICT, blank=True, null=True)
     
     machine = models.ForeignKey('essays.Cutter', on_delete=models.RESTRICT, null=True)
@@ -1461,36 +1469,81 @@ class ArtRequest(models.Model):
     @property
     def status(self):
         statuses = {}
-        # The following models are related to TestRequest, we need to find the equivalent for ArtRequest
-        # printer_boot = PrinterBoot.objects.filter(test_request__pk=self.id).last()#type:ignore
-        # laminator_boot = LaminatorBoot.objects.filter(test_request__pk=self.id).last()#type:ignore
-        # cutter_boot = CutterBoot.objects.filter(test_request__pk=self.id).last()#type:ignore
+        printer_boot = PrinterBoot.objects.filter(art_request__pk=self.id).last()
+        laminator_boot = LaminatorBoot.objects.filter(art_request__pk=self.id).last()
+        cutter_boot = CutterBoot.objects.filter(art_request__pk=self.id).last()
 
-        # For now, let's implement a simpler status logic based on the reviewer
+        latest_boot = laminator_boot or printer_boot
         if not self.reviewer:
             statuses['code'] = 'not_reviewed'
             statuses['message'] = 'Pendiente por revisión de IDAT'
             statuses['color'] = 'danger'
             statuses['icon'] = 'draw'
             statuses['set'] = 'gmi'
-        elif self.get_technicalspecs(): # type: ignore
-            if self.arttechnicalspecs.boss:  # type: ignore
-                statuses['code'] = 'closed'
-                statuses['message'] = 'Expediente Completo'
-                statuses['color'] = 'success'
-                statuses['icon'] = 'checklist'
-                statuses['set'] = 'gmi'
+        elif latest_boot:
+            
+            if laminator_boot:
+                reports = TestFile.objects.filter(boot_l__id=latest_boot.pk)
             else:
-                statuses['code'] = 'no_techspecs'
-                statuses['message'] = 'Especificaciones técnicas pendientes por revisión'
-                statuses['icon'] = 'unknown_document'
-                statuses['set'] = 'gmi'
+                reports = TestFile.objects.filter(boot_p__id=latest_boot.pk)
+            latest_report = reports.last()
+
+            if latest_report:
+                if not latest_report.boss or not latest_report.idat:
+                    
+                    reviewer = 'IDAT' if not latest_report.idat else 'ASCA'
+                    code = 'last_report_one_review'
+                    color = 'warning'
+                    if not latest_report.boss and not latest_report.idat:
+                        reviewer = 'IDAT y ASCA'
+                        color = 'danger'
+                        code = 'last_report_not_reviewed'
+                    statuses['code'] = code
+                    statuses['message'] = f'Último reporte pendiente por revisión de {reviewer}'
+                    statuses['color'] = color
+                    statuses['icon'] = 'edit_document'
+                    statuses['set'] = 'gmi'
+                elif self.get_technicalspecs(): # type: ignore
+                    if self.arttechnicalspecs.boss:  # type: ignore
+                        statuses['code'] = 'closed'
+                        statuses['message'] = 'Expediente Completo'
+                        statuses['color'] = 'success'
+                        statuses['icon'] = 'checklist'
+                        statuses['set'] = 'gmi'
+                    else:
+                        statuses['code'] = 'no_techspecs'
+                        statuses['message'] = 'Especificacioens técnicas pendientes por revisión'
+                        statuses['icon'] = 'unknown_document'
+                        statuses['set'] = 'gmi'
+                else:
+                    statuses['code'] = 'not_signed_techspecs'
+                    statuses['message'] = 'Especificacioens técnicas pendientes por revisión'
+                    statuses['icon'] = 'unknown_document'
+                    statuses['set'] = 'gmi'
+            else:
+                statuses['code'] = 'no_last_report'
+                statuses['message'] = 'Último arranque sin reporte'
+                statuses['icon'] = 'file-medical'
+                statuses['set'] = 'fas'
         else:
-            statuses['code'] = 'not_signed_techspecs'
-            statuses['message'] = 'Especificaciones técnicas pendientes por crear'
-            statuses['color'] = 'warning'
-            statuses['icon'] = 'unknown_document'
-            statuses['set'] = 'gmi'
+            if self.touched:
+                if not cutter_boot:
+                    statuses['code'] = 'no_boot'
+                    statuses['message'] = 'Sin arranques registrados'
+                    statuses['color'] = 'danger'
+                    statuses['icon'] = 'print_error'
+                    statuses['set'] = 'gmi'
+                else:
+                    statuses['code'] = 'cut_no_boot'
+                    statuses['message'] = 'Cortado sin arranques de impresora o laminadora registrados'
+                    statuses['icon'] = 'print_disabled'
+                    statuses['set'] = 'gmi'
+            else:
+                statuses['code'] = 'not_touched'
+                statuses['message'] = 'Listo para producción'
+                statuses['color'] = 'success'
+                statuses['icon'] = 'print_connect'
+                statuses['set'] = 'gmi'
 
         return statuses
 

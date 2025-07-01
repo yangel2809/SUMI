@@ -15,6 +15,7 @@ __pycache__/
 
 # SQLite database
 *.sqlite3
+*.idea/
 
 # VS Code settings
 .vscode/
