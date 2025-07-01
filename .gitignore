@@ -1,28 +1,29 @@
 /---USUARIOS POR DEFECTO.txt
 
 # Python
+# Byte-compiled / optimized / DLL files
 __pycache__/
 **/__pycache__/
 *.py[cod]
-*.pyo
-*.pyc
-*.pyd
+*.cpython-*.pyc
 *.pdb
 
 # Django migrations cache
+# This is covered by the Python rules above, but can be kept for clarity
 **/migrations/__pycache__/
-**/migrations/*.pyc
 
-# SQLite database
+# Database
 *.sqlite3
-*.idea/
 
-# VS Code settings
+# IDE / Editor specific
+.idea/
 .vscode/
 
-# Environment
+# Environment variables
 .env
 *.env
+
+# Virtual environments
 venv/
 ENV/
 env/
