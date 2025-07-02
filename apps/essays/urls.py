@@ -71,6 +71,10 @@ urlpatterns = [
     path('test_requests_art/<str:pk>/unarchive/', unarchiveTestRequestArt, name='unarchive_test_request_art'),
 
     #Printer Boot
+    path('test_requests_art/<str:pk>/printer/<str:ck>/', viewPrinterBootArt, name='view_printer_boot_art'),
+    path('test_requests_art/<str:tr>/printer/', addPrinterBootArt, name='add_printer_boot_art'),
+    path('test_requests_art/<str:tr>/printer/<str:ck>/edit/', editPrinterBootArt, name='edit_printer_boot_art'),
+    path('test_requests_art/<str:tr>/printer/<str:ck>/delete/', deletePrinterBootArt, name='delete_printer_boot_art'),
     path('test_requests/<str:pk>/printer/<str:ck>/', viewPrinterBoot, name='view_printer_boot_tr'),
     path('test_requests/<str:tr>/printer/', addPrinterBootTR, name='add_printer_boot_tr'),
     path('test_requests/<str:tr>/printer/<str:ck>/edit/', editPrinterBootTR, name='edit_printer_boot_tr'),

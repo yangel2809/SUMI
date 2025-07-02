@@ -91,7 +91,7 @@
     $('#materialTypeForm').on('submit', function(e) {
       e.preventDefault();
       $.ajax({
-        url: '/x-material-types/add',
+        url: '/x-material-types/add/',
         data: {
           'name': $('#name_modal').val(),
           'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()

@@ -1,8 +1,9 @@
 {% extends "layouts/base.html" %}
 {% load home_tags %}
 {% block content %}
+{% with request_obj=art_request_obj|default:request_obj %}
 <!-- form_view.html -->
-{% if test_request_obj.company == 'mcl' %}
+{% if request_obj.company == 'mcl' %}
 <style>:root {--mc-color: #946037;--mc-selection: #ad7e5a;--mc-shadow-color: #94603780;--mc-calendar-today: #94603780;--critical-color: #94603769;--mc-hover-color: #94603759;}</style>
 <script>$('meta[name="theme-color"]').attr('content', '#946037')</script>
 {% endif %}
@@ -21,25 +22,25 @@
 					</div>
 					<div class="card-body px-md-0 px-2 py-2">
 						<div class="form-group d-flex input-group input-group-outline">
-							<input type="hidden" id="company" value="{{ test_request_obj.company }}">
+							<input type="hidden" id="company" value="{{ request_obj.company }}">
 							<form class="form col-12" method="POST" id="main_form" style="user-select: none">
 								{% csrf_token %}
 								<div class="row pt-2 px-1 px-md-3">
 									<div class="d-flex flex-wrap justify-content-between pb-1">
 										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Pedido N°</label>
-											<p class="ps-1 mb-0 fw-bold">{{ test_request_obj.number }}</p>
+											<p class="ps-1 mb-0 fw-bold">{{ request_obj.number }}</p>
 										</div>
 										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Cliente</label>
 											<p class="ps-1 mb-0 fw-bold">
-												{% if test_request_obj.check_test_client %}
-												{{ test_request_obj.test_client }}
+												{% if request_obj.check_test_client %}
+												{{ request_obj.test_client }}
 												{% else %}
-												{{ test_request_obj.client }}
+												{{ request_obj.client }}
 												{% endif %}
 											</p>
 										</div>
 										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Producto</label>
-											<p class="ps-1 mb-0 fw-bold">{{ test_request_obj.product }}</p>
+											<p class="ps-1 mb-0 fw-bold">{{ request_obj.product }}</p>
 										</div>
 										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Máquina impresora</label>
 											{{ form.printer }}
@@ -48,7 +49,7 @@
 
 									<div class="d-flex flex-wrap justify-content-center gap-3 pb-3">
 										<div class="d-flex flex-column flex-grow-1"><label for="production_order">Orden de produción</label>
-											<input type="text" name="production_order" class="form-control myform-focus" value="{{ test_request_obj.production_order|default_if_none:'' }}" id="production_order" maxlength="5" required , style="text-transform: uppercase !important; padding-left: 34px !important;">
+											<input type="text" name="production_order" class="form-control myform-focus" value="{{ request_obj.production_order|default_if_none:'' }}" id="production_order" maxlength="5" required , style="text-transform: uppercase !important; padding-left: 34px !important;">
 											<x class="text-dark infield-text" style="margin-top: 32px !important;">PR-</x>
 										</div>
 										<div class="d-flex flex-column flex-grow-1">
@@ -77,7 +78,7 @@
 										<div class="d-flex flex-column flex-grow-0"><label class="text-primary fw-bold ms-0">Gramaje</label><div class="pt-2 font-weight-bold">{{ sustrate.weight|truncate|swap_comma }}g/m²</div></div>
 										<div class="d-flex flex-column flex-grow-0"><label class="text-primary fw-bold ms-0">Espesor</label><div class="pt-2 font-weight-bold">{{ sustrate.thickness|truncate|swap_comma }}µ</div></div>
 										<div class="d-flex flex-column flex-grow-0"><label class="text-primary fw-bold ms-0">Ancho (mm)</label>
-											<input type="text" class="form-control myform-focus" readonly value="{{ test_request_obj.sustrate_width }}">
+											<input type="text" class="form-control myform-focus" readonly value="{{ request_obj.sustrate_width }}">
 										</div>
 										<div class="d-flex flex-column flex-grow-0"><label for="crown_treatment_side">Cara Tratmiento Corona</label>{{ form.crown_treatment_side }}</div>
 										<div class="d-flex flex-column flex-grow-0"><label for="surface_tension">Tensión Superficial (din/cm)</label>{{ form.surface_tension }}</div>
@@ -140,18 +141,18 @@
 									</div>
 
 									<div class="d-flex flex-wrap justify-content-center gap-3 pb-3">
-										<div class="d-flex flex-column flex-grow-1"><label for="cut_width_result">Ancho de Corte (mm) - <x class="fw-bold">Especificación: {{ test_request_obj.width_bobbin }}{{ test_request_obj.width_bobbin_unit|default_if_none:"" }}</x></label>
+										<div class="d-flex flex-column flex-grow-1"><label for="cut_width_result">Ancho de Corte (mm) - <x class="fw-bold">Especificación: {{ request_obj.width_bobbin }}{{ request_obj.width_bobbin_unit|default_if_none:"" }}</x></label>
 											{{ form.cut_width_result }}
 										</div>										
 										<div class="d-flex flex-column flex-grow-1"><label for="develop">Especificación de Desarrollo</label>
 											<div class="d-flex flex-nowrap">
 											  <div class="{% if form.develop.errors %}border-error{% endif %} d-flex flex-row-reverse flex-grow-1">
-												<input type="text" name="develop" value="{{ test_request_obj.develop }}" class="form-control myform-focus flat-right" style="padding-right: 1.3em !important" readonly id="develop">
+												<input type="text" name="develop" value="{{ request_obj.develop }}" class="form-control myform-focus flat-right" style="padding-right: 1.3em !important" readonly id="develop">
 											  </div>                        
 											  <div class="{% if form.develop_unit.errors %}border-error{% endif %} flex-grow-1">
 												<span class="select2-selection select2-selection--single form-control myform-focus flat-left">
 													<span class="select2-selection__rendered">
-														<span class="select2-selection__placeholder">{{ test_request_obj.develop_unit|default_if_none:'' }}</span>
+														<span class="select2-selection__placeholder">{{ request_obj.develop_unit|default_if_none:'' }}</span>
 													</span>
 												</span>
 											  </div>
@@ -172,13 +173,13 @@
 											{{ form.winding_description }}
 										</div>
 										<div class="col-md-7 col-12 ps-3 pb-3">
-											{% include 'essays/icons/render.html' with title="Embobinado al Cliente" description=test_request_obj.winding_description winding=test_request_obj.winding photocell=test_request_obj.photocell_side photocell_dsp=test_request_obj.get_photocell_side_display set=test_request_obj.company %}
+											{% include 'essays/icons/render.html' with title="Embobinado al Cliente" description=request_obj.winding_description winding=request_obj.winding photocell=request_obj.photocell_side photocell_dsp=request_obj.get_photocell_side_display set=request_obj.company %}
 										</div>
 									<hr class="mb-3">
 									
 									<div class="col-md-3 col-12">
 										<h6 class="fw-bold text-primary mb-0">Repetición</h6>
-										<p class="mb-0 fw-bold">Especificación: {{ test_request_obj.repetition }}{{ test_request_obj.repetition_unit|default_if_none:"" }}</p>
+										<p class="mb-0 fw-bold">Especificación: {{ request_obj.repetition }}{{ request_obj.repetition_unit|default_if_none:"" }}</p>
 									</div>
 									<div class="col-md-3 col-12 pb-2"><label for="r_left">A: Izquierda</label>{{ form.r_left }}</div>
 									<div class="col-md-3 col-12 pb-2"><label for="r_center">C: Centro</label>{{ form.r_center }}</div>
@@ -551,6 +552,7 @@ $(document).ready(function () {
 	});
 })
 </script>
+{% endwith %}
 {% endblock content %}
 {% block javascripts %}
 <script src="{{ ASSETS_ROOT }}/js/datetime-picker/popper.js"></script>

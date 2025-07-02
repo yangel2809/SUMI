@@ -1,8 +1,9 @@
 {% load tz %}
 {% load home_tags %}
 
+{% with request_obj=art_request_obj|default:test_request_obj %}
 <!---------------------------------[Content Start]--------------------------------->
-{% if test_request_obj.company == 'mcl' %}
+{% if request_obj.company == 'mcl' %}
 <style>
   :root {
     --mc-color: #946037;
@@ -25,9 +26,9 @@
 {% for report, result_cols, bobbin_id in objects %}
 <div class="tabbed-content" id="child-content-{{ forloop.counter0 }}" style="display: none;">
   <div class="d-flex flex-row flex-wrap justify-content-between px-1 px-md-3">
-    <div class="d-flex flex-sm-row{% if test_request_obj.company == 'mcl' %}-reverse{% endif %} flex-column{% if not test_request_obj.company == 'crx' %}-reverse{% endif %} user-select-none">
+    <div class="d-flex flex-sm-row{% if request_obj.company == 'mcl' %}-reverse{% endif %} flex-column{% if not request_obj.company == 'crx' %}-reverse{% endif %} user-select-none">
       <div class="p-1">
-        {% if test_request_obj.company == 'mcl' %}
+        {% if request_obj.company == 'mcl' %}
           <img alt="Morrocel c.a RIF:J-06000377-6" width="220em" src="{{ ASSETS_ROOT }}/img/logo_mcl.svg" />
         {% else %}
           <img alt="Curex c.a RIF:J-00074598-6" width="220em" src="{{ ASSETS_ROOT }}/img/logo_crx.svg" />
@@ -52,26 +53,30 @@
   <div class="row px-1 px-md-3">
     <div class="d-flex flex-wrap justify-content-between gap-3 mb-n2 mt-2">
       <div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Pedido N°</label>
-        <p class="ps-1 mb-0 fw-bold">{{ test_request_obj.number }}</p>
+        <p class="ps-1 mb-0 fw-bold">{{ request_obj.number }}</p>
       </div>
       <div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Cliente</label>
         <p class="ps-1 mb-0 fw-bold">
-          {% if test_request_obj.check_test_client %}
-          {{ test_request_obj.test_client }}
+          {% if art_request_obj %}
+          {{ art_request_obj.client }}
           {% else %}
-          {{ test_request_obj.client }}
+            {% if request_obj.check_test_client %}
+            {{ request_obj.test_client }}
+            {% else %}
+            {{ request_obj.client }}
+            {% endif %}
           {% endif %}
         </p>
       </div>
       <div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Producto</label>
-        <p class="ps-1 mb-0 fw-bold">{{ test_request_obj.product }}</p>
+        <p class="ps-1 mb-0 fw-bold">{{ request_obj.product }}</p>
       </div>
       
       <div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Código GP</label>
         <p class="ps-1 mb-0 fw-bold">PR</p>
       </div>
       <div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Órden de producción</label>
-        <p class="ps-1 mb-0 fw-bold">PR-{{ test_request_obj.production_order }}</p>
+        <p class="ps-1 mb-0 fw-bold">PR-{{ request_obj.production_order }}</p>
       </div>
       <div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Turno</label>
         <p class="ps-1 mb-0 fw-bold">{{ report.turn }}</p>
@@ -95,3 +100,4 @@
 {% elif tab == 'laminator_boot' %} 
   {% include "essays/details/action-pill.html" with title="Laminación" machine_obj="laminator" obj_id=lamination_boot_obj.id edit_boot=perms.essays.change_laminatorboot export_boot=perms.essays.export_boot delete_boot=perms.essays.delete_laminatorboot %}
 {% endif %}
+{% endwith %}

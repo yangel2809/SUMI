@@ -959,8 +959,6 @@ def viewExitElement(request, pk):
     
     return render(request, 'essays/details-test_request.html', context)
 
-@login_required(login_url='/login/')
-@permission_required('essays.view_printerboot', raise_exception=True)
 def viewPrinterBoot(request, pk, ck):
     
     test_request_obj = get_object_or_404(TestRequest, pk=pk)
@@ -1023,10 +1021,78 @@ def viewPrinterBoot(request, pk, ck):
         
         return JsonResponse({'content_html': content_html})
     
-    return render(request, 'essays/details-test_request.html', context)
-
+    return render(request, 'essays/details-test_request.html', context) 
 @login_required(login_url='/login/')
-@permission_required('essays.view_laminatorboot', raise_exception=True)
+@permission_required('essays.view_printerboot', raise_exception=True)
+def viewPrinterBootArt(request, pk, ck):
+    
+    art_request_obj = get_object_or_404(ArtRequest, pk=pk)
+    print("Debug art_request_obj:", art_request_obj)
+    print("Debug client:", art_request_obj.client)
+    print("Debug number:", art_request_obj.number)
+    print("Debug product:", art_request_obj.product)
+    print("Debug production_order:", art_request_obj.production_order)
+    segment = 'art_request'
+    back = '/art_requests/?touched=True'
+    if art_request_obj.touched == False:
+        segment = 'requests'
+        back = '/art_requests/?touched=False'
+    if 'next' in request.GET:
+        back =+ request.GET.get('next')
+    printer_boot_obj = get_object_or_404(PrinterBoot, pk=ck)
+    sustrate = None
+    if art_request_obj.sindex >= 0:
+        sustrate = ArtStructure.objects.filter(test_request__pk = pk)[art_request_obj.sindex]
+    test_file = TestFile.objects.filter(boot_p=ck)
+    result_cols_list = []
+    bobbin_id_list = []
+    
+    #render the tabs------------------------------------------------------------------
+    printer_boot = PrinterBoot.objects.filter(test_request__pk=pk)
+    lamination_boot = LaminatorBoot.objects.filter(test_request__pk=pk)
+    cutter_boot = CutterBoot.objects.filter(test_request__pk=pk)
+    spec_extra = ArtTechnicalSpecs.objects.filter(art_request=art_request_obj).first()
+    annexes = Annex.objects.filter(test_request__pk=pk)
+
+    for test in test_file:
+        essays = TestFileEssay.objects.filter(test_file=test)
+        if essays:
+            results = TestFileEssayResult.objects.filter(essay=essays[0])
+            result_cols_list.append(len(results))
+            bobbin_id_list.append(results)
+        else:
+            result_cols_list.append(0)
+            bobbin_id_list.append(0)
+    
+    objects = zip(test_file, result_cols_list, bobbin_id_list)
+
+    content ='essays/details/machine_boot.html'
+    context = {
+        'art_request_obj':art_request_obj,
+        'printer_boot_obj':printer_boot_obj,
+        'tab':'printer_boot',
+        'sustrate':sustrate,
+        'objects':objects,
+        'test_file':test_file,
+        'segment':segment,
+        'back': back,
+        'content':content,
+        'tab_p':printer_boot_obj.id, #type:ignore
+        #render tabs--------------------
+        'printer_boot':printer_boot,
+        'lamination_boot':lamination_boot,
+        'cutter_boot':cutter_boot,
+        'spec_extra':spec_extra,
+        'annexes':annexes,
+    }
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        content_html = render_to_string(content, context, request)
+        
+        return JsonResponse({'content_html': content_html})
+    
+    return render(request, 'essays/details-test_request_art.html', context)
+
 def viewLaminatorBoot(request, pk, ck):
     
     test_request_obj = get_object_or_404(TestRequest, pk=pk)
@@ -1960,7 +2026,7 @@ def addPrinterBootTR (request, tr):
     sustrate = None
     if test_request_obj.sindex >= 0:
         sustrate = TestStructure.objects.filter(test_request__pk = tr)[test_request_obj.sindex]
-    context = {'form': form, 'test_request_obj':test_request_obj, 'sustrate':sustrate, 'segment':'test_request', 'back': True}
+    context = {'form': form, 'request_obj':test_request_obj, 'sustrate':sustrate, 'segment':'test_request', 'back': True}
     
     if request.method == 'POST':
         if form.is_valid():
@@ -2003,7 +2069,7 @@ def editPrinterBootTR (request, tr, ck):
     if test_request_obj.sindex >= 0:
         sustrate = TestStructure.objects.filter(test_request__pk = tr)[test_request_obj.sindex]
 
-    context = {'form': form, 'test_request_obj':test_request_obj, 'printer_boot_obj':printer_boot_obj, 'sustrate':sustrate, 'segment':'test_request', 'back': True}
+    context = {'form': form, 'request_obj':test_request_obj, 'printer_boot_obj':printer_boot_obj, 'sustrate':sustrate, 'segment':'test_request', 'back': True}
     
     if request.method == 'POST':
         if form.is_valid():
@@ -2040,6 +2106,105 @@ def deletePrinterBootTR (request, tr, ck):
     if request.method == 'POST':
         printr_boot.delete()
     return redirect('view_test_request', tr)
+
+@login_required(login_url='/login/')
+@permission_required('essays.add_printerboot', raise_exception=True)#type:ignore
+def addPrinterBootArt (request, tr):
+    
+    art_request_obj = get_object_or_404(ArtRequest, pk=tr)#Get the parent to render
+    print("Debug art_request_obj:", art_request_obj)
+    print("Debug client:", art_request_obj.client)
+    print("Debug number:", art_request_obj.number)
+    print("Debug product:", art_request_obj.product)
+    print("Debug production_order:", art_request_obj.production_order)
+    if art_request_obj.signed_techspecs and not (request.user.groups.filter(name = 'ASCA-Staff').exists() or request.user.is_superuser):
+        return render(request, 'errors/403.html', status=403)
+    
+    form = PrinterBootForm(request.POST or None)
+
+    sustrate = None
+    if art_request_obj.sindex >= 0:
+        sustrate = ArtStructure.objects.filter(test_request__pk = tr)[art_request_obj.sindex]
+    context = {'form': form, 'request_obj':art_request_obj, 'sustrate':sustrate, 'segment':'art_request', 'back': True}
+    
+    if request.method == 'POST':
+        if form.is_valid():
+            printer_boot = form.save(commit=False)
+            #validation
+            for i in range(1, 11):
+                attr = f'sta_{i:02d}'
+                value = getattr(printer_boot, attr, None)
+                if value is not None:
+                    setattr(printer_boot, attr, value.upper())
+
+            printer_boot.test_request = art_request_obj
+
+            printer_boot.r_average = average(printer_boot.r_left, printer_boot.r_right, printer_boot.r_center)            
+
+            printer_boot.save()
+
+            art_request_obj.touched = True
+            art_request_obj.production_order = request.POST.get('production_order')
+            art_request_obj.save()
+
+            return redirect(f'/test_requests_art/{art_request_obj.id}') #type:ignore
+        else:
+            print(form.errors)
+    return render(request, 'essays/form-printer_boot.html', context)
+
+@login_required(login_url='/login/')
+@permission_required('essays.change_printerboot', raise_exception=True)#type:ignore
+def editPrinterBootArt (request, tr, ck):
+    
+    art_request_obj = get_object_or_404(ArtRequest, pk=tr)#Get the parent to render
+
+    if art_request_obj.signed_techspecs and not (request.user.groups.filter(name = 'ASCA-Staff').exists() or request.user.is_superuser):
+        return render(request, 'errors/403.html', status=403)
+    
+    printer_boot_obj = get_object_or_404(PrinterBoot, pk=ck)
+
+    form = PrinterBootForm(request.POST or None, instance=printer_boot_obj)
+    sustrate = None
+    if art_request_obj.sindex >= 0:
+        sustrate = ArtStructure.objects.filter(test_request__pk = tr)[art_request_obj.sindex]
+
+    context = {'form': form, 'request_obj':art_request_obj, 'printer_boot_obj':printer_boot_obj, 'sustrate':sustrate, 'segment':'art_request', 'back': True}
+    
+    if request.method == 'POST':
+        if form.is_valid():
+            printer_boot = form.save(commit=False)
+            #validation
+            for i in range(1, 11):
+                attr = f'sta_{i:02d}'
+                value = getattr(printer_boot, attr, None)
+                if value is not None:
+                    setattr(printer_boot, attr, value.upper())
+            printer_boot.test_request = art_request_obj
+            
+            printer_boot.r_average = average(printer_boot.r_left, printer_boot.r_right, printer_boot.r_center)
+
+            printer_boot.save()
+
+            art_request_obj.touched = True
+            art_request_obj.production_order = request.POST.get('production_order')
+            art_request_obj.save()
+                
+            return redirect(f'/test_requests_art/{art_request_obj.id}/printer/{printer_boot_obj.id}') #type:ignore
+        else:
+            print(form.errors)
+    return render(request, 'essays/form-printer_boot.html', context)
+
+@login_required(login_url='/login/')
+@permission_required('essays.delete_printerboot', raise_exception=True)#type:ignore
+def deletePrinterBootArt (request, tr, ck):
+
+    if ArtRequest.objects.get(pk = tr).signed_techspecs and not (request.user.groups.filter(name = 'ASCA-Staff').exists() or request.user.is_superuser):
+        return render(request, 'errors/403.html', status=403)
+    
+    printr_boot = get_object_or_404(PrinterBoot, pk=ck)
+    if request.method == 'POST':
+        printr_boot.delete()
+    return redirect('view_test_request_art', tr)
 
 #Laminator Boot----------------------------------------------------->
 @login_required(login_url='/login/')
