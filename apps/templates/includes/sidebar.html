@@ -102,6 +102,28 @@
         </a>
       </li>
       {% endif %}
+
+      {% if perms.essays.view_artrequest %}
+      <li class="nav-item">
+        <a class="nav-link text-white {% if segment == 'art_request' %} bg-primary {% endif %}" href="{% url 'test_request_art' %}?touched=True">
+          <div class="text-white text-center me-2 d-flex">
+            <i class="material-symbols-rounded opacity-10">edit_document</i>
+          </div>
+          <span class="nav-link-text ms-1">Expedientes de Arte</span>
+        </a>
+      </li>
+      {% endif %}
+
+      {% if perms.essays.view_artrequest %}
+      <li class="nav-item">
+        <a class="nav-link text-white {% if segment == 'closed_art_request' %} bg-primary {% endif %}" href="{% url 'test_request_art' %}?touched=closed">
+          <div class="text-white text-center me-2 d-flex">
+            <i class="material-symbols-rounded opacity-10">task</i>
+          </div>
+          <span class="nav-link-text ms-1">Expedientes de Arte (Cerrados)</span>
+        </a>
+      </li>
+      {% endif %}
       
       {% if perms.sales.view_saleorder or perms.production.view_order %}
         <li class="nav-item">

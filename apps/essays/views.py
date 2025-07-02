@@ -2137,7 +2137,7 @@ def addPrinterBootArt (request, tr):
                 if value is not None:
                     setattr(printer_boot, attr, value.upper())
 
-            printer_boot.test_request = art_request_obj
+            printer_boot.art_request = art_request_obj
 
             printer_boot.r_average = average(printer_boot.r_left, printer_boot.r_right, printer_boot.r_center)            
 
@@ -2179,7 +2179,7 @@ def editPrinterBootArt (request, tr, ck):
                 value = getattr(printer_boot, attr, None)
                 if value is not None:
                     setattr(printer_boot, attr, value.upper())
-            printer_boot.test_request = art_request_obj
+            printer_boot.art_request= art_request_obj
             
             printer_boot.r_average = average(printer_boot.r_left, printer_boot.r_right, printer_boot.r_center)
 
