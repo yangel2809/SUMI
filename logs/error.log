@@ -168,3 +168,8 @@
 2025/07/02 11:17:12 [emerg] 13580#11956: CreateDirectory() "C:\Users\Laptop 01\Documents\GitHub\SUMI/temp/client_body_temp" failed (3: The system cannot find the path specified)
 2025/07/02 11:20:43 [emerg] 3864#8820: CreateDirectory() "C:\Users\Laptop 01\Documents\GitHub\SUMI/temp/client_body_temp" failed (3: The system cannot find the path specified)
 2025/07/02 11:23:07 [emerg] 5500#4540: CreateDirectory() "C:\Users\Laptop 01\Documents\GitHub\SUMI/temp/client_body_temp" failed (3: The system cannot find the path specified)
+2025/07/02 13:06:03 [emerg] 16768#11300: CreateDirectory() "C:\Users\Laptop 01\Documents\GitHub\SUMI/temp/client_body_temp" failed (3: The system cannot find the path specified)
+2025/07/02 13:15:35 [emerg] 14672#6320: CreateDirectory() "C:\Users\Laptop 01\Documents\GitHub\SUMI/temp/client_body_temp" failed (3: The system cannot find the path specified)
+2025/07/02 14:51:24 [emerg] 2496#3476: CreateDirectory() "C:\Users\Laptop 01\Documents\GitHub\SUMI/temp/client_body_temp" failed (3: The system cannot find the path specified)
+2025/07/02 15:19:26 [emerg] 10120#18256: CreateDirectory() "C:\Users\Laptop 01\Documents\GitHub\SUMI/temp/client_body_temp" failed (3: The system cannot find the path specified)
+2025/07/02 15:54:36 [emerg] 17116#10608: CreateDirectory() "C:\Users\Laptop 01\Documents\GitHub\SUMI/temp/client_body_temp" failed (3: The system cannot find the path specified)

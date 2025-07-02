@@ -1027,11 +1027,6 @@ def viewPrinterBoot(request, pk, ck):
 def viewPrinterBootArt(request, pk, ck):
     
     art_request_obj = get_object_or_404(ArtRequest, pk=pk)
-    print("Debug art_request_obj:", art_request_obj)
-    print("Debug client:", art_request_obj.client)
-    print("Debug number:", art_request_obj.number)
-    print("Debug product:", art_request_obj.product)
-    print("Debug production_order:", art_request_obj.production_order)
     segment = 'art_request'
     back = '/art_requests/?touched=True'
     if art_request_obj.touched == False:
@@ -1068,6 +1063,7 @@ def viewPrinterBootArt(request, pk, ck):
 
     content ='essays/details/machine_boot.html'
     context = {
+        'test_request_obj':art_request_obj,
         'art_request_obj':art_request_obj,
         'printer_boot_obj':printer_boot_obj,
         'tab':'printer_boot',
