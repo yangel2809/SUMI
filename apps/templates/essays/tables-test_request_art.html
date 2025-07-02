@@ -5,7 +5,7 @@
     {% if 'closed_art_request' in segment %}
     Expedientes de IDAT
     {% elif 'art_request' in segment %}
-    Expedientes de pruebas
+    Expedientes de Arte
     {% else %}
     {% if perms.essays.view_artentryelement %}
     <a class="title-tab text-white {% if tab != 'art_entry' %}faded-title cursor-pointer{% endif %}" redirect="{% url 'entry_element_art' %}" value="art_entry">Elementos de Entrada de Arte</a> | {% endif %}

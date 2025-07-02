@@ -5,7 +5,7 @@
   <table class="table table-hover align-items-center mb-0">
     <thead>
       <tr>
-        {% if 'test_request_art' in segment %}
+        {% if 'art_request' in segment %}
         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">op</th>
         {% endif %}
         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">N° Solicitud</th>
@@ -24,7 +24,7 @@
     <tbody>
       {% for test_request_art in objects %}
       <tr>
-        {% if 'test_request_art' in segment %}
+        {% if 'art_request' in segment %}
         <td class="col-1 ps-4 ms-2">
           <a title="Ver expediente" href="{% url 'view_test_request_art' test_request_art.id %}{% if '?' in request.get_full_path %}?back=/test_requests_art/{{ request.GET | query_encode }}{% endif %}" class="mb-0 fw-bold">{% if test_request_art.production_order %}PR-{{ test_request_art.production_order }}{% else %}-{% endif %}</a>
         </td>
