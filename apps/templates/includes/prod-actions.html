@@ -1,97 +1,87 @@
-{% if order_obj %}
-  {% if not "edit" in request.get_full_path %}
-    {% for cut in cutter_boot %}
-      {% if perms.production.change_cutterboot %}
-        <li class="nav-item mt-3 ms-1 mb-2 doc-edit {% if not cut.id == tab_c %}d-none{% endif %}" id="edit_cut_{{ forloop.counter0 }}">
-          <a class="a-deaf" title="Editar Arranque de Cortadora" href="{% url 'production_cutter_edit' pk=order_obj.id ck=cut.id %}">
-            <i class="material-symbols-rounded detail-action-icon">drive_file_rename_outline</i>
-          </a>
-        </li>
-      {% endif %}
-      {% if perms.production.delete_cutterboot %}
-        <li class="nav-item mt-3 ms-1 mb-2 doc-edit {% if not cut.id == tab_c %}d-none{% endif %}" id="delete_cut_{{ forloop.counter0 }}">
-          <a class="a-deaf" title="Eliminar Arranque de Cortadora" data-bs-toggle="modal" data-bs-target="#id-cut-{{ cut.id }}" style="user-select: none; cursor: pointer !important;" title="Eliminar">
-            <i class="material-icons detail-action-icon">delete</i>
-          </a> 
-        </li>
-        <!-- Modal -->
-        <div class="modal fade" id="id-cut-{{ cut.id }}" tabindex="-1" aria-labelledby="exampleModalLabel"
-          aria-hidden="true" style="user-select: none;">
-          <div class="modal-dialog">
-            <div class="modal-content px-3">
-              <div class="bg-primary modal-header px-4 mx-n3">
-                <h4 class="modal-title font-weight-bolder text-white" id="exampleModalLabel">¡Advertencia!</h4>
-              </div>
-              <form method="POST" action="{% url 'production_cutter_delete' cut.id %}">
-                {% csrf_token %}
-                <div class="modal-body text-start px-1">
-                  <p class="mb-1 font-weight-bold" style="line-height: 1.25;">
-                    ¿Seguro que desea eliminar el Control de Arranque de Corrtadora?</p>
-                  <p class="mb-n1 text-xs">Esta acción no puede deshacerse</p>
-                </div>
-                <div class="modal-footer text-center justify-content-center py-2">
-                  <button type="button" class="m-0 mx-1 btn btn-secondary"
-                  data-bs-dismiss="modal">Cancelar</button>
-                  <button type="submit" class="m-0 mx-1 btn btn-danger">Confirmar</button>
-                </div>
-              </form>
+{% load home_tags %}
+{% with request_obj=art_request_obj|default:test_request_obj|default:order_obj %}
+{% if not "edit" in request.get_full_path %}
+
+  {# --- Printer Boot Actions --- #}
+  {% for prt in printer_boot %}
+    {% if ('production' in segment and perms.production.change_printerboot) or ('production' not in segment and perms.essays.change_printerboot) %}
+      <li class="nav-item mt-3 ms-1 mb-2 doc-edit {% if not prt.id == tab_p %}d-none{% endif %}" id="edit_prt_{{ forloop.counter0 }}">
+        <a class="a-deaf" title="Editar Arranque de Impresora" 
+        href="{% if 'production' in segment %}{% url 'production_printer_edit' pk=request_obj.id ck=prt.id %}
+              {% elif 'art' in segment %}{% url 'edit_printer_boot_art' tr=request_obj.id ck=prt.id %}
+              {% else %}{% url 'edit_printer_boot_tr' tr=request_obj.id ck=prt.id %}{% endif %}">
+          <i class="material-symbols-rounded detail-action-icon">drive_file_rename_outline</i>
+        </a>
+      </li>
+    {% endif %}
+  {% endfor %}
+
+  {# --- Laminator Boot Actions --- #}
+  {% for lam in lamination_boot %}
+    {% if ('production' in segment and perms.production.change_laminatorboot) or ('production' not in segment and perms.essays.change_laminatorboot) %}
+      <li class="nav-item mt-3 ms-1 mb-2 doc-edit {% if not lam.id == tab_l %}d-none{% endif %}" id="edit_lam_{{ forloop.counter0 }}">
+        <a class="a-deaf" title="Editar Arranque de Laminadora" 
+        href="{% if 'production' in segment %}{% url 'production_laminator_edit' pk=request_obj.id ck=lam.id %}
+              {% elif 'art' in segment %}{% url 'edit_laminator_boot_art' tr=request_obj.id ck=lam.id %}
+              {% else %}{% url 'edit_laminator_boot_tr' tr=request_obj.id ck=lam.id %}{% endif %}">
+          <i class="material-symbols-rounded detail-action-icon">drive_file_rename_outline</i>
+        </a>
+      </li>
+    {% endif %}
+  {% endfor %}
+
+  {# --- Cutter Boot Actions --- #}
+  {% for cut in cutter_boot %}
+    {% if ('production' in segment and perms.production.change_cutterboot) or ('production' not in segment and perms.essays.change_cutterboot) %}
+      <li class="nav-item mt-3 ms-1 mb-2 doc-edit {% if not cut.id == tab_c %}d-none{% endif %}" id="edit_cut_{{ forloop.counter0 }}">
+        <a class="a-deaf" title="Editar Arranque de Cortadora" 
+        href="{% if 'production' in segment %}{% url 'production_cutter_edit' pk=request_obj.id ck=cut.id %}
+              {% elif 'art' in segment %}{% url 'edit_cutter_boot_art' tr=request_obj.id ck=cut.id %}
+              {% else %}{% url 'edit_cutter_boot_tr' tr=request_obj.id ck=cut.id %}{% endif %}">
+          <i class="material-symbols-rounded detail-action-icon">drive_file_rename_outline</i>
+        </a>
+      </li>
+    {% endif %}
+  {% endfor %}
+
+  {# --- Delete Modals --- #}
+  {% for cut in cutter_boot %}
+    {% if ('production' in segment and perms.production.delete_cutterboot) or ('production' not in segment and perms.essays.delete_cutterboot) %}
+      <li class="nav-item mt-3 ms-1 mb-2 doc-edit {% if not cut.id == tab_c %}d-none{% endif %}" id="delete_cut_{{ forloop.counter0 }}">
+        <a class="a-deaf" title="Eliminar Arranque de Cortadora" data-bs-toggle="modal" data-bs-target="#id-cut-{{ cut.id }}" style="user-select: none; cursor: pointer !important;">
+          <i class="material-icons detail-action-icon">delete</i>
+        </a> 
+      </li>
+      <div class="modal fade" id="id-cut-{{ cut.id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content px-3">
+            <div class="bg-primary modal-header px-4 mx-n3">
+              <h4 class="modal-title font-weight-bolder text-white">¡Advertencia!</h4>
             </div>
+            <form method="POST" action="{% if 'production' in segment %}{% url 'production_cutter_delete' pk=cut.id %}{% elif 'art' in segment %}{% url 'delete_cutter_boot_art' tr=request_obj.id ck=cut.id %}{% else %}{% url 'delete_cutter_boot_tr' tr=request_obj.id ck=cut.id %}{% endif %}">
+              {% csrf_token %}
+              <div class="modal-body text-start px-1">
+                <p class="mb-1 font-weight-bold">¿Seguro que desea eliminar el Control de Arranque de Cortadora?</p>
+                <p class="mb-n1 text-xs">Esta acción no puede deshacerse.</p>
+              </div>
+              <div class="modal-footer text-center justify-content-center py-2">
+                <button type="button" class="m-0 mx-1 btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="m-0 mx-1 btn btn-danger">Confirmar</button>
+              </div>
+            </form>
           </div>
         </div>
-      {% endif %}
-    {% endfor %}
-
-    {% if order_obj.technicalspecs %}
-      {% if perms.essays.change_technicalspecs %}
-        <li class="nav-item mt-3 ms-1 mb-2 {% if not tab_ts %}d-none{% endif %} doc-edit" id="edit_ts_{{ order_obj.technicalspecs.id  }}">
-          <a class="a-deaf" title="Editar revisiones" href="/production/{{ order_obj.id }}/techspecs/{{ order_obj.technicalspecs.id }}/edit">
-            <i class="material-symbols-rounded detail-action-icon">drive_file_rename_outline</i>
-          </a>
-        </li>
-      {% endif %}
-      {% comment %}
-        {% if perms.essays.delete_technicalspecs %}
-          <li class="nav-item mt-3 ms-1 mb-2 doc-edit d-none" id="delete_ts_{{ order_obj.technicalspecs.id  }}">
-            <a class="a-deaf" title="Eliminar revisiones" data-bs-toggle="modal" data-bs-target="#id-cut-{{ order_obj.technicalspecs.id }}" style="user-select: none; cursor: pointer !important;" title="Eliminar">
-              <i class="material-icons detail-action-icon">delete</i>
-            </a> 
-          </li>
-          <!-- Modal -->
-          <div class="modal fade" id="id-cut-{{ order_obj.technicalspecs.id }}" tabindex="-1" aria-labelledby="exampleModalLabel"
-            aria-hidden="true" style="user-select: none;">
-            <div class="modal-dialog">
-              <div class="modal-content px-3">
-                <div class="bg-primary modal-header px-4 mx-n3">
-                  <h4 class="modal-title font-weight-bolder text-white" id="exampleModalLabel">¡Advertencia!</h4>
-                </div>
-                <form method="POST" action="/production/{{ test_request_obj.id }}/techspecs/{{ order_obj.technicalspecs.id }}/delete/">
-                  {% csrf_token %}
-                  <div class="modal-body text-start px-1">
-                    <p class="mb-1 font-weight-bold" style="line-height: 1.25;">
-                      ¿Seguro que desea eliminar el Control de Arranque de Corrtadora?</p>
-                    <p class="mb-n1 text-xs">Esta acción no puede deshacerse</p>
-                  </div>
-                  <div class="modal-footer text-center justify-content-center py-2">
-                    <button type="button" class="m-0 mx-1 btn btn-secondary"
-                    data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="m-0 mx-1 btn btn-danger">Confirmar</button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        {% endif %}
-      {% endcomment %}
+      </div>
     {% endif %}
+  {% endfor %}
 
-    {% if perms.essays.view_order %}
-    <li class="{% if tab == 'main' or tab_c %}d-block{% else %}d-none{% endif %} nav-item mt-3 ms-1 mb-2 doc-edit" id="print-btn">
-      <a class="a-deaf" title="Guardar cómo PDF/Imprimir" href="javascript:window.print()">
-        <i class="material-symbols-rounded detail-action-icon">picture_as_pdf</i>
-      </a>
-    </li>
-    {% endif %}
+  {# --- Print Button --- #}
+  {% if perms.essays.view_order %}
+  <li class="{% if tab == 'main' or tab_c or tab_p or tab_l %}d-block{% else %}d-none{% endif %} nav-item mt-3 ms-1 mb-2 doc-edit" id="print-btn">
+    <a class="a-deaf" title="Guardar cómo PDF/Imprimir" href="javascript:window.print()">
+      <i class="material-symbols-rounded detail-action-icon">picture_as_pdf</i>
+    </a>
+  </li>
   {% endif %}
-  
 {% endif %}
-
+{% endwith %}

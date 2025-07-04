@@ -1,0 +1,89 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<!-- form_view.html -->
+{% if request_obj.company == 'mcl' %}
+<style>:root {--mc-color: #946037;--mc-selection: #ad7e5a;--mc-shadow-color: #94603780;--mc-calendar-today: #94603780;--critical-color: #94603769;--mc-hover-color: #94603759;}</style>
+<script>$('meta[name="theme-color"]').attr('content', '#946037')</script>
+{% endif %}
+<link href="{{ ASSETS_ROOT }}/css/plan-form.css" rel="stylesheet" />
+<div class="container-fluid pt-1 px-sm-4 px-3 pb-3">
+	<div class="row min-vh-80 h-100">
+		<div class="col-12 px-0 px-md-2">
+			<div class="card my-4">
+				<div class="card-header p-0 position-relative mt-n4 mx-2 mx-md-3 z-index-2" style="user-select: none">
+					<div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2">
+						<div class="mt-2 text-center">
+							<h4 class="text-white text-center font-weight-bolder me-3">{% if 'edit' in request.get_full_path %}Editar
+								{% endif %}Especificaciones Técnicas</h4>
+						</div>
+					</div>
+					<div class="card-body px-md-0 px-2 py-2">
+						<div class="form-group d-flex input-group input-group-outline">
+							<form class="form col-12" method="POST" id="main_form" style="user-select: none">
+								{% csrf_token %}
+								<div class="row px-1 px-md-3">
+									<div class="d-flex flex-wrap justify-content-between pb-1">
+										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Solicitud N°</label>
+											<p class="ps-1 mb-0 fw-bold">{{ request_obj.number }}</p>
+										</div>
+										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Cliente</label>
+											<p class="ps-1 mb-0 fw-bold">
+												{% if request_obj.check_test_client %}
+												{{ request_obj.test_client }}
+												{% else %}
+												{{ request_obj.client }}
+												{% endif %}
+											</p>
+										</div>
+										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Producto</label>
+											<p class="ps-1 mb-0 fw-bold">{{ request_obj.product }}</p>
+										</div>
+									</div>
+									
+									<div class="col-md-6 col-12 pb-2"><label for="date">Fecha</label>{{ form.date }}</div>
+									<div class="col-md-6 col-12 pb-2"><label for="quality_analist">Analista de Calidad</label>{{ form.quality_analist }}</div>
+									<div class="col-12 pb-2"><label for="observation">Observaciones</label>{{ form.observation }}</div>
+
+								</div>
+								<div class="d-flex justify-content-center gap-2">
+									<button class="btn btn-primary" type="submit">Guardar</button>
+									<button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#cancelModal">
+										Cancelar
+									  </button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel"
+aria-labelledby="TrueDelete" aria-hidden="true" style="user-select: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: var(--mc-color) !important;">
+        <h5 class="modal-title fw-bold text-white" id="cancelModalLabel">Confirmación de Cancelación</h5>
+      </div>
+      <div class="modal-body">
+        ¿Estás seguro de que quieres cancelar?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="mb-1 btn btn-secondary" data-bs-dismiss="modal">No</button>
+        <button type="button" class="mb-1 btn btn-primary" onClick="window.history.back();">Sí, cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+$(document).ready(function () {
+	$('#quality_analist').select2({
+		placeholder: 'Analista de Calidad',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+});
+</script>
+{% endblock content %}

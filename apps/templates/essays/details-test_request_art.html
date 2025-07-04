@@ -56,13 +56,13 @@
   
           {% if cutter_boot and perms.essays.view_cutterboot %}
             {% for boot in cutter_boot %}
-              <p hrefx="{% url 'view_cutter_boot_tr' pk=art_request_obj.id ck=boot.id %}" class="printable tab fw-bold color-cut {% if boot.id == tab_c %}tab-active{% endif %}" value="edit_cut_{{ forloop.counter0 }}" value2="delete_cut_{{ forloop.counter0 }}">Arranque de Cort. {% if cutter_boot|length > 1 %}#{{ forloop.counter }}{% endif %}</p>
+              <p hrefx="{% url 'view_cutter_boot_art' pk=art_request_obj.id ck=boot.id %}" class="printable tab fw-bold color-cut {% if boot.id == tab_c %}tab-active{% endif %}" value="edit_cut_{{ forloop.counter0 }}" value2="delete_cut_{{ forloop.counter0 }}">Arranque de Cort. {% if cutter_boot|length > 1 %}#{{ forloop.counter }}{% endif %}</p>
             {% endfor %}
           {% endif %}
           
           <!--Techspecs-->
           {% if printer_boot or lamination_boot or cutter_boot %}
-            <p hrefx="/test_requests_art/{{ art_request_obj.id }}/tech_specs" class="printable tab fw-bold color-tec {% if tab == 'tech_specs' %}tab-active{% endif %}" value="edit_ts_{{ spec_extra.id  }}" value2="delete_ts_{{ spec_extra.id  }}">Espec. T. de Pruebas <i class="fas fa-chart-bar" aria-hidden="true"></i></p>
+            <p hrefx="{% url 'view_art_tech_specs' pk=art_request_obj.id %}" class="printable tab fw-bold color-tec {% if tab == 'tech_specs' %}tab-active{% endif %}" value="edit_ts_{{ spec_extra.id  }}" value2="delete_ts_{{ spec_extra.id  }}">Espec. T. de Pruebas <i class="fas fa-chart-bar" aria-hidden="true"></i></p>
           {% endif %}
   
           <!--Techspecs-->

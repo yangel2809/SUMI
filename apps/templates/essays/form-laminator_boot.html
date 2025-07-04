@@ -22,7 +22,7 @@
 					</div>
 					<div class="card-body px-md-0 px-2 py-2">
 						<div class="form-group d-flex input-group input-group-outline">
-							<form class="form col-12" method="POST" id="main_form" style="user-select: none">
+							<form class="form col-12" method="POST" id="main_form" style="user-select: none" action="{% if 'art' in segment %}{% if laminator_boot_obj %}{% url 'edit_laminator_boot_art' tr=request_obj.id ck=laminator_boot_obj.id %}{% else %}{% url 'add_laminator_boot_art' tr=request_obj.id %}{% endif %}{% else %}{% if laminator_boot_obj %}{% url 'edit_laminator_boot_tr' tr=request_obj.id ck=laminator_boot_obj.id %}{% else %}{% url 'add_laminator_boot_tr' tr=request_obj.id %}{% endif %}{% endif %}">
 								{% csrf_token %}
 								<div class="row px-1 px-md-3">
 									<div class="d-flex flex-wrap justify-content-between pb-1">

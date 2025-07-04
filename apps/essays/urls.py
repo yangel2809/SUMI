@@ -127,6 +127,12 @@ urlpatterns = [
     path('test_requests/<str:tr>/tech_specs/<str:ck>/edit/', editTechSpecs, name='edit_tech_spec'),
     path('test_requests/<str:tr>/tech_specs/<str:ck>/delete/', deleteTechSpecs, name='delete_tech_spec'),
 
+    #Art Technical Specifications
+    path('test_requests_art/<str:pk>/tech_specs/', viewArtTechSpecs, name='view_art_tech_specs'),
+    path('test_requests_art/<str:tr>/tech_specs/add/', addArtTechSpecs, name='add_art_tech_spec'),
+    path('test_requests_art/<str:tr>/tech_specs/<str:ck>/edit/', editArtTechSpecs, name='edit_art_tech_spec'),
+    path('test_requests_art/<str:tr>/tech_specs/<str:ck>/delete/', deleteArtTechSpecs, name='delete_art_tech_spec'),
+
     #Personal
     path('analyst/add/', addQualityAnalyst, name='add_analyst'),
     path('analyst/<str:pk>/edit/', editQualityAnalyst, name='edit_analyst'),

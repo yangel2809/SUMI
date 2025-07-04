@@ -951,6 +951,7 @@ def viewExitElement(request, pk):
         'cutter_boot':cutter_boot,
         'spec_extra':spec_extra,
         'annexes':annexes,
+        'test_file':test_file,
     }
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         content_html = render_to_string(content, context, request)
@@ -1102,6 +1103,7 @@ def viewCutterBootArt(request, pk, ck):
     if 'next' in request.GET:
         back =+ request.GET.get('next')
     cutter_boot_obj = get_object_or_404(CutterBoot, pk=ck)
+    test_file = TestFile.objects.filter(boot_c=ck)
     
     structure_list = ArtStructure.objects.filter(art_request__pk=pk)
     tr_weight = 0
@@ -1342,6 +1344,138 @@ def deleteLaminatorBootArt (request, tr, ck):
     laminator_boot = get_object_or_404(LaminatorBoot, pk=ck)
     if request.method == 'POST':
         laminator_boot.delete()
+    return redirect('view_test_request_art', tr)
+
+@login_required(login_url='/login/')
+@permission_required('essays.view_arttechnicalspecs', raise_exception=True)
+def viewArtTechSpecs(request, pk):
+    
+    art_request_obj = get_object_or_404(ArtRequest, pk=pk)
+    if art_request_obj.deleted and not request.user.has_perm('essay.view_deleted_artrequest'):
+        return render(request, 'errors/404.html', status=404)
+    segment = 'art_request'
+    back = '/art_requests/?touched=True'
+    if art_request_obj.touched == False:
+        segment = 'requests'
+        back = '/art_requests/?touched=False'
+    if 'next' in request.GET:
+        back =+ request.GET.get('next')
+    structure_list = ArtStructure.objects.filter(art_request__pk=pk)
+
+    printer_boot = PrinterBoot.objects.filter(art_request__pk=pk)
+    lamination_boot = LaminatorBoot.objects.filter(art_request__pk=pk)
+    cutter_boot = CutterBoot.objects.filter(art_request__pk=pk)
+
+    latest_lam = None
+    latest_report = None
+    latest_cutter = None
+
+    if lamination_boot:
+        latest_lam = lamination_boot.latest('id')
+        reports = TestFile.objects.filter(boot_l__id=latest_lam.pk)
+        latest_report = reports.last()
+    elif printer_boot:
+        latest_lam = printer_boot.latest('id')
+        reports = TestFile.objects.filter(boot_p__id=latest_lam.pk)
+        latest_report = reports.last()
+
+    if cutter_boot:
+        latest_cutter = cutter_boot.latest('id')
+
+    all_delal = TestFileEssay.objects.filter(test_file__boot_l__art_request=art_request_obj).filter(essay__method="011").order_by('test_file__boot_l__step')
+
+    spec_extra = ArtTechnicalSpecs.objects.filter(art_request=art_request_obj).first()
+    annexes = Annex.objects.filter(art_request__pk=pk)
+
+    content = 'essays/details/tech_specs.html'
+    
+    context = {
+        'test_request_obj':art_request_obj,
+        'art_request_obj':art_request_obj,
+        'structure_list':structure_list,
+        'printer_boot':printer_boot,
+        'lamination_boot':lamination_boot,
+        'latest_lam':latest_lam,
+        'latest_report':latest_report,
+        'all_delal':all_delal,
+        'cutter_boot':cutter_boot,
+        'latest_cutter':latest_cutter,
+        'spec_extra':spec_extra,
+        'tab_ts':True,
+        'annexes':annexes,
+        'segment':segment,
+        'tab':'tech_specs',
+        'back': back,
+        'content':content
+    }
+    
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        content_html = render_to_string(content, context, request)
+        
+        return JsonResponse({'content_html': content_html})
+    
+    return render(request, 'essays/details-test_request_art.html', context)
+
+@login_required(login_url='/login/')
+@permission_required('essays.add_arttechnicalspecs', raise_exception=True)#type:ignore
+def addArtTechSpecs (request, tr):
+    
+    art_request_obj = get_object_or_404(ArtRequest, pk=tr)
+   
+    if art_request_obj.signed_techspecs and not (request.user.groups.filter(name = 'ASCA-Staff').exists() or request.user.is_superuser):
+        return render(request, 'errors/403.html', status=403)
+    
+    form = ArtTechnicalSpecsForm(request.POST or None)
+
+    context = {'form': form, 'request_obj':art_request_obj, 'art_request_obj':art_request_obj, 'segment':'art_request', 'back': True}
+    
+    if request.method == 'POST':
+        if form.is_valid():
+            tech_specs = form.save(commit=False)
+            tech_specs.art_request = art_request_obj
+            tech_specs.save()
+
+            return redirect(f'/test_requests_art/{art_request_obj.id}') #type:ignore
+        else:
+            print(form.errors)
+    return render(request, 'essays/form-tech_specs.html', context)
+
+@login_required(login_url='/login/')
+@permission_required('essays.change_arttechnicalspecs', raise_exception=True)#type:ignore
+def editArtTechSpecs (request, tr, ck):
+    
+    art_request_obj = get_object_or_404(ArtRequest, pk=tr)
+
+    if art_request_obj.signed_techspecs and not (request.user.groups.filter(name = 'ASCA-Staff').exists() or request.user.is_superuser):
+        return render(request, 'errors/403.html', status=403)
+    
+    tech_specs_obj = get_object_or_404(ArtTechnicalSpecs, pk=ck)
+
+    form = ArtTechnicalSpecsForm(request.POST or None, instance=tech_specs_obj)
+    
+    context = {'form': form, 'request_obj':art_request_obj, 'art_request_obj':art_request_obj, 'tech_specs_obj':tech_specs_obj, 'segment':'art_request', 'back': True}
+    
+    if request.method == 'POST':
+        if form.is_valid():
+            tech_specs = form.save(commit=False)
+            tech_specs.art_request = art_request_obj
+            tech_specs.save()
+                
+            return redirect(f'/test_requests_art/{art_request_obj.id}/tech_specs/') #type:ignore
+        else:
+            print(form.errors)
+    return render(request, 'essays/form-tech_specs.html', context)
+
+@login_required(login_url='/login/')
+@permission_required('essays.delete_arttechnicalspecs', raise_exception=True)#type:ignore
+def deleteArtTechSpecs (request, tr, ck):
+
+    if ArtRequest.objects.get(pk = tr).signed_techspecs and not (request.user.groups.filter(name = 'ASCA-Staff').exists() or request.user.is_superuser):
+        return render(request, 'errors/403.html', status=403)
+    
+    tech_specs = get_object_or_404(ArtTechnicalSpecs, pk=ck)
+    if request.method == 'POST':
+        tech_specs.delete()
     return redirect('view_test_request_art', tr)
 
 def viewLaminatorBoot(request, pk, ck):

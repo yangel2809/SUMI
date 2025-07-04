@@ -960,6 +960,7 @@ class TestFile(models.Model):
     
     boot_p = models.ForeignKey("essays.PrinterBoot", blank=True, on_delete=models.CASCADE, null=True)
     boot_l = models.ForeignKey("essays.LaminatorBoot", blank=True, on_delete=models.CASCADE, null=True)
+    boot_c = models.ForeignKey("essays.CutterBoot", blank=True, on_delete=models.CASCADE, null=True)
 
     type = models.CharField(max_length=3, choices = TFT_OPT, blank=False, null=True)
     

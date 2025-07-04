@@ -21,7 +21,7 @@
 					<div class="card-body px-md-0 px-2 py-2">
 						<div class="form-group d-flex input-group input-group-outline">
 							<input type="hidden" id="company" value="{{ request_obj.company }}">
-							<form class="form col-12" method="POST" style="user-select: none">
+							<form class="form col-12" method="POST" action="{% if 'art' in segment %}{% if cutter_boot_obj %}{% url 'edit_cutter_boot_art' tr=request_obj.id ck=cutter_boot_obj.id %}{% else %}{% url 'add_cutter_boot_art' tr=request_obj.id %}{% endif %}{% else %}{% if cutter_boot_obj %}{% url 'edit_cutter_boot_tr' tr=request_obj.id ck=cutter_boot_obj.id %}{% else %}{% url 'add_cutter_boot_tr' tr=request_obj.id %}{% endif %}{% endif %}" style="user-select: none">
 								{% csrf_token %}
 								<div class="row pt-2 px-1 px-md-3">
 									<div class="d-flex flex-wrap justify-content-between pb-1">

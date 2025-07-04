@@ -314,15 +314,15 @@
   </p>
   
   <div class="d-flex flex-row flex-wrap justify-content-between gap-3 pb-1 px-1 px-md-3">
-{% endwith %}
+    {% endwith %}
     {% if cutter_boot_obj.observation.html %}
     {% if cutter_boot_obj.observation.html != '<p><br></p>' %}
     <h6 class="fw-bold text-primary m-0">Observaciones</h6>
     <div class="col-12 pb-2">{{ cutter_boot_obj.observation.html|safe }}</div>
     {% endif %}
     {% endif %}
-  
-
+    
+    
     <div>
       <h5 class="fw-bold text-primary m-0">Por Aseguramiento de la Calidad</h5>
       <p class="text-lg fw-normal p-0 m-0">{{ cutter_boot_obj.quality_analist }}</p>
@@ -332,5 +332,6 @@
       <p class="text-lg fw-normal text-sm-end p-0 m-0">{{ cutter_boot_obj.production_operator }}</p>
     </div>
   </div>
+  {% include 'essays/details/action-pill.html' with title="Cortadora" machine_obj="cutter" obj_id=cutter_boot_obj.id edit_boot=True delete_boot=True %}
 
 </div>
