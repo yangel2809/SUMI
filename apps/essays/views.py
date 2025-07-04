@@ -27,6 +27,7 @@ from apps.authentication.views import compiled_data
 from .filters import *
 from .forms import *
 from .models import *
+from apps.home.models import Essay
 from apps.production.models import Order, PrinterBoot as ProductionPrinterBoot, LaminatorBoot as ProductionLaminatorBoot, LaminationEssay as ProductionLaminationEssay, TestFile as ProductionTestFile,  TestFileEssay as ProductionTestFileEssay,  TestFileEssayResult as ProductionTestFileEssayResult, Bobbin as ProductionBobbin
 from apps.home.views import get_id
 #from .utils import *
@@ -1478,6 +1479,62 @@ def deleteArtTechSpecs (request, tr, ck):
         tech_specs.delete()
     return redirect('view_test_request_art', tr)
 
+@login_required(login_url='/login/')
+@permission_required('essays.change_testfile', raise_exception=True)
+@transaction.atomic
+def editReportArt(request, tr, boot_type, ck, rp):
+    
+    art_request_obj = get_object_or_404(ArtRequest, pk=tr)
+    if art_request_obj.signed_techspecs and not (request.user.groups.filter(name = 'ASCA-Staff').exists() or request.user.is_superuser):
+        return render(request, 'errors/403.html', status=403)
+    
+    if boot_type == 'printer':
+        boot = get_object_or_404(PrinterBoot, pk=ck)
+    elif boot_type == 'laminator':
+        boot = get_object_or_404(LaminatorBoot, pk=ck)
+    else:
+        raise Http404
+
+    report = get_object_or_404(TestFile, pk=rp)
+    TestFileEssayFormset = modelformset_factory(TestFileEssay, form=TestFileEssayForm, extra=0)
+
+    form = TestFileForm(request.POST or None, instance=report)
+    formset = TestFileEssayFormset(request.POST or None, queryset=TestFileEssay.objects.filter(test_file=report))
+
+    context = {
+        'form': form, 
+        'formset': formset, 
+        'request_obj':art_request_obj, 
+        'art_request_obj':art_request_obj,
+        'boot':boot,
+        'report':report,
+        'segment':'art_request', 
+        'back': True
+    }
+    
+    if request.method == 'POST':
+        if form.is_valid() and formset.is_valid():
+            form.save()
+            formset.save()
+            return redirect(f'/test_requests_art/{art_request_obj.id}/{boot_type}/{boot.id}')
+        else:
+            print(form.errors)
+            print(formset.errors)
+    return render(request, 'essays/form-report.html', context)
+
+@login_required(login_url='/login/')
+@permission_required('essays.delete_testfile', raise_exception=True)
+def deleteReportArt(request, tr, boot_type, ck, rp):
+    
+    art_request_obj = get_object_or_404(ArtRequest, pk=tr)
+    if art_request_obj.signed_techspecs and not (request.user.groups.filter(name = 'ASCA-Staff').exists() or request.user.is_superuser):
+        return render(request, 'errors/403.html', status=403)
+    
+    report = get_object_or_404(TestFile, pk=rp)
+    if request.method == 'POST':
+        report.delete()
+    return redirect(f'/test_requests_art/{art_request_obj.id}/{boot_type}/{ck}')
+
 def viewLaminatorBoot(request, pk, ck):
     
     test_request_obj = get_object_or_404(TestRequest, pk=pk)
@@ -2839,7 +2896,84 @@ def ExportBoot(request, pk, machine, ck):
 
     return HttpResponseBadRequest(request)
 
+@login_required(login_url='/login/')
+@permission_required('essays.add_testfile', raise_exception=True)
+@transaction.atomic
+def ReportArt(request, tr, ck, boot_type):
+    art_request_obj = get_object_or_404(ArtRequest, pk=tr)  # Get the parent to render
 
+    if art_request_obj.signed_techspecs and not (request.user.groups.filter(name='ASCA-Staff').exists() or request.user.is_superuser):
+        return render(request, 'errors/403.html', status=403)
+
+    if boot_type == 'laminator':
+        boot_obj = get_object_or_404(LaminatorBoot, pk=ck)
+    elif boot_type == 'printer':
+        boot_obj = get_object_or_404(PrinterBoot, pk=ck)
+    else:
+        raise Http404("Invalid boot type")
+
+    form = TestFileForm(request.POST or None)
+    formset_essay = TestFileEssayFormset(request.POST or None, prefix='essays')
+    formset_essay_result = TestFileEssayResultFormset(request.POST or None, prefix='results')
+
+    formset = zip(formset_essay, formset_essay_result)
+
+    context = {
+        'form': form,
+        'formset': formset,
+        'formset_essay': formset_essay,
+        'formset_essay_result': formset_essay_result,
+        'art_request_obj': art_request_obj,
+        'boot_obj': boot_obj,
+        'segment': 'art_request',
+        'back': True
+    }
+
+    if request.method == 'POST':
+        if form.is_valid() and formset_essay.is_valid() and formset_essay_result.is_valid():
+            test_file = form.save(commit=False)
+            # validation
+            if boot_type == 'laminator':
+                test_file.boot_l = boot_obj
+            elif boot_type == 'printer':
+                test_file.boot_p = boot_obj
+
+            if not request.user.has_perm('essays.supv_sign_testfile'):
+                test_file.supervisor = None
+            if not request.user.has_perm('essays.boss_sign_testfile'):
+                test_file.boss = None
+            if not request.user.has_perm('home.sign_plan'):
+                test_file.idat = None
+            test_file.save()
+            bobbin = Bobbin.objects.create(test_file=test_file, turn=test_file.turn, date=test_file.date, quality_analist=test_file.quality_analist, production_operator=test_file.production_operator)
+
+            essays = formset_essay.save(commit=False)
+            eform = sorted(essays, key=lambda e: e.essay.priority)
+            for essay in eform:
+                essay.test_file = test_file
+                essay.save()
+
+            rform = formset_essay_result.save(commit=False)
+            for n, result in enumerate(rform):
+                result.essay_id = essays[n].id
+                result.bobbin = bobbin
+                result.result_p = average(result.result_a, result.result_b, result.result_c, essay=result.essay)
+
+                checks = [result.check_a, result.check_b, result.check_c]
+                results = [result.result_a, result.result_b, result.result_c]
+                valid_checks = [check for check, result in zip(checks, results) if result is not None and result != '']
+                result.check_p = sum(valid_checks) / len(valid_checks) >= 0.5 if valid_checks else False
+                result.save()
+
+            art_request_obj.touched = True
+            art_request_obj.save()
+
+            return redirect(f'/test_requests_art/{art_request_obj.id}/{boot_type}/{boot_obj.id}')
+        else:
+            print(form.errors)
+            print(formset_essay.errors)
+            print(formset_essay_result.errors)
+    return render(request, 'essays/form-test_file.html', context)
 
 #Unified Report CRUD------------------------------------------------------------------------>    
 @login_required(login_url='/login/')

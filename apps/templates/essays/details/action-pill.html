@@ -32,20 +32,21 @@
       <i class="pill-child-action fas fa-print"></i>
     </a>
 
-    {% if export_boot %}
+    {% if export_boot and machine_obj != 'cutter' %}
     &ensp;
     <a class="d-flex" title="Exportar" href="#">
       <i class="pill-child-action fas fa-external-link-alt" aria-hidden="true"  data-bs-toggle="modal" data-bs-target="#boot-export"></i>
     </a>
     {% endif %}
   </p>
+  {% if machine_obj != 'cutter' %}
   {% for report in test_file %}
   <p class="pill" tab="#child-content-{{ forloop.counter0 }}">Reporte de Control de Calidad: {{ title }}</p>
   <p class="pill-child" >
     &thinsp;
     {% if not request_obj.signed_techspecs or request.user|is_asca_staff or request.user|has_group:"IDAT-A" %}
     {% if perms.essays.change_testfile or perms.home.sign_plan %}
-    <a class="d-flex" title="Editar" href="{% url 'edit_report' tr=request_obj.id boot_type=machine_obj ck=obj_id rp=report.id %}">
+    <a class="d-flex" title="Editar" href="{% if 'art' in segment %}{% url 'edit_report_art' tr=request_obj.id boot_type=machine_obj ck=obj_id rp=report.id %}{% else %}{% url 'edit_report' tr=request_obj.id boot_type=machine_obj ck=obj_id rp=report.id %}{% endif %}">
       <i class="pill-child-action fas fa-pen"></i>
     </a>
     &ensp;
@@ -66,7 +67,7 @@
         <div class="bg-primary modal-header px-4 mx-n3">
           <h4 class="modal-title font-weight-bolder text-white">¡Advertencia!</h4>
         </div>
-        <form method="POST" action="{% url 'delete_report' tr=request_obj.id boot_type=machine_obj ck=obj_id rp=report.id %}">
+        <form method="POST" action="{% if 'art' in segment %}{% url 'delete_report_art' tr=request_obj.id boot_type=machine_obj ck=obj_id rp=report.id %}{% else %}{% url 'delete_report' tr=request_obj.id boot_type=machine_obj ck=obj_id rp=report.id %}{% endif %}">
           {% csrf_token %}
           <div class="modal-body text-start px-1">
             <p class="mb-1 font-weight-bold" style="line-height: 1.25;">
@@ -83,7 +84,8 @@
   </div>
   {% endfor %}
   {% if not test_file and perms.essays.add_testfile %}
-    <p class="pill" href="{% url 'report_boot' tr=request_obj.id boot_type=machine_obj ck=obj_id %}" redirect="true"><i class="material-icons inline-icon" aria-hidden="true">note_add</i>&thinsp;Agregar Reporte</p>
+    <p class="pill" href="{% if 'art' in segment %}{% url 'report_boot_art' tr=request_obj.id boot_type=machine_obj ck=obj_id %}{% else %}{% url 'report_boot' tr=request_obj.id boot_type=machine_obj ck=obj_id %}{% endif %}" redirect="true"><i class="material-icons inline-icon" aria-hidden="true">note_add</i>&thinsp;Agregar Reporte</p>
+  {% endif %}
   {% endif %}
 </div>
 

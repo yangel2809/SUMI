@@ -1,11 +1,12 @@
 {% extends "layouts/base.html" %}
 {% block content %}
+{% with request_obj_temp=art_request_obj %}{% with request_obj=test_request_obj|default:request_obj_temp %}
 <!-- form_view.html -->
-{% if test_request_obj.company == 'mcl' %}
+{% if request_obj.company == 'mcl' %}
 <style>:root {--mc-color: #946037;--mc-selection: #ad7e5a;--mc-shadow-color: #94603780;--mc-calendar-today: #94603780;--critical-color: #94603769;--mc-hover-color: #94603759;}</style>
 <script>$('meta[name="theme-color"]').attr('content', '#946037')</script>
 {% endif %}
-<link href="{{ ASSETS_ROOT }}/css/essay-material-form.css" rel="stylesheet" />
+<link href="{{ ASSETS_ROOT }} 'css/essay-material-form.css'" rel="stylesheet" />
 <div class="container-fluid pt-1 px-sm-4 px-3 pb-3">
 	<div class="row min-vh-80 h-100">
 		<div class="col-12 px-0 px-md-2">
@@ -26,21 +27,21 @@
 									<div class="d-flex flex-wrap justify-content-between gap-3 pb-2 mt-2">
 
 										<div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Pedido N°</label>
-											<p class="ps-1 mb-0 fw-bold">{{ test_request_obj.number }}</p>
+											<p class="ps-1 mb-0 fw-bold">{{ request_obj.number }}</p>
 										</div>
 
 										<div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Cliente</label>
 											<p class="ps-1 mb-0 fw-bold">
-												{% if test_request_obj.check_test_client %}
-												{{ test_request_obj.test_client }}
+												{% if request_obj.check_test_client %}
+												{{ request_obj.test_client }}
 												{% else %}
-												{{ test_request_obj.client }}
+												{{ request_obj.client }}
 												{% endif %}
 											</p>
 										</div>
 
 										<div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Producto</label>
-											<p class="ps-1 mb-0 fw-bold">{{ test_request_obj.product }}</p>
+											<p class="ps-1 mb-0 fw-bold">{{ request_obj.product }}</p>
 										</div>
 										
 										<div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Código</label>
@@ -48,15 +49,15 @@
 										</div>
 
 										<div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Prueba N°</label>
-											<p class="ps-1 mb-0 fw-bold">PR-{{ boot_obj.origin|default_if_none:test_request_obj.production_order }}</p>
+											<p class="ps-1 mb-0 fw-bold">PR-{{ boot_obj.origin|default_if_none:request_obj.production_order }}</p>
 										</div>
 
 										<div class="d-flex flex-column flex-grow-1 {% if not perms.essays.change_testfile %}d-none{% endif %}"><label class="text-primary fw-bold mb-0" for="turn">Turno</label>
-    										{{ form.turn }}
+    									{{ form.turn }}
 										</div>
 
 										<div class="d-flex flex-column flex-grow-1 {% if not perms.essays.change_testfile %}d-none{% endif %}"><label class="text-primary fw-bold mb-0" for="date">Fecha</label>
-    										{{ form.date }}
+    									{{ form.date }}
 										</div>
 										
 									</div>
@@ -65,18 +66,17 @@
 									{% if not "edit" in request.get_full_path %}
 										{% include 'essays/formsets/test_file_essay.html' %}
 									{% endif %}
-																									
-									
+																		
 									<h6 class="fw-bold text-primary m-0">Observaciones</h6>
 									<br>
 									<div class="col-12">{{ form.observation }}</div>
 									
 									<div class="d-flex flex-wrap justify-content-center gap-3 pt-3 {% if not perms.essays.change_testfile %}d-none{% endif %}">
 										<div class="d-flex flex-column flex-grow-1"><label for="quality_analist">Analista Inspector</label>
-    										{{ form.quality_analist }}
+    									{{ form.quality_analist }}
 										</div>
 										<div class="d-flex flex-column flex-grow-1"><label for="production_operator">Personal de Producción</label>
-					    				    {{ form.production_operator }}
+									    {{ form.production_operator }}
 										</div>
 									</div>
 									<hr class="mt-3 mx-2">
@@ -162,7 +162,7 @@ aria-labelledby="TrueDelete" aria-hidden="true" style="user-select: none;">
 			});
 		
 		});
-	  
+  
 		$('#remove').click(function () {
 			var form_id_z = parseInt($('#id_essays-TOTAL_FORMS').val());
 			if(form_id_z > form_minlimit){
@@ -172,10 +172,10 @@ aria-labelledby="TrueDelete" aria-hidden="true" style="user-select: none;">
 			  $('#id_results-TOTAL_FORMS').val(parseInt(form_id_z));
 			}
 		});
-	   
+   
 		$('#adhesive').select2({
 			allowClear: true,
-			placeholder: 'Seleccione...	',
+			placeholder: 'Seleccione...\t',
 			width: '100%',
 			selectionCssClass: ':all:',
 			dropdownCssClass: ':all:',
@@ -246,4 +246,5 @@ aria-labelledby="TrueDelete" aria-hidden="true" style="user-select: none;">
 	let form_minlimit = parseInt($('#id_essays-TOTAL_FORMS').val());
 </script>
 
+{% endwith %}{% endwith %}
 {% endblock content %}

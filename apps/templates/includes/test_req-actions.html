@@ -1,45 +1,4 @@
 
-  {% for cut in cutter_boot %}
-    {% if perms.essays.change_cutterboot %}
-      <li class="nav-item mt-3 ms-1 mb-2 doc-edit {% if not cut.id == tab_c %}d-none{% endif %}" id="edit_cut_{{ forloop.counter0 }}">
-        <a class="a-deaf" title="Editar Arranque de Cortadora" href="/test_requests/{{ test_request_obj.id }}/cutter/{{ cut.id }}/edit">
-          <i class="material-symbols-rounded detail-action-icon">drive_file_rename_outline</i>
-        </a>
-      </li>
-    {% endif %}
-    {% if perms.essays.delete_cutterboot %}
-      <li class="nav-item mt-3 ms-1 mb-2 doc-edit {% if not cut.id == tab_c %}d-none{% endif %}" id="delete_cut_{{ forloop.counter0 }}">
-        <a class="a-deaf" title="Eliminar Arranque de Cortadora" data-bs-toggle="modal" data-bs-target="#id-cut-{{ cut.id }}" style="user-select: none; cursor: pointer !important;" title="Eliminar">
-          <i class="material-icons detail-action-icon">delete</i>
-        </a> 
-      </li>
-      <!-- Modal -->
-      <div class="modal fade" id="id-cut-{{ cut.id }}" tabindex="-1" aria-labelledby="exampleModalLabel"
-        aria-hidden="true" style="user-select: none;">
-        <div class="modal-dialog">
-          <div class="modal-content px-3">
-            <div class="bg-primary modal-header px-4 mx-n3">
-              <h4 class="modal-title font-weight-bolder text-white" id="exampleModalLabel">¡Advertencia!</h4>
-            </div>
-            <form method="POST" action="/test_requests/{{ test_request_obj.id }}/cutter/{{ cut.id }}/delete/">
-              {% csrf_token %}
-              <div class="modal-body text-start px-1">
-                <p class="mb-1 font-weight-bold" style="line-height: 1.25;">
-                  ¿Seguro que desea eliminar el Control de Arranque de Corrtadora?</p>
-                <p class="mb-n1 text-xs">Esta acción no puede deshacerse</p>
-              </div>
-              <div class="modal-footer text-center justify-content-center py-2">
-                <button type="button" class="m-0 mx-1 btn btn-secondary"
-                data-bs-dismiss="modal">Cancelar</button>
-                <button type="submit" class="m-0 mx-1 btn btn-danger">Confirmar</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    {% endif %}
-  {% endfor %}
-
   {% if spec_extra %}
     {% if perms.essays.change_technicalspecs %}
       <li class="nav-item mt-3 ms-1 mb-2 {% if not tab_ts %}d-none{% endif %} doc-edit" id="edit_ts_{{ spec_extra.id  }}">

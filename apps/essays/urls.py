@@ -100,6 +100,11 @@ urlpatterns = [
     path('test_requests/<str:tr>/<str:boot_type>/<str:ck>/report/<str:rp>/edit/', editReport, name='edit_report'),
     path('test_requests/<str:tr>/<str:boot_type>/<str:ck>/report/<str:rp>/delete/', deleteReport, name='delete_report'),
 
+    #Report Art
+    path('test_requests_art/<str:tr>/<str:boot_type>/<str:ck>/report/', ReportArt, name='report_boot_art'),
+    path('test_requests_art/<str:tr>/<str:boot_type>/<str:ck>/report/<str:rp>/edit/', editReportArt, name='edit_report_art'),
+    path('test_requests_art/<str:tr>/<str:boot_type>/<str:ck>/report/<str:rp>/delete/', deleteReportArt, name='delete_report_art'),
+
     #TestFileEssays
     path('test_file_essay/<str:pk>/<str:tr>/add/<str:site>/<str:ck>/', addTestFileEssay, name='test_file_essay_add'),
     path('test_file_essay/<str:pk>/<str:tr>/edit/<str:site>/<str:ck>/', editTestFileEssay, name='test_file_essay_edit'),
