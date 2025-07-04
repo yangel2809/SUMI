@@ -79,6 +79,12 @@ urlpatterns = [
     path('test_requests/<str:tr>/printer/', addPrinterBootTR, name='add_printer_boot_tr'),
     path('test_requests/<str:tr>/printer/<str:ck>/edit/', editPrinterBootTR, name='edit_printer_boot_tr'),
     path('test_requests/<str:tr>/printer/<str:ck>/delete/', deletePrinterBootTR, name='delete_printer_boot_tr'),
+
+    #Cutter Boot Art
+    path('test_requests_art/<str:pk>/cutter/<str:ck>/', viewCutterBootArt, name='view_cutter_boot_art'),
+    path('test_requests_art/<str:tr>/cutter/', addCutterBootArt, name='add_cutter_boot_art'),
+    path('test_requests_art/<str:tr>/cutter/<str:ck>/edit/', editCutterBootArt, name='edit_cutter_boot_art'),
+    path('test_requests_art/<str:tr>/cutter/<str:ck>/delete/', deleteCutterBootArt, name='delete_cutter_boot_art'),
     
     #Laminator Boot 
     path('test_requests/<str:pk>/laminator/<str:ck>/', viewLaminatorBoot, name='view_laminator_boot_tr'),
@@ -108,6 +114,12 @@ urlpatterns = [
     path('test_requests/<str:tr>/cutter/', addCutterBootTR, name='add_cutter_boot_tr'),
     path('test_requests/<str:tr>/cutter/<str:ck>/edit/', editCutterBootTR, name='edit_cutter_boot_tr'),
     path('test_requests/<str:tr>/cutter/<str:ck>/delete/', deleteCutterBootTR, name='delete_cutter_boot_tr'),
+
+    #Laminator Boot Art
+    path('test_requests_art/<str:pk>/laminator/<str:ck>/', viewLaminatorBootArt, name='view_laminator_boot_art'),
+    path('test_requests_art/<str:tr>/laminator/', addLaminatorBootArt, name='add_laminator_boot_art'),
+    path('test_requests_art/<str:tr>/laminator/<str:ck>/edit/', editLaminatorBootArt, name='edit_laminator_boot_art'),
+    path('test_requests_art/<str:tr>/laminator/<str:ck>/delete/', deleteLaminatorBootArt, name='delete_laminator_boot_art'),
 
     #Technical Specifications
     path('test_requests/<str:pk>/tech_specs/', viewTechSpecs, name='view_tech_specs'),

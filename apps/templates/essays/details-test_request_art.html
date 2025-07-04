@@ -26,8 +26,8 @@
               <p hrefx="/test_requests_art/{{ art_request_obj.id }}/printer" class="tab fw-bold color-crx" redirect="true">+ <i class="fa fa-print" aria-hidden="true"></i></p>
             {% endif %}
           {% endif %}
-          
-          {% if printer_boot  and perms.essays.view_printerboot  %}
+
+          {% if printer_boot and perms.essays.view_printerboot %}
             {% for boot in printer_boot %}      
             <p hrefx="/test_requests_art/{{ art_request_obj.id }}/printer/{{ boot.id }}/" class="tab fw-bold color-crx {% if tab_p == boot.id %}tab-active{% endif %}">Arranque de Imp. {% if printer_boot|length > 1 %}#{{ forloop.counter }}{% endif %}</p>
             
@@ -43,7 +43,7 @@
   
           {% if lamination_boot and perms.essays.view_laminatorboot %}
             {% for boot in lamination_boot %}
-              <p hrefx="{% url 'view_laminator_boot_tr' pk=art_request_obj.id ck=boot.id %}" class="tab fw-bold {% if boot.id == tab_l %}tab-active{% endif %} color-mcl">Arranque de Lam. P-{{ boot.step }}</p>
+              <p hrefx="{% url 'view_laminator_boot_art' pk=art_request_obj.id ck=boot.id %}" class="tab fw-bold {% if boot.id == tab_l %}tab-active{% endif %} color-mcl">Arranque de Lam. P-{{ boot.step }}</p>
             {% endfor %}
           {% endif %}
   

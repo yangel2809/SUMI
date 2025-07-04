@@ -1,7 +1,7 @@
 {% extends "layouts/base.html" %}
 {% block content %}
 <!-- form_view.html -->
-{% if test_request_obj.company == 'mcl' %}
+{% if request_obj.company == 'mcl' %}
 <style>:root {--mc-color: #946037;--mc-selection: #ad7e5a;--mc-shadow-color: #94603780;--mc-calendar-today: #94603780;--critical-color: #94603769;--mc-hover-color: #94603759;}</style>
 <script>$('meta[name="theme-color"]').attr('content', '#946037')</script>
 {% endif %}
@@ -27,19 +27,19 @@
 								<div class="row px-1 px-md-3">
 									<div class="d-flex flex-wrap justify-content-between pb-1">
 										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Solicitud N°</label>
-											<p class="ps-1 mb-0 fw-bold">{{ test_request_obj.number }}</p>
+											<p class="ps-1 mb-0 fw-bold">{{ request_obj.number }}</p>
 										</div>
 										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Cliente</label>
 											<p class="ps-1 mb-0 fw-bold">
-												{% if test_request_obj.check_test_client %}
-												{{ test_request_obj.test_client }}
+												{% if request_obj.check_test_client %}
+												{{ request_obj.test_client }}
 												{% else %}
-												{{ test_request_obj.client }}
+												{{ request_obj.client }}
 												{% endif %}
 											</p>
 										</div>
 										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Producto</label>
-											<p class="ps-1 mb-0 fw-bold">{{ test_request_obj.product }}</p>
+											<p class="ps-1 mb-0 fw-bold">{{ request_obj.product }}</p>
 										</div>
 									</div>
 									
@@ -47,7 +47,7 @@
 									<div class="col-md-4 col-6 pb-2"><label for="machine_speed">Velocidad de Máquina (m/min)</label>{{ form.machine_speed }}</div>
 									<div class="col-md-4 col-6 pb-2" id="datetime_container"><label for="date_time">Fecha y hora</label>{{ form.date_time }}</div>
 									<div class="col-md-5 col-12 pb-2"><label for="production_order">Orden de produción</label>
-										<input type="text" name="production_order" class="form-control myform-focus" value="{{ test_request_obj.production_order|default_if_none:'' }}" id="production_order" maxlength="5" required , style="text-transform: uppercase !important; padding-left: 34px !important;">
+										<input type="text" name="production_order" class="form-control myform-focus" value="{{ request_obj.production_order|default_if_none:'' }}" id="production_order" maxlength="5" required , style="text-transform: uppercase !important; padding-left: 34px !important;">
 										<x class="text-dark infield-text" style="margin-top: -31.5px !important;">PR-</x>
 									</div>
 									<div class="col-md-5 col-12 pb-2"><label for="gp_code">Código GP</label>

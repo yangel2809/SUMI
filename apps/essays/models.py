@@ -577,7 +577,7 @@ class TestStructure (models.Model):
         return str(self.material_type)
 class ArtStructure (models.Model):
 
-    test_request = models.ForeignKey('essays.ArtRequest', on_delete=models.CASCADE, null=True)
+    art_request = models.ForeignKey('essays.ArtRequest', on_delete=models.CASCADE, null=True)
 
     material_type = models.ForeignKey('home.MaterialType', on_delete=models.RESTRICT, blank=False, null=True)
     provider = models.ForeignKey('home.Provider', on_delete=models.RESTRICT, blank=False, null=True)
@@ -1182,6 +1182,7 @@ class ArtTechnicalSpecs(models.Model):
     
    
 class Annex(models.Model):
+    art_request = models.ForeignKey('essays.ArtRequest', on_delete=models.CASCADE, blank=True, null=True)
     test_request = models.ForeignKey('essays.TestRequest', on_delete=models.CASCADE, blank=True, null=True)
     production_order = models.ForeignKey("production.Order", on_delete=models.CASCADE, blank=True, null=True)
     image = models.ImageField(upload_to="annex", null=True)

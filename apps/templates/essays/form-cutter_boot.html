@@ -1,7 +1,7 @@
 {% extends "layouts/base.html" %}
 {% block content %}
 <!-- form_view.html -->
-{% if test_request_obj.company == 'mcl' %}
+{% if request_obj.company == 'mcl' %}
 <style>:root {--mc-color: #946037;--mc-selection: #ad7e5a;--mc-shadow-color: #94603780;--mc-calendar-today: #94603780;--critical-color: #94603769;--mc-hover-color: #94603759;}</style>
 <script>$('meta[name="theme-color"]').attr('content', '#946037')</script>
 {% endif %}
@@ -20,34 +20,34 @@
 					</div>
 					<div class="card-body px-md-0 px-2 py-2">
 						<div class="form-group d-flex input-group input-group-outline">
-							<input type="hidden" id="company" value="{{ test_request_obj.company }}">
+							<input type="hidden" id="company" value="{{ request_obj.company }}">
 							<form class="form col-12" method="POST" style="user-select: none">
 								{% csrf_token %}
 								<div class="row pt-2 px-1 px-md-3">
 									<div class="d-flex flex-wrap justify-content-between pb-1">
 										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Pedido N°</label>
-											<p class="ps-1 mb-0 fw-bold">{{ test_request_obj.number }}</p>
+											<p class="ps-1 mb-0 fw-bold">{{ request_obj.number }}</p>
 										</div>
 										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Cliente</label>
 											<p class="ps-1 mb-0 fw-bold">
-												{% if test_request_obj.check_test_client %}
-												{{ test_request_obj.test_client }}
+												{% if request_obj.check_test_client %}
+												{{ request_obj.test_client }}
 												{% else %}
-												{{ test_request_obj.client }}
+												{{ request_obj.client }}
 												{% endif %}
 											</p>
 										</div>
 										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Producto</label>
-											<p class="ps-1 mb-0 fw-bold">{{ test_request_obj.product }}</p>
+											<p class="ps-1 mb-0 fw-bold">{{ request_obj.product }}</p>
 										</div>
 										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Repetición</label>
-											<p class="ps-1 mb-0 fw-bold">{{ test_request_obj.repetition }}{{ test_request_obj.repetition_unit }}</p>
+											<p class="ps-1 mb-0 fw-bold">{{ request_obj.repetition }}{{ request_obj.repetition_unit }}</p>
 										</div>
 										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Producto</label>
-											<p class="ps-1 mb-0 fw-bold">{{ test_request_obj.product }}</p>
+											<p class="ps-1 mb-0 fw-bold">{{ request_obj.product }}</p>
 										</div>
 										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Acho de Corte</label>
-											<p class="ps-1 mb-0 fw-bold">{{ test_request_obj.width_bobbin }}{{ test_request_obj.width_bobbin_unit }}</p>
+											<p class="ps-1 mb-0 fw-bold">{{ request_obj.width_bobbin }}{{ request_obj.width_bobbin_unit }}</p>
 										</div>
 										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Gramaje</label>
 											<p class="ps-1 mb-0 fw-bold">{{ tr_weight }}μ</p>
@@ -63,7 +63,7 @@
 										<div class="d-flex flex-column flex-grow-1" id="datetime_container"><label for="date_time">Fecha y hora</label>{{ form.date_time }}</div>
 										<div class="d-flex flex-column flex-grow-1"><label for="turn">Turno</label>{{ form.turn }}</div>
 										<div class="d-flex flex-column flex-grow-1"><label for="production_order">Orden de produción</label>
-											<input type="text" name="production_order" class="form-control myform-focus" value="{{ test_request_obj.production_order|default_if_none:'' }}" id="production_order" maxlength="5" required , style="text-transform: uppercase !important; padding-left: 34px !important;">
+											<input type="text" name="production_order" class="form-control myform-focus" value="{{ request_obj.production_order|default_if_none:'' }}" id="production_order" maxlength="5" required , style="text-transform: uppercase !important; padding-left: 34px !important;">
 											<x class="text-dark infield-text" style="margin-top: 32px !important;">PR-</x>
 										</div>
 										<div class="d-flex flex-column flex-grow-1"><label for="gp_code">Código GP</label>
@@ -102,7 +102,7 @@
                             <tr>
                               <td class="fw-bold">Ancho</td>
                               <td class="text-center"><abbr title="Milímetros">mm</abbr></td>
-                              <td class="text-center fw-bold">{{ test_request_obj.width_bobbin }}{{ test_request_obj.width_bobbin_unit }}</td>
+                              <td class="text-center fw-bold">{{ request_obj.width_bobbin }}{{ request_obj.width_bobbin_unit }}</td>
                               <td class="d-flex flex-row gap-2">
                                 {{ form.w_a }}
                                 {{ form.w_c }}
@@ -112,7 +112,7 @@
                             <tr>
                               <td class="fw-bold">Repetición</td>
                               <td class="text-center"><abbr title="Milímetros">mm</abbr></td>
-                              <td class="text-center fw-bold">{{ test_request_obj.repetition }}</td>
+                              <td class="text-center fw-bold">{{ request_obj.repetition }}</td>
                               <td class="d-flex flex-row gap-2">
                                 {{ form.r_a }}
                                 {{ form.r_c }}
@@ -127,7 +127,7 @@
                             <tr>
                               <td class="fw-bold">Core</td>
                               <td class="text-center"><abbr title="Pulgadas">in</abbr></td>
-                              <td class="text-center fw-bold">{{ test_request_obj.core_dia_bobbin }}"</td>
+                              <td class="text-center fw-bold">{{ request_obj.core_dia_bobbin }}"</td>
                               <td>{{ form.core }}</td>
                             </tr>
                             <tr>
@@ -135,12 +135,12 @@
                               <td class="text-center fw-bold" colspan="2">
 								<div class="d-flex flex-nowrap">
 									<div class=" d-flex flex-row-reverse flex-grow-1">
-									  <input type="text" value="{{ test_request_obj.exterior_dia_bobbin }}" class="form-control myform-focus flat-right" style="padding-right: 1.3em !important" readonly>
+									  <input type="text" value="{{ request_obj.exterior_dia_bobbin }}" class="form-control myform-focus flat-right" style="padding-right: 1.3em !important" readonly>
 									</div>                        
 									<div class=" flex-grow-1">
 									  <span class="select2-selection select2-selection--single form-control myform-focus flat-left">
 										  <span class="select2-selection__rendered">
-											  <span class="select2-selection__placeholder">{{ test_request_obj.exterior_dia_bobbin_unit }}</span>
+											  <span class="select2-selection__placeholder">{{ request_obj.exterior_dia_bobbin_unit }}</span>
 										  </span>
 									  </span>
 									</div>
@@ -157,8 +157,8 @@
                               <td class="fw-bold">Posición de Embobinado</td>
                               <td class="text-center">N°</td>
                               <td style="white-space: normal; text-align: center; max-width: 190px !important;" class="fw-bold text-xs">
-                                {% if test_request_obj.winding %}{{ test_request_obj.winding }}{% endif %}{% if test_request_obj.winding and test_request_obj.winding_description %},&thinsp;{% endif %}
-                                {% if test_request_obj.winding_description %}{{ test_request_obj.winding_description }}{% endif %}
+                                {% if request_obj.winding %}{{ request_obj.winding }}{% endif %}{% if request_obj.winding and request_obj.winding_description %},&thinsp;{% endif %}
+                                {% if request_obj.winding_description %}{{ request_obj.winding_description }}{% endif %}
                               </td>
                               <td>{{ form.winding_position }}</td>
                             </tr>
@@ -166,7 +166,7 @@
                               <td class="fw-bold">Distancia Borde Material</td>
                               <td class="text-center"><abbr title="Milímetros">mm</abbr></td>
                               <td class="text-center">
-								<input type="text" class="form-control myform-focus text-center" readonly value="{{ test_request_obj.dist_boder_cell_material }}">
+								<input type="text" class="form-control myform-focus text-center" readonly value="{{ request_obj.dist_boder_cell_material }}">
 								</td>
                               <td>{{ form.dist_boder_material }}</td>
                             </tr>
