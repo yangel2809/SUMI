@@ -905,7 +905,19 @@ def viewTestRequest(request, pk):
         return JsonResponse({'content_html': content_html})
     
     return render(request, 'essays/details-test_request.html', context)
-
+@login_required(login_url='/login/')
+@permission_required('essays.view_artrequest', raise_exception=True)
+def art_analysis(request):
+    """
+    Vista básica para el análisis de arte.
+    Puedes personalizar el contexto y el template según tus necesidades.
+    """
+    context = {
+        'segment': 'art_analysis',
+        'title': 'Análisis de Arte',
+        'back': True,
+    }
+    return render(request, 'essays/art_analysis.html', context)
 @login_required(login_url='/login/')
 @permission_required('essays.view_entryelement', raise_exception=True)
 def viewExitElement(request, pk):

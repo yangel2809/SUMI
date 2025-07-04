@@ -80,6 +80,16 @@
         </a>
       </li>
       {% endif %}
+      {% if perms.essays.view_artrequest %}
+      <li class="nav-item">
+        <a class="nav-link text-white {% if segment == 'art_analysis' %} bg-primary {% endif %}" href="{% url 'art_analysis' %}">
+          <div class="text-white text-center me-2 d-flex">
+            <i class="material-symbols-rounded opacity-10">analytics</i>
+          </div>
+          <span class="nav-link-text ms-1">Análisis de Arte</span>
+        </a>
+      </li>
+      {% endif %}
 
       {% if perms.essays.view_testrequest and perms.essays.view_working_testrequest %}
       <li class="nav-item">

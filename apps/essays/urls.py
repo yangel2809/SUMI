@@ -69,7 +69,10 @@ urlpatterns = [
     path('test_requests_art/<str:pk>/open/', openTestRequestArt, name='open_test_request_art'),
     path('test_requests_art/<str:pk>/archive/', archiveTestRequestArt, name='archive_test_request_art'),
     path('test_requests_art/<str:pk>/unarchive/', unarchiveTestRequestArt, name='unarchive_test_request_art'),
-
+    
+    # Análisis de Arte
+    path('art_analysis/', views.art_analysis, name='art_analysis'),
+    
     #Printer Boot
     path('test_requests_art/<str:pk>/printer/<str:ck>/', viewPrinterBootArt, name='view_printer_boot_art'),
     path('test_requests_art/<str:tr>/printer/', addPrinterBootArt, name='add_printer_boot_art'),

@@ -1673,3 +1673,94 @@ class ArtExitElement(models.Model):
 
     def __str__(self):
         return f'{self.art_request} - {self.elaborator}'
+
+class ArtAnalysis(models.Model):
+    # Relations
+    art_request = models.ForeignKey('essays.ArtRequest', on_delete=models.CASCADE, related_name='analyses')
+    client = models.ForeignKey("home.Client", on_delete=models.RESTRICT, null=True, blank=True)
+
+    # Main fields
+    request_number = models.CharField(max_length=20, blank=True, null=True)
+    requesting_company = models.CharField(max_length=100, default="Morocel")
+    date = models.DateField(null=True, blank=True)
+    product = models.CharField(max_length=200, blank=True, null=True)
+    net_content = models.CharField(max_length=100, blank=True, null=True)
+    requester = models.CharField(max_length=100, blank=True, null=True)
+
+    # Supplied material
+    SUPPLIED_MATERIAL_OPT = (
+        ('muestra Impresa', 'Muestra Impresa'),
+        ('plano Mecánico', 'Plano Mecánico'),
+        ('otro', 'Otro'),
+    )
+    supplied_material = models.CharField(max_length=20, choices=SUPPLIED_MATERIAL_OPT, blank=True, null=True)
+    supplied_material_other = models.CharField(max_length=100, blank=True, null=True)
+
+    # Printer
+    PRINTER_OPT = (
+        ('novoflex', 'Novoflex'),
+        ('olympia', 'Olympia'),
+        ('alina', 'Alina'),
+    )
+    printer = models.CharField(max_length=20, choices=PRINTER_OPT, blank=True, null=True)
+
+    substrate_to_print = models.CharField(max_length=100, default="Aluminum")
+
+    # Print type
+    PRINT_TYPE_OPT = (
+        ('reverso', 'Reverso'),
+        ('superficie', 'Superficie'),
+    )
+    print_type = models.CharField(max_length=20, choices=PRINT_TYPE_OPT, blank=True, null=True)
+
+    product_structure = models.CharField(max_length=100, default="INK, ALUMINUM, RESIN")
+
+    printed_development_mm = models.FloatField(blank=True, null=True)
+    package_unit_length_mm = models.FloatField(blank=True, null=True)
+    k = models.FloatField(blank=True, null=True)
+    distortion_percent = models.FloatField(blank=True, null=True)
+    distorted_development_mm = models.FloatField(blank=True, null=True)
+    adjusted_printed_unit_length_mm = models.FloatField(blank=True, null=True)
+    repeats_per_development = models.IntegerField(blank=True, null=True)
+    client_bobbin_width_mm = models.FloatField(blank=True, null=True)
+    plant_bobbin_width_mm = models.FloatField(blank=True, null=True)
+    repeats_per_printed_width = models.IntegerField(blank=True, null=True)
+    printed_width_mm = models.FloatField(blank=True, null=True)
+    distance_between_repeats_width_mm = models.FloatField(blank=True, null=True)
+    package_unit_width_mm = models.FloatField(blank=True, null=True)
+
+    plate_type = models.CharField(max_length=100, blank=True, null=True)
+    thickness = models.CharField(max_length=50, blank=True, null=True)
+
+    # Photocell
+    PHOTOCELL_OPT = (
+        ('no', 'No'),
+        ('si', 'Sí'),
+    )
+    photocell = models.CharField(max_length=3, choices=PHOTOCELL_OPT, blank=True, null=True)
+    photocell_width_mm = models.FloatField(blank=True, null=True)
+    photocell_length_mm = models.FloatField(blank=True, null=True)
+    distance_between_photocells_mm = models.FloatField(blank=True, null=True)
+    tolerance_mm = models.FloatField(blank=True, null=True)
+    photocell_colors = models.CharField(max_length=100, blank=True, null=True)
+
+    total_colors = models.IntegerField(blank=True, null=True)
+    cut_bar_colors = models.CharField(max_length=100, blank=True, null=True)
+
+    # Displacement
+    DISPLACEMENT_OPT = (
+        ('no', 'No'),
+        ('si', 'Sí'),
+        ('zigzag', 'Zig-Zag'),
+        ('escalonado', 'Escalonado'),
+    )
+    displacement = models.CharField(max_length=12, choices=DISPLACEMENT_OPT, blank=True, null=True)
+
+    roll_down_suggestions = models.TextField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Analisis de arte"
+        verbose_name_plural = "Analisis de artes"
+
+    def __str__(self):
+        return f"Analisis de arte {self.request_number or ''} - {self.product or ''}"
