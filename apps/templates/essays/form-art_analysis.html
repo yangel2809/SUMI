@@ -1,61 +1,187 @@
 {% extends "layouts/base.html" %}
 {% block content %}
+<!-- form_view.html -->
+{% if art_request_obj.company == 'mcl' %}
+<style>:root {--mc-color: #946037;--mc-selection: #ad7e5a;--mc-shadow-color: #94603780;--mc-calendar-today: #94603780;--critical-color: #94603769;--mc-hover-color: #94603759;}</style>
+<script>$('meta[name="theme-color"]').attr('content', '#946037')</script>
+{% endif %}
+<style>label{margin-bottom: 0 !important;}</style>
+<link href="{{ ASSETS_ROOT }}/css/essay-material-form.css" rel="stylesheet" />
 <div class="container-fluid pt-1 px-sm-4 px-3 pb-3">
-  <div class="row min-vh-80 h-100">
-    <div class="col-12 px-0 px-md-2">
-      <div class="card my-4">
-        <div class="card-header p-0 position-relative mt-n4 mx-2 mx-md-3 z-index-2" style="user-select: none">
-          <div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2">
-            <div class="mt-2 text-center">
-              <h4 class="text-white text-center font-weight-bolder me-3">
-                {% if 'edit' in request.get_full_path %}Editar {% endif %}Análisis de Arte
-              </h4>
-            </div>
-          </div>
-        </div>
-        <div class="card-body px-md-0 px-2 py-2">
-          <form class="form col-12" method="POST" style="user-select: none">
-            {% csrf_token %}
-            <div class="row px-1 px-md-3">
-              <div class="d-flex flex-wrap justify-content-between gap-3 pb-2 mt-2">
-                <div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Solicitud Tipo</label>
-                  <p class="ps-1 mb-0 fw-bold">PRUEBA</p>
-                </div>
-                <div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Solicitud N°</label>
-                  <p class="ps-1 mb-0 fw-bold">{{ art_request_obj.number|default:'---' }}</p>
-                </div>
-                <div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Empresa solicitante</label>
-                  <p class="ps-1 mb-0 fw-bold">{{ art_request_obj.company|default:'---' }}</p>
-                </div>
-                <div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Fecha</label>
-                  <p class="ps-1 mb-0 fw-bold">{{ art_request_obj.date|date:'d/m/Y'|default:'---' }}</p>
-                </div>
-                <div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Cliente</label>
-                  <p class="ps-1 mb-0 fw-bold">{{ art_request_obj.client|default:'---' }}</p>
-                </div>
-                <div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Producto</label>
-                  <p class="ps-1 mb-0 fw-bold">{{ art_request_obj.product|default:'---' }}</p>
-                </div>
-                <div class="d-flex flex-column flex-nowrap"><label class="text-primary fw-bold mb-0">Contenido Neto</label>
-                  <p class="ps-1 mb-0 fw-bold">{{ art_request_obj.net_content|default:'---' }}</p>
-                </div>
-              </div>
-              <hr>
-              <div class="d-flex flex-wrap gap-3">
-                {{ form.as_p }}
-              </div>
-              <div class="d-flex flex-wrap justify-content-center gap-2 pt-3">
-                <button class="btn btn-primary" type="submit">Guardar</button>
-                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#cancelModal">Cancelar</button>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
+	<div class="row min-vh-80 h-100">
+		<div class="col-12 px-0 px-md-2">
+			<div class="card my-4">
+				<div class="card-header p-0 position-relative mt-n4 mx-2 mx-md-3 z-index-2" style="user-select: none">
+					<div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2">
+						<div class="mt-2 text-center">
+							<h4 class="text-white text-center font-weight-bolder me-3">{% if 'edit' in request.get_full_path %}Editar
+								{% endif %}Análisis de Arte</h5>								
+						</div>
+					</div>
+					<div class="card-body px-md-0 px-2 py-2">
+						<div class="form-group d-flex input-group input-group-outline">
+							<input type="hidden" id="company" value="{{ art_request_obj.company }}">
+							<form class="form col-12" method="POST" style="user-select: none">
+								{% csrf_token %}
+								<div class="row pt-2 px-1 px-md-3">
+									<div class="d-flex flex-wrap justify-content-between pb-1">
+										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Pedido N°</label>
+											<p class="ps-1 mb-0 fw-bold">{{ art_request_obj.number }}</p>
+										</div>
+										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Cliente</label>
+											<p class="ps-1 mb-0 fw-bold">
+												{% if art_request_obj.check_test_client %}
+												{{ art_request_obj.test_client }}
+												{% else %}
+												{{ art_request_obj.client }}
+												{% endif %}
+											</p>
+										</div>
+										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Producto</label>
+											<p class="ps-1 mb-0 fw-bold">{{ art_request_obj.product }}</p>
+										</div>
+									</div>
+
+									<div class="d-flex flex-wrap justify-content-center gap-3 pb-3">
+										<div class="d-flex flex-column flex-grow-1"><label for="requester">Solicitante</label>{{ form.requester }}</div>
+									</div>
+
+									<div class="card my-3">
+										<div class="card-header p-0 mt-n2 position-relative mx-1 z-index-2" style="user-select: none">
+										  <div class="bg-primary shadow-primary border-radius-lg px-3 pt-3 pb-2">
+											<div class="mt-0 d-flex ">
+											  <h5 class="text-white font-weight-bolder">Análisis de material</h5>
+											</div>
+										  </div>
+										</div>
+
+										<div class="card-body mt-n4 border-radius-lg px-0 pb-2">
+										  <div class="table-responsive p-0" style="overflow-y: hidden;">
+											  <table class="table  align-items-center text-align-center mb-0">
+											    <tbody id="form_set" class=" p-0 m-0" style="user-select: none;">
+                            <tr>
+                              <td class="fw-bold">Material Suministrado</td>
+                              <td colspan="2">{{ form.supplied_material }}</td>
+                            </tr>
+                            <tr id="supplied_material_other_row" style="display: none;">
+                              <td class="fw-bold">Especifique</td>
+                              <td colspan="2">{{ form.supplied_material_other }}</td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">Impresora</td>
+                              <td colspan="2">{{ form.printer }}</td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">Tipo de Impresión</td>
+                              <td colspan="2">{{ form.print_type }}</td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">Desarrollo Impreso (mm)</td>
+                              <td colspan="2">{{ form.printed_development_mm }}</td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">Largo Unidad Empaque (mm)</td>
+                              <td colspan="2">{{ form.package_unit_length_mm }}</td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">K</td>
+                              <td colspan="2">{{ form.k }}</td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">% Distorsión</td>
+                              <td colspan="2">{{ form.distortion_percent }}</td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">Desarrollo Distorsionado (mm)</td>
+                              <td colspan="2">{{ form.distorted_development_mm }}</td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">Largo Unidad Impreso Ajustado (mm)</td>
+                              <td colspan="2">{{ form.adjusted_printed_unit_length_mm }}</td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">Repeticiones al desarrollo</td>
+                              <td colspan="2">{{ form.repeats_per_development }}</td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">Ancho Bobina Cliente (mm)</td>
+                              <td colspan="2">{{ form.client_bobbin_width_mm }}</td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">Ancho Bobina Planta (mm)</td>
+                              <td colspan="2">{{ form.plant_bobbin_width_mm }}</td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">Repeticiones a lo Ancho Impreso</td>
+                              <td colspan="2">{{ form.repeats_per_printed_width }}</td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">Ancho Impreso (mm)</td>
+                              <td colspan="2">{{ form.printed_width_mm }}</td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">Distancia entre Repeticiones Ancho (mm)</td>
+                              <td colspan="2">{{ form.distance_between_repeats_width_mm }}</td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">Ancho Unidad Empaque (mm)</td>
+                              <td colspan="2">{{ form.package_unit_width_mm }}</td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">Tipo de Plancha</td>
+                              <td colspan="2">{{ form.plate_type }}</td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">Espesor</td>
+                              <td colspan="2">{{ form.thickness }}</td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">Fotocelda</td>
+                              <td>{{ form.photocell }}</td>
+                              <td>{{ form.photocell_width_mm }}</td>
+                              <td>{{ form.photocell_length_mm }}</td>
+                              <td>{{ form.distance_between_photocells_mm }}</td>
+                              <td>{{ form.tolerance_mm }}</td>
+                              <td>{{ form.photocell_colors }}</td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">Total No. de Colores</td>
+                              <td colspan="2">{{ form.total_colors }}</td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">Colores de Barra de Corte</td>
+                              <td colspan="2">{{ form.cut_bar_colors }}</td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">Desplazamiento (mm)</td>
+                              <td colspan="2">{{ form.displacement }}</td>
+                            </tr>
+                            <tr>
+                              <td class="fw-bold">Sugerencias Roll Down</td>
+                              <td colspan="2">{{ form.roll_down_suggestions }}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+								</div>
+								<div class="d-flex justify-content-center gap-2">
+									<button class="btn btn-primary" type="submit">Guardar</button>
+									<button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#cancelModal">
+										Cancelar
+									  </button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
-<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true" style="user-select: none;">
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel"
+aria-labelledby="TrueDelete" aria-hidden="true" style="user-select: none;">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header" style="background-color: var(--mc-color) !important;">
@@ -71,4 +197,70 @@
     </div>
   </div>
 </div>
+<script>
+$(document).ready(function () {
+	
+	$('#supplied_material').select2({
+		minimumResultsForSearch: Infinity,
+		placeholder: 'Seleccionar...',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+
+	$('#printer').select2({
+		minimumResultsForSearch: Infinity,
+		placeholder: 'Seleccionar...',
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+	
+	$('#print_type').select2({
+		minimumResultsForSearch: Infinity,
+		placeholder: 'Seleccionar...',
+		allowClear: true,
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+
+	$('#photocell').select2({
+		minimumResultsForSearch: Infinity,
+		placeholder: 'Seleccionar...',
+		allowClear: true,
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+
+	$('#displacement').select2({
+		minimumResultsForSearch: Infinity,
+		placeholder: 'Seleccionar...',
+		allowClear: true,
+		width: '100%',
+		selectionCssClass: ':all:',
+		dropdownCssClass: ':all:'
+	});
+
+	function toggleSuppliedMaterialOther() {
+		if ($('#id_supplied_material').val() === 'otro') {
+			$('#supplied_material_other_row').show();
+		} else {
+			$('#supplied_material_other_row').hide();
+		}
+	}
+
+	toggleSuppliedMaterialOther();
+
+	$('#id_supplied_material').on('change', toggleSuppliedMaterialOther);
+})
+</script>
 {% endblock content %}
+{% block javascripts %}
+<script src="{{ ASSETS_ROOT }}/js/datetime-picker/popper.js"></script>
+<script src="{{ ASSETS_ROOT }}/js/datetime-picker/bootstrap.min.js"></script>
+<script src="{{ ASSETS_ROOT }}/js/datetime-picker/moment-with-locales.min.js"></script>
+<script src="{{ ASSETS_ROOT }}/js/datetime-picker/bootstrap-datetimepicker.min.js"></script>
+<script src="{{ ASSETS_ROOT }}/js/datetime-picker/main.js"></script>
+{% endblock javascripts %}
