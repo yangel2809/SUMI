@@ -71,8 +71,9 @@ urlpatterns = [
     path('test_requests_art/<str:pk>/unarchive/', unarchiveTestRequestArt, name='unarchive_test_request_art'),
     
     # Análisis de Arte
-    path('art_analysis/', views.art_analysis, name='art_analysis'),
-    
+    path('art_analysis/', views.indexArtAnalysis, name='art_analysis'),
+    path('art_analysis/add/<str:pk>/', views.addArtAnalysis, name='add_art_analysis'),
+
     #Printer Boot
     path('test_requests_art/<str:pk>/printer/<str:ck>/', viewPrinterBootArt, name='view_printer_boot_art'),
     path('test_requests_art/<str:tr>/printer/', addPrinterBootArt, name='add_printer_boot_art'),

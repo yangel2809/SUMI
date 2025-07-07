@@ -16,6 +16,7 @@ from documents.forms import MultipleFileField, MultipleFileInput
 from django.forms import *
 from django.utils import timezone, dateformat
 from .models import *
+from .models import ArtAnalysis
 
 class BaseInlineFormset(BaseInlineFormSet):
     def get_deletion_widget(self):
@@ -538,7 +539,7 @@ class ArtRequestForm(ModelForm):
             'logistics': CheckboxInput(attrs={'class': 'form-check-input justify-content-center', 'aria-label':'Seleccionar Planificación y Logística', 'id':'logistics'}),
             'quality': CheckboxInput(attrs={'class': 'form-check-input justify-content-center', 'aria-label':'Seleccionar Calidad', 'id':'quality'}),
         }   
-               
+   
 TestStructureFormset = inlineformset_factory(TestRequest, TestStructure,
         fields = (
             #'test_material_check',
@@ -1220,3 +1221,103 @@ class ArtEntryElementForm(ModelForm):
                 instance.documents.add(doc)
             instance.save()
         return instance
+
+class ArtAnalysisForm(ModelForm):
+    class Meta:
+        model = ArtAnalysis
+        fields = [
+            'requester',
+            'supplied_material',
+            'supplied_material_other',
+            'printer',
+            'print_type',
+            'printed_development_mm',
+            'package_unit_length_mm',
+            'k',
+            'distortion_percent',
+            'distorted_development_mm',
+            'adjusted_printed_unit_length_mm',
+            'repeats_per_development',
+            'client_bobbin_width_mm',
+            'plant_bobbin_width_mm',
+            'repeats_per_printed_width',
+            'printed_width_mm',
+            'distance_between_repeats_width_mm',
+            'package_unit_width_mm',
+            'plate_type',
+            'thickness',
+            'photocell',
+            'photocell_width_mm',
+            'photocell_length_mm',
+            'distance_between_photocells_mm',
+            'tolerance_mm',
+            'photocell_colors',
+            'total_colors',
+            'cut_bar_colors',
+            'displacement',
+            'roll_down_suggestions',
+        ]
+        labels = {
+            'requester': 'Solicitante',
+            'supplied_material': 'Material Suministrado',
+            'supplied_material_other': 'Otro material suministrado',
+            'printer': 'Impresora',
+            'print_type': 'Tipo de Impresión',
+            'printed_development_mm': 'Desarrollo Impreso (mm)',
+            'package_unit_length_mm': 'Largo Unidad Empaque (mm)',
+            'k': 'K',
+            'distortion_percent': '% Distorsión',
+            'distorted_development_mm': 'Desarrollo Distorsionado (mm)',
+            'adjusted_printed_unit_length_mm': 'Largo Unidad Impreso Ajustado (mm)',
+            'repeats_per_development': 'Repeticiones al desarrollo',
+            'client_bobbin_width_mm': 'Ancho Bobina Cliente (mm)',
+            'plant_bobbin_width_mm': 'Ancho Bobina Planta (mm)',
+            'repeats_per_printed_width': 'Repeticiones a lo Ancho Impreso',
+            'printed_width_mm': 'Ancho Impreso (mm)',
+            'distance_between_repeats_width_mm': 'Distancia entre Repeticiones Ancho (mm)',
+            'package_unit_width_mm': 'Ancho Unidad Empaque (mm)',
+            'plate_type': 'Tipo de Plancha',
+            'thickness': 'Espesor',
+            'photocell': 'Fotocelda',
+            'photocell_width_mm': 'Ancho Fotocelda (mm)',
+            'photocell_length_mm': 'Largo Fotocelda (mm)',
+            'distance_between_photocells_mm': 'Distancia entre Fotoceldas (mm)',
+            'tolerance_mm': 'Tolerancia (mm)',
+            'photocell_colors': 'Colores Fotocelda',
+            'total_colors': 'Total No. de Colores',
+            'cut_bar_colors': 'Colores de Barra de Corte',
+            'displacement': 'Desplazamiento (mm)',
+            'roll_down_suggestions': 'Sugerencias Roll Down',
+        }
+        widgets = {
+            'requester': TextInput(attrs={'class': 'form-control', 'placeholder': 'Solicitante'}),
+            'supplied_material': Select(attrs={'class': 'form-select'}),
+            'supplied_material_other': TextInput(attrs={'class': 'form-control', 'placeholder': 'Otro material'}),
+            'printer': Select(attrs={'class': 'form-select'}),
+            'print_type': Select(attrs={'class': 'form-select'}),
+            'printed_development_mm': NumberInput(attrs={'class': 'form-control', 'step': 'any'}),
+            'package_unit_length_mm': NumberInput(attrs={'class': 'form-control', 'step': 'any'}),
+            'k': TextInput(attrs={'class': 'form-control'}),
+            'distortion_percent': NumberInput(attrs={'class': 'form-control', 'step': 'any'}),
+            'distorted_development_mm': NumberInput(attrs={'class': 'form-control', 'step': 'any'}),
+            'adjusted_printed_unit_length_mm': NumberInput(attrs={'class': 'form-control', 'step': 'any'}),
+            'repeats_per_development': NumberInput(attrs={'class': 'form-control', 'step': 'any'}),
+            'client_bobbin_width_mm': NumberInput(attrs={'class': 'form-control', 'step': 'any'}),
+            'plant_bobbin_width_mm': NumberInput(attrs={'class': 'form-control', 'step': 'any'}),
+            'repeats_per_printed_width': NumberInput(attrs={'class': 'form-control', 'step': 'any'}),
+            'printed_width_mm': NumberInput(attrs={'class': 'form-control', 'step': 'any'}),
+            'distance_between_repeats_width_mm': NumberInput(attrs={'class': 'form-control', 'step': 'any'}),
+            'package_unit_width_mm': NumberInput(attrs={'class': 'form-control', 'step': 'any'}),
+            'plate_type': TextInput(attrs={'class': 'form-control'}),
+            'thickness': TextInput(attrs={'class': 'form-control'}),
+            'photocell': Select(attrs={'class': 'form-select'}),
+            'photocell_width_mm': NumberInput(attrs={'class': 'form-control', 'step': 'any'}),
+            'photocell_length_mm': NumberInput(attrs={'class': 'form-control', 'step': 'any'}),
+            'distance_between_photocells_mm': NumberInput(attrs={'class': 'form-control', 'step': 'any'}),
+            'tolerance_mm': NumberInput(attrs={'class': 'form-control', 'step': 'any'}),
+            'photocell_colors': TextInput(attrs={'class': 'form-control'}),
+            'total_colors': NumberInput(attrs={'class': 'form-control', 'step': 'any'}),
+            'cut_bar_colors': TextInput(attrs={'class': 'form-control'}),
+            'displacement': Select(attrs={'class': 'form-select'}),
+            'roll_down_suggestions': TextInput(attrs={'class': 'form-control'}),
+        }

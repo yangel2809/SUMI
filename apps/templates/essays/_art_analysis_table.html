@@ -1,0 +1,33 @@
+<table class="table align-items-center mb-0">
+  <thead>
+    <tr>
+      <th>Solicitud No.</th>
+      <th>Empresa</th>
+      <th>Fecha</th>
+      <th>Cliente</th>
+      <th>Producto</th>
+      <th>Solicitante</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for analysis in analyses %}
+    <tr>
+      <td>{{ analysis.request_number }}</td>
+      <td>{{ analysis.requesting_company }}</td>
+      <td>{{ analysis.date|date:'d/m/Y' }}</td>
+      <td>{{ analysis.client }}</td>
+      <td>{{ analysis.product }}</td>
+      <td>{{ analysis.requester }}</td>
+      <td>
+        <a href="#" class="btn btn-sm btn-primary">Ver</a>
+        <a href="#" class="btn btn-sm btn-secondary">Editar</a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="7" class="text-center">No hay análisis de arte registrados.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

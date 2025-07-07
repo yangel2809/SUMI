@@ -905,19 +905,44 @@ def viewTestRequest(request, pk):
         return JsonResponse({'content_html': content_html})
     
     return render(request, 'essays/details-test_request.html', context)
+
+# Análisis de Arte
 @login_required(login_url='/login/')
 @permission_required('essays.view_artrequest', raise_exception=True)
-def art_analysis(request):
-    """
-    Vista básica para el análisis de arte.
-    Puedes personalizar el contexto y el template según tus necesidades.
-    """
+def indexArtAnalysis(request):
+    analyses = ArtAnalysis.objects.all()
     context = {
         'segment': 'art_analysis',
         'title': 'Análisis de Arte',
         'back': True,
+        'analyses': analyses,
+        'objects': analyses,
+        'table': 'essays/_art_analysis_table.html',
     }
     return render(request, 'essays/art_analysis.html', context)
+
+@login_required(login_url='/login/')
+@permission_required('essays.add_artanalysis', raise_exception=True)
+def addArtAnalysis(request, pk):
+
+    from apps.essays.models import ArtRequest
+    art_request_obj = get_object_or_404(ArtRequest, pk=pk)
+    if request.method == 'POST':
+        form = ArtAnalysisForm(request.POST)
+        if form.is_valid():
+            analysis = form.save(commit=False)
+            analysis.art_request = art_request_obj
+            analysis.client = art_request_obj.client
+            analysis.save()
+            return redirect(f'/test_requests_art/{art_request_obj.id}/')
+    else:
+        form = ArtAnalysisForm()
+    context = {
+        'form': form,
+        'art_request_obj': art_request_obj,
+    }
+    return render(request, 'essays/form-art_analysis.html', context)
+
 @login_required(login_url='/login/')
 @permission_required('essays.view_entryelement', raise_exception=True)
 def viewExitElement(request, pk):
@@ -1167,7 +1192,7 @@ def addCutterBootArt (request, tr):
     
     form = CutterBootForm(request.POST or None)
 
-    context = {'form': form, 'request_obj':art_request_obj, 'art_request_obj':art_request_obj, 'segment':'art_request', 'back': True}
+    context = {'form': form, 'request_obj':art_request_obj, 'segment':'art_request', 'back': True}
     
     if request.method == 'POST':
         if form.is_valid():
@@ -1248,7 +1273,7 @@ def viewLaminatorBootArt(request, pk, ck):
     lamination_boot = LaminatorBoot.objects.filter(art_request__pk=pk)
     cutter_boot = CutterBoot.objects.filter(art_request__pk=pk)
     spec_extra = ArtTechnicalSpecs.objects.filter(art_request=art_request_obj).first()
-    annexes = Annex.objects.filter(art_request__pk=pk)
+    annexes = Annex.objects.filter(test_request__pk=pk)
 
     for test in test_file:
         essays = TestFileEssay.objects.filter(test_file=test)
@@ -1301,7 +1326,7 @@ def addLaminatorBootArt (request, tr):
     
     form = LaminatorBootForm(request.POST or None)
 
-    context = {'form': form, 'request_obj':art_request_obj, 'art_request_obj':art_request_obj, 'segment':'art_request', 'back': True}
+    context = {'form': form, 'request_obj':art_request_obj, 'segment':'art_request', 'back': True}
     
     if request.method == 'POST':
         if form.is_valid():
@@ -1331,7 +1356,7 @@ def editLaminatorBootArt (request, tr, ck):
 
     form = LaminatorBootForm(request.POST or None, instance=laminator_boot_obj)
     
-    context = {'form': form, 'request_obj':art_request_obj, 'art_request_obj':art_request_obj, 'laminator_boot_obj':laminator_boot_obj, 'segment':'art_request', 'back': True}
+    context = {'form': form, 'request_obj':art_request_obj, 'laminator_boot_obj':laminator_boot_obj, 'segment':'art_request', 'back': True}
     
     if request.method == 'POST':
         if form.is_valid():
@@ -2209,6 +2234,8 @@ def editTestRequest (request, pk):
             print(err)
     return render(request, 'essays/form-test_request.html', context)
 
+@login_required(login_url='/login/')
+@permission_required('essays.delete_testrequest', raise_exception=True)
 def deleteTestRequest(request, pk):
     test_request = get_object_or_404(TestRequest, pk=pk)
      
@@ -2931,7 +2958,7 @@ def ReportArt(request, tr, ck, boot_type):
     formset = zip(formset_essay, formset_essay_result)
 
     context = {
-        'form': form,
+        'form': form, 
         'formset': formset,
         'formset_essay': formset_essay,
         'formset_essay_result': formset_essay_result,
@@ -3182,7 +3209,7 @@ def addResult (request, tr, machine, ck, tf):
             for result in rform:                
                 result.bobbin = bobbin
                 result.result_p = average(result.result_a, result.result_b, result.result_c, essay=result.essay)
-                
+
                 checks = [result.check_a, result.check_b, result.check_c]
                 results = [result.result_a, result.result_b, result.result_c]
                 valid_checks = [check for check, result in zip(checks, results) if result is not None and result != '']
@@ -3384,18 +3411,13 @@ def editCutterBootTR (request, tr, ck):
     
     cutter_boot_obj = get_object_or_404(CutterBoot, pk=ck)#Get the parent to render
 
-    structure_list = TestStructure.objects.filter(test_request__pk=tr)
-    tr_weight = 0
-    for st in structure_list:
-        tr_weight = tr_weight + st.weight #type:ignore
-
     form = CutterBootForm(request.POST or None, instance=cutter_boot_obj)
+    
     context = {'form': form, 'test_request_obj':test_request_obj, 'tr_weight':tr_weight, 'segment':'test_request', 'back': True}
     
     if request.method == 'POST':
         if form.is_valid():
             cutter_boot = form.save(commit=False)
-            #validation
             cutter_boot.r_p = average(cutter_boot.r_a, cutter_boot.r_b, cutter_boot.r_c)
             cutter_boot.w_p = average(cutter_boot.w_a, cutter_boot.w_b, cutter_boot.w_c)
 
@@ -3749,3 +3771,4 @@ def deleteProductionOperator(request, pk):
     if 'next' in request.GET:
         return redirect(request.GET.get('next'))
     return redirect('personal', 'o')
+
