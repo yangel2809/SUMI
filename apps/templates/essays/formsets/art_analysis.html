@@ -1,0 +1,95 @@
+<div class="card mx-2 mt-3 mb-4">
+    <div class="card-header p-0 mt-n2 position-relative mx-2 z-index-2" style="user-select: none">
+        <div class="bg-primary shadow-primary border-radius-lg px-2 pt-2 pb-1">
+            <div class="mt-0 d-flex mx-1">
+                <h5 class="text-white font-weight-bolder mb-1 ms-1">Planificación de Arte</h5>
+                <div class="ps-3 ms-auto my-auto">
+                    <a class="mouse-point" title="Agregar Planificación" type="hidden" value="Add More" id="add_moret"
+                        style="cursor: pointer !important">
+                        <i class="material-icons text-white">addchart</i>
+                    </a>
+                    <a class="mouse-point" title="Quitar Planificación" type="hidden" value="Add More" id="remove_t"
+                        style="cursor: pointer !important">
+                        <i class="material-icons text-white">remove_circle</i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-body shadow mt-n4 border-radius-lg px-lg-3 px-sm-2 px-1 pb-2">
+        <div class="table-responsive p-0" style="overflow-y: hidden;">
+            {{ tform.management_form }}
+            <table class="table table-hover align-items-center text-align-center mb-0">
+                <thead class="align-items-center text-xs mb-n1">
+                    <tr>
+                        <th class="text-center px-1 col-2 pb-2">Colores Unidad de Impresión</th>
+                        <th class="text-center px-1 col-2 pb-2">Tipo Imagen Impresión</th>
+                        <th class="text-center px-1 col-1 pb-2">Trama L/pi</th>
+                        <th class="text-center px-1 col-1 pb-2">Min Punto %</th>
+                        <th class="text-center px-1 col-2 pb-2">Tipo Doble Faz - Espesor</th>
+                        <th class="text-center px-1 col-2 pb-2">Tipo Plancha - Espesor</th>
+                        <th class="text-center px-1 col-1 pb-2">Anilox L/cm</th>
+                        <th class="text-center px-1 col-1 pb-2">Anilox código</th>
+                        <th class="text-center px-1 col-1 pb-2">Anilox ángulo</th>
+                        <th class="text-center col-auto pb-2"><i class="material-icons">delete</i></th>
+                    </tr>
+                </thead>
+                <tbody id="tform_set" class="p-0 m-0" style="user-select: none;">
+                    {% if tform %}
+                    {% for tt in tform %}
+                    {% for hidden in tt.hidden_fields %}{{ hidden }}{% endfor %}
+                    <tr class="row-cols-10" id="trow-{{ forloop.counter0 }}">
+                        <td class="px-1 col-2">{{ tt.printing_unit_colors }}</td>
+                        <td class="px-1 col-2">{{ tt.image_type }}</td>
+                        <td class="px-1 col-1">{{ tt.screen_lpi }}</td>
+                        <td class="px-1 col-1">{{ tt.min_point_percent }}</td>
+                        <td class="px-1 col-2">{{ tt.double_sided_type }}</td>
+                        <td class="px-1 col-2">{{ tt.double_sided_thickness }}</td>
+                        <td class="px-1 col-1">{{ tt.anilox_l_cm }}</td>
+                        <td class="px-1 col-1">{{ tt.anilox_code }}</td>
+                        <td class="px-1 col-1">{{ tt.anilox_angle }}</td>
+                        <td class="text-center col-auto px-0">
+                            <div class="p-0 form-check">
+                                {% if tt.instance.pk %}{{ tt.DELETE }}{% else %}
+                                <button type="button" class="btn btn-danger btn-sm remove-trow" title="Quitar planificación">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% endif %}
+                </tbody>
+                <tbody id="tempty_form" style="display:none !important;">
+                    <tr class="row-cols-10" id="trow-__prefix__">
+                        <td class="px-1 col-2">{{ tform.empty_form.printing_unit_colors }}</td>
+                        <td class="px-1 col-2">{{ tform.empty_form.image_type }}</td>
+                        <td class="px-1 col-1">{{ tform.empty_form.screen_lpi }}</td>
+                        <td class="px-1 col-1">{{ tform.empty_form.min_point_percent }}</td>
+                        <td class="px-1 col-2">{{ tform.empty_form.double_sided_type }}</td>
+                        <td class="px-1 col-2">{{ tform.empty_form.double_sided_thickness }}</td>
+                        <td class="px-1 col-1">{{ tform.empty_form.anilox_l_cm }}</td>
+                        <td class="px-1 col-1">{{ tform.empty_form.anilox_code }}</td>
+                        <td class="px-1 col-1">{{ tform.empty_form.anilox_angle }}</td>
+                        <td class="text-center col-auto px-0">
+                            <button type="button" class="btn btn-danger btn-sm remove-trow" title="Quitar planificación">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="p-0" style="user-select:none">
+            <hr class="p-0 m-0">
+            <div class="d-flex justify-content-center text-sm align-content-middle font-weight-bolder p-0 mt-2 mb-0">
+                <a class="a-deaf text-middle" id="add_moretbot" style="cursor: pointer !important">
+                    <div>
+                        <i class="material-icons" style="vertical-align: text-top; font-size: 18px !important;">add_circle</i><b style="vertical-align: text-top;"> Agregar Planificación</b>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

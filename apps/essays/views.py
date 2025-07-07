@@ -927,9 +927,12 @@ def addArtAnalysis(request, pk):
 
     from apps.essays.models import ArtRequest
     art_request_obj = get_object_or_404(ArtRequest, pk=pk)
+    ArtAnalysisFormSet = modelformset_factory(ArtAnalysis, form=ArtAnalysisForm, extra=1)
+
     if request.method == 'POST':
         form = ArtAnalysisForm(request.POST)
-        if form.is_valid():
+        tform = ArtAnalysisFormSet(request.POST, prefix='tform')
+        if form.is_valid() and tform.is_valid():
             analysis = form.save(commit=False)
             analysis.request_number = art_request_obj.number
             analysis.date = art_request_obj.date
@@ -937,11 +940,17 @@ def addArtAnalysis(request, pk):
             analysis.art_request = art_request_obj
             analysis.client = art_request_obj.client
             analysis.save()
+
+            tform.save()
+
             return redirect(f'/test_requests_art/{art_request_obj.id}/')
     else:
         form = ArtAnalysisForm()
+        tform = ArtAnalysisFormSet(queryset=ArtAnalysis.objects.none(), prefix='tform')
+
     context = {
         'form': form,
+        'tform': tform,
         'art_request_obj': art_request_obj,
     }
     return render(request, 'essays/form-art_analysis.html', context)
@@ -952,17 +961,22 @@ def editArtAnalysis(request, pk):
 
     analysis = get_object_or_404(ArtAnalysis, pk=pk)
     art_request_obj = analysis.art_request
+    ArtAnalysisFormSet = modelformset_factory(ArtAnalysis, form=ArtAnalysisForm, extra=0)
 
     if request.method == 'POST':
         form = ArtAnalysisForm(request.POST, instance=analysis)
-        if form.is_valid():
+        tform = ArtAnalysisFormSet(request.POST, prefix='tform')
+        if form.is_valid() and tform.is_valid():
             form.save()
+            tform.save()
             return redirect(f'/test_requests_art/{art_request_obj.id}/')
     else:
         form = ArtAnalysisForm(instance=analysis)
+        tform = ArtAnalysisFormSet(queryset=ArtAnalysis.objects.filter(pk=pk), prefix='tform')
 
     context = {
         'form': form,
+        'tform': tform,
         'art_request_obj': art_request_obj,
     }
     return render(request, 'essays/form-art_analysis.html', context)
@@ -3202,7 +3216,7 @@ def editReport(request, tr, ck, rp, boot_type):
     return render(request, 'essays/form-test_file.html', context)
 
 @login_required(login_url='/login/')
-@permission_required('essays.delete_testfile', raise_exception=True)#type:ignore
+@permission_required('essays.delete_testfile', raise_exception=True)
 def deleteReport(request, tr, ck, rp, boot_type):
 
     if TestRequest.objects.get(pk = tr).signed_techspecs and not (request.user.groups.filter(name = 'ASCA-Staff').exists() or request.user.is_superuser):
@@ -3326,6 +3340,7 @@ def addTestFileEssay (request, pk, tr, site, ck):
                 results = [res.result_a, res.result_b, res.result_c]
                 valid_checks = [check for check, res in zip(checks, results) if res is not None and res != '']
                 res.check_p = sum(valid_checks) / len(valid_checks) >= 0.5 if valid_checks else False #type:ignore
+                #more validation
                 res.save()  #type:ignore
 
             if site == 'p':
@@ -3362,7 +3377,7 @@ def editTestFileEssay (request, pk, tr, site, ck):
 
             for rms in formset.deleted_objects:
                 rms.delete()
-            
+
             for res in forms:
                 res.result_p = average(res.result_a, res.result_b, res.result_c, essay=res.essay)
 

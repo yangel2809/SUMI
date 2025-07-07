@@ -1,266 +1,288 @@
 {% extends "layouts/base.html" %}
 {% block content %}
-<!-- form_view.html -->
-{% if art_request_obj.company == 'mcl' %}
-<style>:root {--mc-color: #946037;--mc-selection: #ad7e5a;--mc-shadow-color: #94603780;--mc-calendar-today: #94603780;--critical-color: #94603769;--mc-hover-color: #94603759;}</style>
-<script>$('meta[name="theme-color"]').attr('content', '#946037')</script>
-{% endif %}
-<style>label{margin-bottom: 0 !important;}</style>
-<link href="{{ ASSETS_ROOT }}/css/essay-material-form.css" rel="stylesheet" />
 <div class="container-fluid pt-1 px-sm-4 px-3 pb-3">
-	<div class="row min-vh-80 h-100">
-		<div class="col-12 px-0 px-md-2">
-			<div class="card my-4">
-				<div class="card-header p-0 position-relative mt-n4 mx-2 mx-md-3 z-index-2" style="user-select: none">
-					<div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2">
-						<div class="mt-2 text-center">
-							<h4 class="text-white text-center font-weight-bolder me-3">{% if 'edit' in request.get_full_path %}Editar
-								{% endif %}Análisis de Arte</h5>								
-						</div>
-					</div>
-					<div class="card-body px-md-0 px-2 py-2">
-						<div class="form-group d-flex input-group input-group-outline">
-							<input type="hidden" id="company" value="{{ art_request_obj.company }}">
-							<form class="form col-12" method="POST" style="user-select: none">
-								{% csrf_token %}
-								<div class="row pt-2 px-1 px-md-3">
-									<div class="d-flex flex-wrap justify-content-between pb-1">
-										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Pedido N°</label>
-											<p class="ps-1 mb-0 fw-bold">{{ art_request_obj.number }}</p>
-										</div>
-										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Cliente</label>
-											<p class="ps-1 mb-0 fw-bold">
-												{% if art_request_obj.check_test_client %}
-												{{ art_request_obj.test_client }}
-												{% else %}
-												{{ art_request_obj.client }}
-												{% endif %}
-											</p>
-										</div>
-										<div class="d-flex flex-column flex-nowrap pt-2 pb-1"><label class="text-primary fw-bold">Producto</label>
-											<p class="ps-1 mb-0 fw-bold">{{ art_request_obj.product }}</p>
-										</div>
-									</div>
-
-									<div class="d-flex flex-wrap justify-content-center gap-3 pb-3">
-										<div class="d-flex flex-column flex-grow-1"><label for="requester">Solicitante</label>{{ form.requester }}</div>
-									</div>
-
-									<div class="card my-3">
-										<div class="card-header p-0 mt-n2 position-relative mx-1 z-index-2" style="user-select: none">
-										  <div class="bg-primary shadow-primary border-radius-lg px-3 pt-3 pb-2">
-											<div class="mt-0 d-flex ">
-											  <h5 class="text-white font-weight-bolder">Análisis de material</h5>
-											</div>
-										  </div>
-										</div>
-
-										<div class="card-body mt-n4 border-radius-lg px-0 pb-2">
-										  <div class="table-responsive p-0" style="overflow-y: hidden;">
-											  <table class="table  align-items-center text-align-center mb-0">
-											    <tbody id="form_set" class=" p-0 m-0" style="user-select: none;">
-                            <tr>
-                              <td class="fw-bold">Material Suministrado</td>
-                              <td colspan="2">{{ form.supplied_material }}</td>
-                            </tr>
-                            <tr id="supplied_material_other_row" style="display: none;">
-                              <td class="fw-bold">Especifique</td>
-                              <td colspan="2">{{ form.supplied_material_other }}</td>
-                            </tr>
-                            <tr>
-                              <td class="fw-bold">Impresora</td>
-                              <td colspan="2">{{ form.printer }}</td>
-                            </tr>
-                            <tr>
-                              <td class="fw-bold">Tipo de Impresión</td>
-                              <td colspan="2">{{ form.print_type }}</td>
-                            </tr>
-                            <tr>
-                              <td class="fw-bold">Desarrollo Impreso (mm)</td>
-                              <td colspan="2">{{ form.printed_development_mm }}</td>
-                            </tr>
-                            <tr>
-                              <td class="fw-bold">Largo Unidad Empaque (mm)</td>
-                              <td colspan="2">{{ form.package_unit_length_mm }}</td>
-                            </tr>
-                            <tr>
-                              <td class="fw-bold">K</td>
-                              <td colspan="2">{{ form.k }}</td>
-                            </tr>
-                            <tr>
-                              <td class="fw-bold">% Distorsión</td>
-                              <td colspan="2">{{ form.distortion_percent }}</td>
-                            </tr>
-                            <tr>
-                              <td class="fw-bold">Desarrollo Distorsionado (mm)</td>
-                              <td colspan="2">{{ form.distorted_development_mm }}</td>
-                            </tr>
-                            <tr>
-                              <td class="fw-bold">Largo Unidad Impreso Ajustado (mm)</td>
-                              <td colspan="2">{{ form.adjusted_printed_unit_length_mm }}</td>
-                            </tr>
-                            <tr>
-                              <td class="fw-bold">Repeticiones al desarrollo</td>
-                              <td colspan="2">{{ form.repeats_per_development }}</td>
-                            </tr>
-                            <tr>
-                              <td class="fw-bold">Ancho Bobina Cliente (mm)</td>
-                              <td colspan="2">{{ form.client_bobbin_width_mm }}</td>
-                            </tr>
-                            <tr>
-                              <td class="fw-bold">Ancho Bobina Planta (mm)</td>
-                              <td colspan="2">{{ form.plant_bobbin_width_mm }}</td>
-                            </tr>
-                            <tr>
-                              <td class="fw-bold">Repeticiones a lo Ancho Impreso</td>
-                              <td colspan="2">{{ form.repeats_per_printed_width }}</td>
-                            </tr>
-                            <tr>
-                              <td class="fw-bold">Ancho Impreso (mm)</td>
-                              <td colspan="2">{{ form.printed_width_mm }}</td>
-                            </tr>
-                            <tr>
-                              <td class="fw-bold">Distancia entre Repeticiones Ancho (mm)</td>
-                              <td colspan="2">{{ form.distance_between_repeats_width_mm }}</td>
-                            </tr>
-                            <tr>
-                              <td class="fw-bold">Ancho Unidad Empaque (mm)</td>
-                              <td colspan="2">{{ form.package_unit_width_mm }}</td>
-                            </tr>
-                            <tr>
-                              <td class="fw-bold">Tipo de Plancha</td>
-                              <td colspan="2">{{ form.plate_type }}</td>
-                            </tr>
-                            <tr>
-                              <td class="fw-bold">Espesor</td>
-                              <td colspan="2">{{ form.thickness }}</td>
-                            </tr>
-                            <tr>
-                              <td class="fw-bold">Fotocelda</td>
-                              <td>{{ form.photocell }}</td>
-                              <td>{{ form.photocell_width_mm }}</td>
-                              <td>{{ form.photocell_length_mm }}</td>
-                              <td>{{ form.distance_between_photocells_mm }}</td>
-                              <td>{{ form.tolerance_mm }}</td>
-                              <td>{{ form.photocell_colors }}</td>
-                            </tr>
-                            <tr>
-                              <td class="fw-bold">Total No. de Colores</td>
-                              <td colspan="2">{{ form.total_colors }}</td>
-                            </tr>
-                            <tr>
-                              <td class="fw-bold">Colores de Barra de Corte</td>
-                              <td colspan="2">{{ form.cut_bar_colors }}</td>
-                            </tr>
-                            <tr>
-                              <td class="fw-bold">Desplazamiento (mm)</td>
-                              <td colspan="2">{{ form.displacement }}</td>
-                            </tr>
-                            <tr>
-                              <td class="fw-bold">Sugerencias Roll Down</td>
-                              <td colspan="2">{{ form.roll_down_suggestions }}</td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
+    <div class="row min-vh-80 h-100">
+        <div class="col-12 px-0 px-md-2">
+            <div class="card my-4">
+                <div class="card-header p-0 position-relative mt-n4 mx-2 mx-md-3 z-index-2" style="user-select: none">
+                    <div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2">
+                        <div class="mt-2 text-center">
+                            <h4 class="text-white text-center font-weight-bolder me-3">ANÁLISIS Y PLANIFICACIÓN DE DIAGRAMACIÓN Y MONTAJE</h4>
+                        </div>
                     </div>
-                  </div>
-								</div>
-								<div class="d-flex justify-content-center gap-2">
-									<button class="btn btn-primary" type="submit">Guardar</button>
-									<button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#cancelModal">
-										Cancelar
-									  </button>
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+                </div>
+                <div class="card-body px-md-4 px-3 py-3">
+                    <form method="POST">
+                        {% csrf_token %}
+
+                        <!-- Información General -->
+                        <div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2 mb-3">
+                            <h5 class="text-white font-weight-bolder">Información General</h5>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 col-sm-6 mb-3">
+                                <label>Solicitud Tipo</label>
+                                <input type="text" class="form-control" value="PRUEBA" readonly>
+                            </div>
+                            <div class="col-md-3 col-sm-6 mb-3">
+                                <label>Solicitud No.</label>
+                                <input type="text" class="form-control" value="{{ art_request_obj.number }}" readonly>
+                            </div>
+                            <div class="col-md-3 col-sm-6 mb-3">
+                                <label>Empresa solicitante</label>
+                                <input type="text" class="form-control" value="{{ art_request_obj.get_company_display }}" readonly>
+                            </div>
+                            <div class="col-md-3 col-sm-6 mb-3">
+                                <label>Fecha</label>
+                                <input type="text" class="form-control" value="{{ art_request_obj.date }}" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>Cliente</label>
+                                <input type="text" class="form-control" value="{% if art_request_obj.check_test_client %}{{ art_request_obj.test_client }}{% else %}{{ art_request_obj.client }}{% endif %}" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>Producto</label>
+                                <input type="text" class="form-control" value="{{ art_request_obj.product }}" readonly>
+                            </div>
+                        </div>
+
+                        <!-- Material Suministrado -->
+                        <div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2 my-3">
+                            <h5 class="text-white font-weight-bolder">Material Suministrado</h5>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 mb-3">
+                                {% for value, text in form.supplied_material.field.choices %}
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="{{ form.supplied_material.name }}" id="supplied_material_{{ forloop.counter }}" value="{{ value }}" {% if form.supplied_material.value == value %}checked{% endif %}>
+                                    <label class="form-check-label" for="supplied_material_{{ forloop.counter }}">{{ text }}</label>
+                                </div>
+                                {% endfor %}
+                                <div id="supplied_material_other_input" style="display: none;" class="mt-2">
+                                    <label>Especificar</label>
+                                    {{ form.supplied_material_other }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Especificaciones -->
+                        <div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2 my-3">
+                            <h5 class="text-white font-weight-bolder">ESPECIFICACIONES</h5>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label>Impresora</label>
+                                {{ form.printer }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label>Sustrato a imprimir</label>
+                                {{ form.substrate_to_print }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label>Tipo de Impresión</label>
+                                {{ form.print_type }}
+                            </div>
+                             <div class="col-md-12 mb-3">
+                                <label>Estructura Producto</label>
+                                {{ form.product_structure }}
+                            </div>
+                        </div>
+                        {% include 'essays/formsets/art_analysis.html' %}
+
+                        <table style="display:none;">
+                            <tbody id="tempty_form">
+                                <tr id="trow-__prefix__">
+                                    <td>{{ tform.empty_form.printing_unit_colors }}</td>
+                                    <td>{{ tform.empty_form.image_type }}</td>
+                                    <td>{{ tform.empty_form.screen_lpi }}</td>
+                                    <td>{{ tform.empty_form.min_point_percent }}</td>
+                                    <td>{{ tform.empty_form.double_sided_type }}</td>
+                                    <td>{{ tform.empty_form.double_sided_thickness }}</td>
+                                    <td>{{ tform.empty_form.anilox_l_cm }}</td>
+                                    <td>{{ tform.empty_form.anilox_code }}</td>
+                                    <td>{{ tform.empty_form.anilox_angle }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Diagramación -->
+                        <div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2 my-3">
+                            <h5 class="text-white font-weight-bolder">DIAGRAMACIÓN</h5>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 col-sm-6 mb-3"><label>Desarrollo Impreso (mm)</label>{{ form.printed_development_mm }}</div>
+                            <div class="col-md-3 col-sm-6 mb-3"><label>Largo Unidad Empaque (mm)</label>{{ form.package_unit_length_mm }}</div>
+                            <div class="col-md-3 col-sm-6 mb-3"><label>K</label>{{ form.k }}</div>
+                            <div class="col-md-3 col-sm-6 mb-3"><label>Distorsión (%)</label>{{ form.distortion_percent }}</div>
+                            <div class="col-md-3 col-sm-6 mb-3"><label>Desarrollo Distorsionado (mm)</label>{{ form.distorted_development_mm }}</div>
+                            <div class="col-md-3 col-sm-6 mb-3"><label>Largo Unidad Impreso Ajustado (mm)</label>{{ form.adjusted_printed_unit_length_mm }}</div>
+                            <div class="col-md-3 col-sm-6 mb-3"><label>Repeticiones al desarrollo</label>{{ form.repeats_per_development }}</div>
+                            <div class="col-md-3 col-sm-6 mb-3"><label>Ancho Bobina Cliente (mm)</label>{{ form.client_bobbin_width_mm }}</div>
+                            <div class="col-md-3 col-sm-6 mb-3"><label>Ancho Bobina Planta (mm)</label>{{ form.plant_bobbin_width_mm }}</div>
+                            <div class="col-md-3 col-sm-6 mb-3"><label>Repeticiones a lo Ancho Impreso</label>{{ form.repeats_per_printed_width }}</div>
+                            <div class="col-md-3 col-sm-6 mb-3"><label>Ancho Impreso (mm)</label>{{ form.printed_width_mm }}</div>
+                            <div class="col-md-3 col-sm-6 mb-3"><label>Distancia entre Repeticiones Ancho (mm)</label>{{ form.distance_between_repeats_width_mm }}</div>
+                            <div class="col-md-3 col-sm-6 mb-3"><label>Ancho Unidad Empaque (mm)</label>{{ form.package_unit_width_mm }}</div>
+                        </div>
+
+                        <!-- Tipo de Plancha -->
+                        <div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2 my-3">
+                            <h5 class="text-white font-weight-bolder">Tipo de Plancha</h5>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3"><label>Tipo de Plancha</label>{{ form.plate_type }}</div>
+                            <div class="col-md-6 mb-3"><label>Espesor</label>{{ form.thickness }}</div>
+                        </div>
+
+                        <!-- Fotocelda -->
+                        <div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2 my-3">
+                            <h5 class="text-white font-weight-bolder">Fotocelda</h5>
+                        </div>
+                        <div class="row align-items-center">
+                            <div class="col-md-12 mb-3">
+                                {% for value, text in form.photocell.field.choices %}
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="{{ form.photocell.name }}" id="photocell_{{ forloop.counter }}" value="{{ value }}" {% if form.photocell.value == value %}checked{% endif %}>
+                                    <label class="form-check-label" for="photocell_{{ forloop.counter }}">{{ text }}</label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="row" id="photocell_fields" style="display: none;">
+                            <div class="col-md-4 col-sm-6 mb-3"><label>Ancho Fotocelda (mm)</label>{{ form.photocell_width_mm }}</div>
+                            <div class="col-md-4 col-sm-6 mb-3"><label>Largo Fotocelda (mm)</label>{{ form.photocell_length_mm }}</div>
+                            <div class="col-md-4 col-sm-6 mb-3"><label>Distancia entre Fotoceldas (mm)</label>{{ form.distance_between_photocells_mm }}</div>
+                            <div class="col-md-6 mb-3"><label>Tolerancia (mm)</label>{{ form.tolerance_mm }}</div>
+                            <div class="col-md-6 mb-3"><label>Colores Fotocelda</label>{{ form.photocell_colors }}</div>
+                        </div>
+
+                        <!-- Colores -->
+                        <div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2 my-3">
+                            <h5 class="text-white font-weight-bolder">Colores</h5>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3"><label>Total No. de Colores</label>{{ form.total_colors }}</div>
+                            <div class="col-md-6 mb-3"><label>Colores de Barra de Corte</label>{{ form.cut_bar_colors }}</div>
+                        </div>
+
+                        <!-- Desplazamiento y Sugerencias -->
+                        <div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2 my-3">
+                            <h5 class="text-white font-weight-bolder">Desplazamiento y Sugerencias</h5>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label>Desplazamiento (mm)</label>
+                                <div>
+                                {% for value, text in form.displacement.field.choices %}
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="{{ form.displacement.name }}" id="displacement_{{ forloop.counter }}" value="{{ value }}" {% if form.displacement.value == value %}checked{% endif %}>
+                                        <label class="form-check-label" for="displacement_{{ forloop.counter }}">{{ text }}</label>
+                                    </div>
+                                {% endfor %}
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>Sugerencias Roll Down</label>
+                                {{ form.roll_down_suggestions }}
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-center mt-4">
+                            <button type="submit" class="btn btn-primary mx-2">Guardar</button>
+                            <button type="button" class="btn btn-secondary mx-2" data-bs-toggle="modal" data-bs-target="#cancelModal">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel"
-aria-labelledby="TrueDelete" aria-hidden="true" style="user-select: none;">
+
+<!-- Modal de Cancelación -->
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header" style="background-color: var(--mc-color) !important;">
-        <h5 class="modal-title fw-bold text-white" id="cancelModalLabel">Confirmación de Cancelación</h5>
+      <div class="modal-header">
+        <h5 class="modal-title" id="cancelModalLabel">Confirmación de Cancelación</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        ¿Estás seguro de que quieres cancelar?
+        ��Estás seguro de que quieres cancelar? Los cambios no guardados se perderán.
       </div>
       <div class="modal-footer">
-        <button type="button" class="mb-1 btn btn-secondary" data-bs-dismiss="modal">No</button>
-        <button type="button" class="mb-1 btn btn-primary" onClick="window.history.back();">Sí, cancelar</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+        <button type="button" class="btn btn-primary" onClick="window.history.back();">Sí, cancelar</button>
       </div>
     </div>
   </div>
 </div>
-<script>
-$(document).ready(function () {
-	
-	$('#supplied_material').select2({
-		minimumResultsForSearch: Infinity,
-		placeholder: 'Seleccionar...',
-		width: '100%',
-		selectionCssClass: ':all:',
-		dropdownCssClass: ':all:'
-	});
-
-	$('#printer').select2({
-		minimumResultsForSearch: Infinity,
-		placeholder: 'Seleccionar...',
-		width: '100%',
-		selectionCssClass: ':all:',
-		dropdownCssClass: ':all:'
-	});
-	
-	$('#print_type').select2({
-		minimumResultsForSearch: Infinity,
-		placeholder: 'Seleccionar...',
-		allowClear: true,
-		width: '100%',
-		selectionCssClass: ':all:',
-		dropdownCssClass: ':all:'
-	});
-
-	$('#photocell').select2({
-		minimumResultsForSearch: Infinity,
-		placeholder: 'Seleccionar...',
-		allowClear: true,
-		width: '100%',
-		selectionCssClass: ':all:',
-		dropdownCssClass: ':all:'
-	});
-
-	$('#displacement').select2({
-		minimumResultsForSearch: Infinity,
-		placeholder: 'Seleccionar...',
-		allowClear: true,
-		width: '100%',
-		selectionCssClass: ':all:',
-		dropdownCssClass: ':all:'
-	});
-
-	function toggleSuppliedMaterialOther() {
-		if ($('#id_supplied_material').val() === 'otro') {
-			$('#supplied_material_other_row').show();
-		} else {
-			$('#supplied_material_other_row').hide();
-		}
-	}
-
-	toggleSuppliedMaterialOther();
-
-	$('#id_supplied_material').on('change', toggleSuppliedMaterialOther);
-})
-</script>
 {% endblock content %}
+
 {% block javascripts %}
-<script src="{{ ASSETS_ROOT }}/js/datetime-picker/popper.js"></script>
-<script src="{{ ASSETS_ROOT }}/js/datetime-picker/bootstrap.min.js"></script>
-<script src="{{ ASSETS_ROOT }}/js/datetime-picker/moment-with-locales.min.js"></script>
-<script src="{{ ASSETS_ROOT }}/js/datetime-picker/bootstrap-datetimepicker.min.js"></script>
-<script src="{{ ASSETS_ROOT }}/js/datetime-picker/main.js"></script>
+<script>
+$(document).ready(function() {
+    // Lógica para mostrar/ocultar el campo "Otro" de material suministrado
+    function toggleSuppliedMaterialOther() {
+        if ($('input[name="supplied_material"]:checked').val() === 'otro') {
+            $('#supplied_material_other_input').show();
+        } else {
+            $('#supplied_material_other_input').hide();
+            $('#id_supplied_material_other').val('');
+        }
+    }
+    $('input[name="supplied_material"]').on('change', toggleSuppliedMaterialOther);
+    toggleSuppliedMaterialOther();
+
+    // Lógica para mostrar/ocultar los campos de fotocelda
+    function togglePhotocellFields() {
+        if ($('input[name="photocell"]:checked').val() === 'si') {
+            $('#photocell_fields').show();
+        } else {
+            $('#photocell_fields').hide();
+            $('#photocell_fields input').val('');
+        }
+    }
+    $('input[name="photocell"]').on('change', togglePhotocellFields);
+    togglePhotocellFields();
+
+    // Inicializar Select2 para los campos que lo necesiten
+    $('#id_printer, #id_print_type').select2({
+        minimumResultsForSearch: Infinity,
+        width: '100%',
+        selectionCssClass: ':all:',
+        dropdownCssClass: ':all:'
+    });
+
+    let tform_idx = {{ tform.total_form_count }};
+    let tform_minlimit = parseInt("{{ tform.min_num|default:0 }}");
+
+    // Agregar nueva fila desde botón superior o inferior
+    $('#add_moret, #add_moretbot').click(function () {
+        let newRow = $('#tempty_form').html().replace(/__prefix__/g, tform_idx);
+        $('#tform_set').append(newRow);
+        tform_idx++;
+        $('#id_tform-TOTAL_FORMS').val(tform_idx);
+    });
+
+    // Eliminar fila (botón por fila)
+    $('#tform_set').on('click', '.remove-trow', function () {
+        let $row = $(this).closest('tr');
+        let rowId = $row.attr('id');
+        if (!rowId) return;
+        let idx = rowId.split('-')[1];
+        if (typeof idx === 'undefined') return;
+        idx = parseInt(idx);
+        // Si la fila es inicial (ya guardada en BD), marca DELETE y oculta
+        if ($('#id_tform-' + idx + '-DELETE').length) {
+            $('#id_tform-' + idx + '-DELETE').prop('checked', true);
+            $row.hide();
+        } else {
+            // Si es nueva, simplemente elimina el HTML y ajusta el contador
+            $row.remove();
+            tform_idx--;
+            $('#id_tform-TOTAL_FORMS').val(tform_idx);
+        }
+    });
+});
+</script>
 {% endblock javascripts %}

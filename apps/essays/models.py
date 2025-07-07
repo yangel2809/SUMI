@@ -1684,9 +1684,7 @@ class ArtAnalysis(models.Model):
     requesting_company = models.CharField(max_length=100, default="Morocel")
     date = models.DateField(null=True, blank=True)
     product = models.CharField(max_length=200, blank=True, null=True)
-    net_content = models.CharField(max_length=100, blank=True, null=True)
-    requester = models.CharField(max_length=100, blank=True, null=True)
-
+    
     # Supplied material
     SUPPLIED_MATERIAL_OPT = (
         ('muestra Impresa', 'Muestra Impresa'),
@@ -1757,6 +1755,17 @@ class ArtAnalysis(models.Model):
     displacement = models.CharField(max_length=12, choices=DISPLACEMENT_OPT, blank=True, null=True)
 
     roll_down_suggestions = models.TextField(blank=True, null=True)
+
+    # Nuevos campos
+    printing_unit_colors = models.CharField(max_length=100, blank=True, null=True)
+    image_type = models.CharField(max_length=100, blank=True, null=True)
+    screen_lpi = models.CharField(max_length=50, blank=True, null=True)
+    min_point_percent = models.FloatField(blank=True, null=True)
+    double_sided_type = models.CharField(max_length=100, blank=True, null=True)
+    double_sided_thickness = models.CharField(max_length=50, blank=True, null=True)
+    anilox_l_cm = models.CharField(max_length=50, blank=True, null=True)
+    anilox_code = models.CharField(max_length=50, blank=True, null=True)
+    anilox_angle = models.CharField(max_length=50, blank=True, null=True)
 
     class Meta:
         verbose_name = "Analisis de arte"

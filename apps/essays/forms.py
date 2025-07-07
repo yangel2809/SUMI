@@ -1223,6 +1223,14 @@ class ArtEntryElementForm(ModelForm):
         return instance
 
 class ArtAnalysisForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(ArtAnalysisForm, self).__init__(*args, **kwargs)
+        self.fields['supplied_material'].choices = [choice for choice in self.fields['supplied_material'].choices if choice[0]]
+        self.fields['printer'].choices = [choice for choice in self.fields['printer'].choices if choice[0]]
+        self.fields['print_type'].choices = [choice for choice in self.fields['print_type'].choices if choice[0]]
+        self.fields['photocell'].choices = [choice for choice in self.fields['photocell'].choices if choice[0]]
+        self.fields['displacement'].choices = [choice for choice in self.fields['displacement'].choices if choice[0]]
+
     class Meta:
         model = ArtAnalysis
         fields = '__all__'
