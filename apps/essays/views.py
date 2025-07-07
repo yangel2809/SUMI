@@ -906,11 +906,11 @@ def viewTestRequest(request, pk):
     
     return render(request, 'essays/details-test_request.html', context)
 
-# Análisis de Arte
+# Analisis de Arte
 @login_required(login_url='/login/')
 @permission_required('essays.view_artrequest', raise_exception=True)
 def indexArtAnalysis(request):
-    analyses = ArtAnalysis.objects.all()
+    analyses = ArtAnalysis.objects.filter(art_request__deleted=False).order_by('-art_request__number')
     context = {
         'segment': 'art_analysis',
         'title': 'Análisis de Arte',
@@ -931,6 +931,9 @@ def addArtAnalysis(request, pk):
         form = ArtAnalysisForm(request.POST)
         if form.is_valid():
             analysis = form.save(commit=False)
+            analysis.request_number = art_request_obj.number
+            analysis.date = art_request_obj.date
+            analysis.product = art_request_obj.product
             analysis.art_request = art_request_obj
             analysis.client = art_request_obj.client
             analysis.save()
@@ -943,6 +946,43 @@ def addArtAnalysis(request, pk):
     }
     return render(request, 'essays/form-art_analysis.html', context)
 
+@login_required(login_url='/login/')
+@permission_required('essays.change_artanalysis', raise_exception=True)
+def editArtAnalysis(request, pk):
+
+    analysis = get_object_or_404(ArtAnalysis, pk=pk)
+    art_request_obj = analysis.art_request
+
+    if request.method == 'POST':
+        form = ArtAnalysisForm(request.POST, instance=analysis)
+        if form.is_valid():
+            form.save()
+            return redirect(f'/test_requests_art/{art_request_obj.id}/')
+    else:
+        form = ArtAnalysisForm(instance=analysis)
+
+    context = {
+        'form': form,
+        'art_request_obj': art_request_obj,
+    }
+    return render(request, 'essays/form-art_analysis.html', context)
+
+@login_required(login_url='/login/')
+@permission_required('essays.delete_artanalysis', raise_exception=True)
+def deleteArtAnalysis(request, pk):
+
+    analysis = get_object_or_404(ArtAnalysis, pk=pk)
+    art_request_obj = analysis.art_request
+
+    if request.method == 'POST':
+        analysis.delete()
+        return redirect(f'/test_requests_art/{art_request_obj.id}/')
+
+    context = {
+        'analysis': analysis,
+        'art_request_obj': art_request_obj,
+    }
+    return render(request, 'essays/form-art_analysis.html', context)
 @login_required(login_url='/login/')
 @permission_required('essays.view_entryelement', raise_exception=True)
 def viewExitElement(request, pk):

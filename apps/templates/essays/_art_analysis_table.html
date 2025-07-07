@@ -20,8 +20,9 @@
       <td>{{ analysis.product }}</td>
       <td>{{ analysis.requester }}</td>
       <td>
-        <a href="#" class="btn btn-sm btn-primary">Ver</a>
-        <a href="#" class="btn btn-sm btn-secondary">Editar</a>
+        <a href="{% url 'view_test_request_art' pk=analysis.art_request.id %}" class="btn btn-sm btn-primary">Ver</a>
+        <a href="{% url 'edit_art_analysis' pk=analysis.id %}" class="btn btn-sm btn-secondary">Editar</a>
+        <a href="{% url 'delete_art_analysis' pk=analysis.id %}" class="btn btn-sm btn-danger">Eliminar</a>
       </td>
     </tr>
     {% empty %}
