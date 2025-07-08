@@ -20,6 +20,8 @@
           
           <p hrefx="/art_requests/{{ art_request_obj.id }}" class="printable tab text-dark fw-bold {% if tab == 'main' %}tab-active{% endif %}" value="edit_tr" value2="delete_tr">Solicitud de Prueba</p>
         
+          <p hrefx="/art_analysis/add/{{ art_request_obj.id }}/" class="tab fw-bold color-crx" redirect="true">+ <i class="fa fa-flask" aria-hidden="true" title="Análisis"></i></p>
+          
           <!--Printer-->
           {% if perms.essays.add_printerboot and art_request_obj.print_selector %}
             {% if not art_request_obj.signed_techspecs or request.user|is_asca_staff %}
@@ -68,9 +70,12 @@
           <!--Techspecs-->
           
           <p hrefx="/test_requests_art/{{ art_request_obj.id }}/annexes" class="tab fw-bold color-anx {% if tab == 'annex' %}tab-active{% endif %}">Anexos <i class="material-symbols-rounded"  style="font-size:18px; vertical-align: text-bottom;">photo_library</i></p>
+
+          
           
         </div>
         
+
         <div class="tab-wrapper">
         </div>
       {% endif %}
