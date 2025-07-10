@@ -24,7 +24,7 @@ class ArtColorForm(forms.Form):
     color2 = CharField(label='Color / Estación 2', required=False, widget=TextInput(attrs={'class': 'form-control'}))
     color3 = CharField(label='Color / Estación 3', required=False, widget=TextInput(attrs={'class': 'form-control'}))
 
-ArtColorFormSet = formset_factory(ArtColorForm, extra=1, can_delete=True)
+ArtColorFormSet = formset_factory(ArtColorForm, extra=0, can_delete=True)
 
 class BaseInlineFormset(BaseInlineFormSet):
     def get_deletion_widget(self):

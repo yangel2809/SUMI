@@ -96,11 +96,10 @@
                     {{ form.product_structure }}
                     {% for error in form.product_structure.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
                   </div>
-                  <div class="col-12 mb-3">
-                    <label for="{{ form.printing_colors.id_for_label }}" class="form-label" style="position: relative;">Colores a Imprimir (JSON)</label>
-                    {{ form.printing_colors }}
-                    {% for error in form.printing_colors.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
-                  </div>
+
+                  <!---INLINE FORMSET-->
+                  {% include 'essays/formsets/art_colors.html' %}
+                  <!---->
 
                   <h5 class="text-bold text-primary text-center pt-3 m-0">Detalles de Logo</h5>
                   <div class="col-md-6 mb-3">
@@ -170,11 +169,6 @@
                         {% for error in form.photocell_colors.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
                       </div>
                   </div>
-                  
-                  <!---INLINE FORMSET-->
-                  {% include 'essays/formsets/art_colors.html' %}
-                  <!---->
-
                   <h5 class="text-bold text-primary text-center pt-3 m-0">Observaciones</h5>
                   <div class="col-12 mb-3 {% if form.observations.errors %}quill-error-outline{% endif %}">
                     {{ form.observations }}

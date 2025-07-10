@@ -1432,7 +1432,7 @@ def deleteLaminatorBootArt (request, tr, ck):
 
     if ArtRequest.objects.get(pk = tr).signed_techspecs and not (request.user.groups.filter(name = 'ASCA-Staff').exists() or request.user.is_superuser):
         return render(request, 'errors/403.html', status=403)
-    
+
     laminator_boot = get_object_or_404(LaminatorBoot, pk=ck)
     if request.method == 'POST':
         laminator_boot.delete()
@@ -2018,8 +2018,10 @@ def editArtRequest(request, pk):
         color_formset = ArtColorFormSet(initial=initial_colors, prefix='colors')
 
     if request.method == 'POST':
-        if form.is_valid() and sformset.is_valid() and color_formset.is_valid():
-            test_request = form.save(commit=False)
+        
+        if form.is_valid() and color_formset.is_valid():
+            print("valido")
+            art_request = form.save(commit=False)
             # Guardar los colores del formset como JSON
             color_list = []
             for color_form in color_formset:
@@ -2029,18 +2031,21 @@ def editArtRequest(request, pk):
                         'color2': color_form.cleaned_data.get('color2', ''),
                         'color3': color_form.cleaned_data.get('color3', ''),
                     })
-            test_request.printing_colors = color_list
+            # Guardar como string JSON si el campo es TextField
+            import json
+            art_request.printing_colors = json.dumps(color_list)
+
             if request.POST.get('update_date'):
-                test_request.date = timezone.now()
-            if not test_request.number:
+                art_request.date = timezone.now()
+            if not art_request.number:
                 last = ArtRequest.objects.exclude(deleted=True).exclude(pk=pk).order_by('-number')[0]
-                test_request.number = set_tr_number(last.number) #type:ignore
+                art_request.number = set_tr_number(last.number) #type:ignore
             if not request.user.has_perm('essays.sign_artrequest'):
-                test_request.reviewer = obj.reviewer or None
-            test_request.save()
-            sformset.instance = test_request
+                art_request.reviewer = obj.reviewer or None
+            art_request.save()
+            sformset.instance = art_request
             sformset.save()
-            return redirect('view_test_request_art', test_request.id)
+            return redirect('view_test_request_art', art_request.id)
     context = {'form': form, 'sformset': sformset, 'color_formset': color_formset, 'segment': segment, 'entry_element': entry_element, 'back': True}
     return render(request, 'essays/form-art-request.html', context)
 
@@ -2738,7 +2743,7 @@ def deletePrinterBootArt (request, tr, ck):
 
     if ArtRequest.objects.get(pk = tr).signed_techspecs and not (request.user.groups.filter(name = 'ASCA-Staff').exists() or request.user.is_superuser):
         return render(request, 'errors/403.html', status=403)
-    
+
     printr_boot = get_object_or_404(PrinterBoot, pk=ck)
     if request.method == 'POST':
         printr_boot.delete()
