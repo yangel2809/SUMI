@@ -297,3 +297,4 @@
 2025/07/08 15:21:18 [emerg] 14652#18308: CreateDirectory() "C:\Users\Laptop 01\Documents\GitHub\SUMI/temp/client_body_temp" failed (3: The system cannot find the path specified)
 2025/07/08 15:22:19 [emerg] 6108#18344: CreateDirectory() "C:\Users\Laptop 01\Documents\GitHub\SUMI/temp/client_body_temp" failed (3: The system cannot find the path specified)
 2025/07/08 15:23:15 [emerg] 5148#4056: CreateDirectory() "C:\Users\Laptop 01\Documents\GitHub\SUMI/temp/client_body_temp" failed (3: The system cannot find the path specified)
+2025/07/10 08:41:28 [emerg] 1604#23824: CreateDirectory() "C:\Users\Laptop 01\Documents\GitHub\SUMI/temp/client_body_temp" failed (3: The system cannot find the path specified)
