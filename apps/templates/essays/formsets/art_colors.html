@@ -1,0 +1,107 @@
+<style>
+  #color_form_set td, #empty_color_form td {
+    padding: 0.5rem 0.75rem !important;
+    vertical-align: middle;
+  }
+</style>
+<div class="card mx-md-0 mx-n2 mt-3 mb-2">
+    <div class="card-header p-0 mt-n2 position-relative mx-2 mx-md-3 z-index-2">
+        <div class="bg-primary shadow-primary border-radius-lg px-3 pt-3 pb-2">
+            <div class="mt-0 d-flex">
+                <h5 class="text-white font-weight-bolder">Colores a Imprimir</h5>
+                <div class="ps-3 ms-auto my-auto">
+                    <a class="cursor-pointer" title="Agregar Fila de Colores" id="add_color_row">
+                        <i class="material-icons text-white">library_add</i>
+                    </a>
+                    <a class="cursor-pointer" title="Quitar Última Fila" id="remove_color_row">
+                        <i class="material-icons text-white">remove_circle</i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-body shadow mt-n4 border-radius-lg px-1 px-md-3 pb-2">
+        <div class="table-responsive p-0">
+            {{ color_formset.management_form }}
+
+            <table class="table align-items-center justify-content-center mb-0">
+                <thead>
+                    <tr>
+                        <th class="text-center px-1 pb-2">Color / Estación 1</th>
+                        <th class="text-center px-1 pb-2">Color / Estación 2</th>
+                        <th class="text-center px-1 pb-2">Color / Estación 3</th>
+                        {% if color_formset.can_delete %}
+                        <th class="text-center px-1 pb-2">
+                            <i class="material-icons">delete</i>
+                        </th>
+                        {% endif %}
+                    </tr>
+                </thead>
+
+                <tbody id="color_form_set">
+                    {% for color_form in color_formset %}
+                    <tr id="color-row-{{ forloop.counter0 }}">
+                        
+                        {% for hidden in color_form.hidden_fields %}{{ hidden }}{% endfor %}
+
+                        <td class="px-1">
+                            <div class="{% if color_form.color1.errors %}border-error{% endif %}">
+                                {{ color_form.color1 }}
+                            </div>
+                        </td>
+
+                        <td class="px-1">
+                            <div class="{% if color_form.color2.errors %}border-error{% endif %}">
+                                {{ color_form.color2 }}
+                            </div>
+                        </td>
+
+                        <td class="px-1">
+                            <div class="{% if color_form.color3.errors %}border-error{% endif %}">
+                                {{ color_form.color3 }}
+                            </div>
+                        </td>
+                        
+                        {% if color_formset.can_delete %}
+                        <td class="text-center">
+                            <div class="p-0 form-check">
+                                {{ color_form.DELETE }}
+                            </div>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+                <tbody id="empty_color_form" style="display: none;">
+                    <tr id="color-row-__prefix__">
+                        
+                        <td class="px-1">
+                            <div class="">
+                                {{ color_formset.empty_form.color1 }}
+                            </div>
+                        </td>
+                        <td class="px-1">
+                            <div class="">
+                                {{ color_formset.empty_form.color2 }}
+                            </div>
+                        </td>
+                        <td class="px-1">
+                            <div class="">
+                                {{ color_formset.empty_form.color3 }}
+                            </div>
+                        </td>
+                        {% if color_formset.can_delete %}
+                        <td class="text-center">
+                             <div class="p-0 form-check">
+                                {{ color_formset.empty_form.DELETE }}
+                            </div>
+                        </td>
+                        {% endif %}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

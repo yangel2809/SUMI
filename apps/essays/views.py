@@ -1971,9 +1971,9 @@ def viewArtRequest(request, pk):
 @permission_required('essays.change_testrequest', raise_exception=True)#type:ignore
 @transaction.atomic
 def editArtRequest(request, pk):
-    
+    from .forms import ArtColorFormSet
+    import json
     obj = get_object_or_404(ArtRequest, pk=pk)
-    
     try:
         entry_element = obj.entry_element
     except:
@@ -1985,61 +1985,64 @@ def editArtRequest(request, pk):
         return render(request, 'errors/403.html', status=403)
     if obj.touched == False:
         segment = 'requests_art'
-    #elif not request.user.is_superuser and obj.touched:
-    #    return render(request, 'errors/403.html', status=403)
-    form = ArtRequestForm(request.POST or None, instance=obj)
-    sformset = ArtStructureFormset(request.POST or None, instance = obj, prefix='structures')
 
-    context = {'form': form,'sformset': sformset, 'segment':segment, 'entry_element':entry_element, 'back': True}
+    # Inicializar formset de colores
     if request.method == 'POST':
-        if form.is_valid() and sformset.is_valid():
+        form = ArtRequestForm(request.POST, instance=obj)
+        sformset = ArtStructureFormset(request.POST, instance=obj, prefix='structures')
+        color_formset = ArtColorFormSet(request.POST, prefix='colors')
+    else:
+        form = ArtRequestForm(instance=obj)
+        sformset = ArtStructureFormset(instance=obj, prefix='structures')
+        # Preparar datos iniciales para el formset de colores
+        initial_colors = []
+        if obj.printing_colors:
+            try:
+                color_data = obj.printing_colors
+                if isinstance(color_data, str):
+                    color_data = json.loads(color_data)
+                if isinstance(color_data, dict):
+                    for k in sorted(color_data.keys()):
+                        v = color_data[k]
+                        if isinstance(v, dict):
+                            initial_colors.append(v)
+                        else:
+                            initial_colors.append({'color1': v, 'color2': '', 'color3': ''})
+                elif isinstance(color_data, list):
+                    for row in color_data:
+                        initial_colors.append(row)
+            except Exception:
+                pass
+        if not initial_colors:
+            initial_colors = [{}]
+        color_formset = ArtColorFormSet(initial=initial_colors, prefix='colors')
+
+    if request.method == 'POST':
+        if form.is_valid() and sformset.is_valid() and color_formset.is_valid():
             test_request = form.save(commit=False)
-            #validation
-            if test_request.art_number:
-                test_request.art_number = test_request.art_number.upper()
-            
-            #add if update date true from the request
+            # Guardar los colores del formset como JSON
+            color_list = []
+            for color_form in color_formset:
+                if color_form.cleaned_data and not color_form.cleaned_data.get('DELETE', False):
+                    color_list.append({
+                        'color1': color_form.cleaned_data.get('color1', ''),
+                        'color2': color_form.cleaned_data.get('color2', ''),
+                        'color3': color_form.cleaned_data.get('color3', ''),
+                    })
+            test_request.printing_colors = color_list
             if request.POST.get('update_date'):
                 test_request.date = timezone.now()
-            
             if not test_request.number:
                 last = ArtRequest.objects.exclude(deleted=True).exclude(pk=pk).order_by('-number')[0]
                 test_request.number = set_tr_number(last.number) #type:ignore
-
             if not request.user.has_perm('essays.sign_artrequest'):
                 test_request.reviewer = obj.reviewer or None
-
-            test_request.save(force_update=True)
-
-            sform = sformset.save(commit=False)
-
-            for rms in sformset.deleted_objects:
-                rms.delete()
-
-            for structure in sform:
-                if not structure.id:
-                    structure.test_request = test_request
-                if structure.code is not None:
-                    structure.code = structure.code.upper()
-                structure.save() 
-
-            action = bool(request.POST.get('save_and_view'))
-            
-            if action == True:
-                print("Redirigiendo a view_test_request_art")
-                return redirect('view_test_request_art', test_request.id)
-            
-            if 'next' in request.GET:
-                print("Redirigiendo a next")
-                return redirect(request.GET.get('next'))
-            
-            print("Redirigiendo a /test_requests_art/?touched=False")
-            return redirect('/test_requests_art/?touched=False')
-        else:
-            for err in form.errors:
-                print(err)
+            test_request.save()
+            sformset.instance = test_request
+            sformset.save()
+            return redirect('view_test_request_art', test_request.id)
+    context = {'form': form, 'sformset': sformset, 'color_formset': color_formset, 'segment': segment, 'entry_element': entry_element, 'back': True}
     return render(request, 'essays/form-art-request.html', context)
-
 
 @login_required(login_url='/login/')
 @permission_required('essays.change_testrequest', raise_exception=True)#type:ignore

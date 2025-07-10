@@ -18,6 +18,14 @@ from django.utils import timezone, dateformat
 from .models import *
 from .models import ArtAnalysis
 
+# Formulario simple para los colores del formset
+class ArtColorForm(forms.Form):
+    color1 = CharField(label='Color / Estación 1', required=False, widget=TextInput(attrs={'class': 'form-control'}))
+    color2 = CharField(label='Color / Estación 2', required=False, widget=TextInput(attrs={'class': 'form-control'}))
+    color3 = CharField(label='Color / Estación 3', required=False, widget=TextInput(attrs={'class': 'form-control'}))
+
+ArtColorFormSet = formset_factory(ArtColorForm, extra=1, can_delete=True)
+
 class BaseInlineFormset(BaseInlineFormSet):
     def get_deletion_widget(self):
         return CheckboxInput(attrs={'class': 'form-check-input justify-content-center'})
@@ -405,47 +413,44 @@ class ArtRequestForm(ModelForm):
     class Meta:
         model = ArtRequest
         fields = [
-            "client",
-            "applicant",
-            "requesting_company",
-            "date",
-            "product_name",
-            "work_type",
-            "supplied_material",
-            "other_supplied_material",
-            "printer",
-            "print_substrate",
-            "print_type",
-            "product_structure",
-            "printing_colors",
-            "company_logo",
-            "logo_type",
-            "plant_reel_width",
-            "client_reel_width",
-            "packaging_unit_width",
-            "packaging_unit_length",
-            "tolerance",
-            "has_photocell",
-            "photocell_width",
-            "photocell_length",
-            "photocell_distance",
-            "photocell_colors",
-            "observations",
-            "elaborator",
-            "reviewer",
-            "archived",
-            "archived_time",
-            "closed",
-            "closed_time",
-            "deleted",
-            "deleted_by",
-            "deleted_time",
-            "deleted_reason"
+            "client", "applicant", "company", "date", "product_name",
+            "work_type", "supplied_material", "other_supplied_material", "printer",
+            "print_substrate", "print_type", "product_structure", "printing_colors",
+            "company_logo", "logo_type", "plant_reel_width", "client_reel_width",
+            "packaging_unit_width", "packaging_unit_length", "tolerance",
+            "has_photocell", "photocell_width", "photocell_length",
+            "photocell_distance", "photocell_colors", "observations",
+            "elaborator", "reviewer"
         ]
         widgets = {
-            "date": DateInput(attrs={"type": "date", "class": "form-control"}),
-            "observations": Textarea(attrs={"class": "form-control"}),
-            # Puedes agregar más widgets personalizados aquí si lo deseas
+            'date': DateInput(attrs={'class': 'form-control', 'type': 'text', 'autocomplete': 'off'}),
+            'client': Select(attrs={'class': 'form-control'}),
+            'applicant': TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del solicitante'}),
+            'company': Select(attrs={'class': 'form-control', 'placeholder': 'Empresa que solicita'}),
+            'product_name': TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del producto'}),
+            'work_type': TextInput(attrs={'class': 'form-control', 'placeholder': 'Tipo de trabajo'}),
+            'supplied_material': TextInput(attrs={'class': 'form-control', 'placeholder': 'Material de referencia'}),
+            'other_supplied_material': TextInput(attrs={'class': 'form-control', 'placeholder': 'Otro material de referencia'}),
+            'printer': Select(attrs={'class': 'form-control'}),
+            'print_substrate': TextInput(attrs={'class': 'form-control', 'placeholder': 'Sustrato'}),
+            'print_type': TextInput(attrs={'class': 'form-control', 'placeholder': 'Superficie o Reverso'}),
+            'product_structure': Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Ej: TINTA, ALUMINIO, RESINA'}),
+            'printing_colors': Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Ej: {\"1\": \"Amarillo\", \"2\": \"Cyan\"}'}),
+            'company_logo': TextInput(attrs={'class': 'form-control', 'placeholder': 'Logo a utilizar'}),
+            'logo_type': TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: No Abreviado'}),
+            'plant_reel_width': NumberInput(attrs={'class': 'form-control', 'placeholder': 'mm'}),
+            'client_reel_width': NumberInput(attrs={'class': 'form-control', 'placeholder': 'mm'}),
+            'packaging_unit_width': NumberInput(attrs={'class': 'form-control', 'placeholder': 'mm'}),
+            'packaging_unit_length': NumberInput(attrs={'class': 'form-control', 'placeholder': 'mm'}),
+            'tolerance': NumberInput(attrs={'class': 'form-control', 'placeholder': 'mm'}),
+            'has_photocell': CheckboxInput(attrs={'class': 'form-check-input'}),
+            'photocell_width': NumberInput(attrs={'class': 'form-control', 'placeholder': 'mm'}),
+            'photocell_length': NumberInput(attrs={'class': 'form-control', 'placeholder': 'mm'}),
+            'photocell_distance': NumberInput(attrs={'class': 'form-control', 'placeholder': 'mm'}),
+            'photocell_colors': TextInput(attrs={'class': 'form-control', 'placeholder': 'Colores'}),
+            'observations': Textarea(attrs={'class': 'form-control', 'rows': 4}),
+            'elaborator': TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre y Apellido'}),
+            'reviewer': TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre y Apellido'}),
         }
    
 TestStructureFormset = inlineformset_factory(TestRequest, TestStructure,

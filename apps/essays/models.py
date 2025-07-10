@@ -1370,6 +1370,12 @@ class ArtRequest(models.Model):
         on_delete=models.CASCADE, 
         null=True, blank=True
     )
+    number = models.CharField(
+        max_length=20,
+        verbose_name="Número de Solicitud",
+        help_text="Número único que identifica la solicitud. Ej: 'REQ-2025-001'",
+        null=True, blank=True
+    )
 
     # --- INFORMACIÓN GENERAL DE LA SOLICITUD ---
     date = models.DateField(
@@ -1390,8 +1396,9 @@ class ArtRequest(models.Model):
         help_text='Persona que realiza la solicitud. Ej: "Francisco Gamboa"',
         null=True, blank=True
     )
-    requesting_company = models.CharField(
+    company = models.CharField(
         max_length=255, 
+        choices= CPN_OPT,
         verbose_name="Empresa solicitante", 
         help_text='Compañía que solicita el trabajo. Ej: "Morocel"',
         null=True, blank=True
