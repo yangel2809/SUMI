@@ -1,5 +1,18 @@
 {% extends "layouts/base.html" %}
 {% block content %}
+<link href="{{ ASSETS_ROOT }}/css/plan-form.css" rel="stylesheet" />
+<style>
+  #main-form label.form-label {
+    margin-top: 0.25rem !important;
+    margin-bottom: 0.25rem !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    line-height: 1.2 !important;
+  }
+  #main-form h5 {
+    margin-bottom: 0.5rem !important;
+  }
+</style>
 <div class="container-fluid pt-1 px-sm-4 px-3 pb-3">
     <div class="row min-vh-80 h-100">
         <div class="col-12 px-0 px-md-2">
@@ -7,50 +20,42 @@
                 <div class="card-header p-0 position-relative mt-n4 mx-2 mx-md-3 z-index-2" style="user-select: none">
                     <div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2">
                         <div class="mt-2 text-center">
-                            <h4 class="text-white text-center font-weight-bolder me-3">ANÁLISIS Y PLANIFICACIÓN DE DIAGRAMACIÓN Y MONTAJE</h4>
+                            <h4 class="text-white text-center fw-bold me-3">ANÁLISIS Y PLANIFICACIÓN DE DIAGRAMACIÓN Y MONTAJE</h4>
                         </div>
                     </div>
                 </div>
                 <div class="card-body px-md-4 px-3 py-3">
-                    <form method="POST">
+                    <form method="POST" class="form justify-content-center col-12" id="main-form" novalidate>
                         {% csrf_token %}
-
-                        <!-- Información General -->
-                        <div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2 mb-3">
-                            <h5 class="text-white font-weight-bolder">Información General</h5>
-                        </div>
-                        <div class="row">
+                        <div class="row px-1 px-md-3">
+                            <h5 class="text-bold text-primary text-center pt-1 m-0">Información General</h5>
                             <div class="col-md-3 col-sm-6 mb-3">
-                                <label>Solicitud Tipo</label>
+                                <label class="form-label">Solicitud Tipo</label>
                                 <input type="text" class="form-control" value="PRUEBA" readonly>
                             </div>
                             <div class="col-md-3 col-sm-6 mb-3">
-                                <label>Solicitud No.</label>
+                                <label class="form-label">Solicitud No.</label>
                                 <input type="text" class="form-control" value="{{ art_request_obj.number }}" readonly>
                             </div>
                             <div class="col-md-3 col-sm-6 mb-3">
-                                <label>Empresa solicitante</label>
+                                <label class="form-label">Empresa solicitante</label>
                                 <input type="text" class="form-control" value="{{ art_request_obj.get_company_display }}" readonly>
                             </div>
                             <div class="col-md-3 col-sm-6 mb-3">
-                                <label>Fecha</label>
+                                <label class="form-label">Fecha</label>
                                 <input type="text" class="form-control" value="{{ art_request_obj.date }}" readonly>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label>Cliente</label>
+                                <label class="form-label">Cliente</label>
                                 <input type="text" class="form-control" value="{% if art_request_obj.check_test_client %}{{ art_request_obj.test_client }}{% else %}{{ art_request_obj.client }}{% endif %}" readonly>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label>Producto</label>
+                                <label class="form-label">Producto</label>
                                 <input type="text" class="form-control" value="{{ art_request_obj.product }}" readonly>
                             </div>
                         </div>
-
-                        <!-- Material Suministrado -->
-                        <div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2 my-3">
-                            <h5 class="text-white font-weight-bolder">Material Suministrado</h5>
-                        </div>
-                        <div class="row">
+                        <h5 class="text-bold text-primary text-center pt-3 m-0">Material Suministrado</h5>
+                        <div class="row px-1 px-md-3">
                             <div class="col-12 mb-3">
                                 {% for value, text in form.supplied_material.field.choices %}
                                 <div class="form-check form-check-inline">
@@ -59,36 +64,31 @@
                                 </div>
                                 {% endfor %}
                                 <div id="supplied_material_other_input" style="display: none;" class="mt-2">
-                                    <label>Especificar</label>
+                                    <label class="form-label">Especificar</label>
                                     {{ form.supplied_material_other }}
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Especificaciones -->
-                        <div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2 my-3">
-                            <h5 class="text-white font-weight-bolder">ESPECIFICACIONES</h5>
-                        </div>
-                        <div class="row">
+                        <h5 class="text-bold text-primary text-center pt-3 m-0">Especificaciones</h5>
+                        <div class="row px-1 px-md-3">
                             <div class="col-md-4 mb-3">
-                                <label>Impresora</label>
+                                <label class="form-label">Impresora</label>
                                 {{ form.printer }}
                             </div>
                             <div class="col-md-4 mb-3">
-                                <label>Sustrato a imprimir</label>
+                                <label class="form-label">Sustrato a imprimir</label>
                                 {{ form.substrate_to_print }}
                             </div>
                             <div class="col-md-4 mb-3">
-                                <label>Tipo de Impresión</label>
+                                <label class="form-label">Tipo de Impresión</label>
                                 {{ form.print_type }}
                             </div>
-                             <div class="col-md-12 mb-3">
-                                <label>Estructura Producto</label>
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Estructura Producto</label>
                                 {{ form.product_structure }}
                             </div>
                         </div>
                         {% include 'essays/formsets/art_analysis.html' %}
-
                         <table style="display:none;">
                             <tbody id="tempty_form">
                                 <tr id="trow-__prefix__">
@@ -104,41 +104,29 @@
                                 </tr>
                             </tbody>
                         </table>
-
-                        <!-- Diagramación -->
-                        <div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2 my-3">
-                            <h5 class="text-white font-weight-bolder">DIAGRAMACIÓN</h5>
+                        <h5 class="text-bold text-primary text-center pt-3 m-0">Diagramación</h5>
+                        <div class="row px-1 px-md-3">
+                            <div class="col-md-3 col-sm-6 mb-3"><label class="form-label">Desarrollo Impreso (mm)</label>{{ form.printed_development_mm }}</div>
+                            <div class="col-md-3 col-sm-6 mb-3"><label class="form-label">Largo Unidad Empaque (mm)</label>{{ form.package_unit_length_mm }}</div>
+                            <div class="col-md-3 col-sm-6 mb-3"><label class="form-label">K</label>{{ form.k }}</div>
+                            <div class="col-md-3 col-sm-6 mb-3"><label class="form-label">Distorsión (%)</label>{{ form.distortion_percent }}</div>
+                            <div class="col-md-3 col-sm-6 mb-3"><label class="form-label">Desarrollo Distorsionado (mm)</label>{{ form.distorted_development_mm }}</div>
+                            <div class="col-md-3 col-sm-6 mb-3"><label class="form-label">Largo Unidad Impreso Ajustado (mm)</label>{{ form.adjusted_printed_unit_length_mm }}</div>
+                            <div class="col-md-3 col-sm-6 mb-3"><label class="form-label">Repeticiones al desarrollo</label>{{ form.repeats_per_development }}</div>
+                            <div class="col-md-3 col-sm-6 mb-3"><label class="form-label">Ancho Bobina Cliente (mm)</label>{{ form.client_bobbin_width_mm }}</div>
+                            <div class="col-md-3 col-sm-6 mb-3"><label class="form-label">Ancho Bobina Planta (mm)</label>{{ form.plant_bobbin_width_mm }}</div>
+                            <div class="col-md-3 col-sm-6 mb-3"><label class="form-label">Repeticiones a lo Ancho Impreso</label>{{ form.repeats_per_printed_width }}</div>
+                            <div class="col-md-3 col-sm-6 mb-3"><label class="form-label">Ancho Impreso (mm)</label>{{ form.printed_width_mm }}</div>
+                            <div class="col-md-3 col-sm-6 mb-3"><label class="form-label">Distancia entre Repeticiones Ancho (mm)</label>{{ form.distance_between_repeats_width_mm }}</div>
+                            <div class="col-md-3 col-sm-6 mb-3"><label class="form-label">Ancho Unidad Empaque (mm)</label>{{ form.package_unit_width_mm }}</div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-3 col-sm-6 mb-3"><label>Desarrollo Impreso (mm)</label>{{ form.printed_development_mm }}</div>
-                            <div class="col-md-3 col-sm-6 mb-3"><label>Largo Unidad Empaque (mm)</label>{{ form.package_unit_length_mm }}</div>
-                            <div class="col-md-3 col-sm-6 mb-3"><label>K</label>{{ form.k }}</div>
-                            <div class="col-md-3 col-sm-6 mb-3"><label>Distorsión (%)</label>{{ form.distortion_percent }}</div>
-                            <div class="col-md-3 col-sm-6 mb-3"><label>Desarrollo Distorsionado (mm)</label>{{ form.distorted_development_mm }}</div>
-                            <div class="col-md-3 col-sm-6 mb-3"><label>Largo Unidad Impreso Ajustado (mm)</label>{{ form.adjusted_printed_unit_length_mm }}</div>
-                            <div class="col-md-3 col-sm-6 mb-3"><label>Repeticiones al desarrollo</label>{{ form.repeats_per_development }}</div>
-                            <div class="col-md-3 col-sm-6 mb-3"><label>Ancho Bobina Cliente (mm)</label>{{ form.client_bobbin_width_mm }}</div>
-                            <div class="col-md-3 col-sm-6 mb-3"><label>Ancho Bobina Planta (mm)</label>{{ form.plant_bobbin_width_mm }}</div>
-                            <div class="col-md-3 col-sm-6 mb-3"><label>Repeticiones a lo Ancho Impreso</label>{{ form.repeats_per_printed_width }}</div>
-                            <div class="col-md-3 col-sm-6 mb-3"><label>Ancho Impreso (mm)</label>{{ form.printed_width_mm }}</div>
-                            <div class="col-md-3 col-sm-6 mb-3"><label>Distancia entre Repeticiones Ancho (mm)</label>{{ form.distance_between_repeats_width_mm }}</div>
-                            <div class="col-md-3 col-sm-6 mb-3"><label>Ancho Unidad Empaque (mm)</label>{{ form.package_unit_width_mm }}</div>
+                        <h5 class="text-bold text-primary text-center pt-3 m-0">Tipo de Plancha</h5>
+                        <div class="row px-1 px-md-3">
+                            <div class="col-md-6 mb-3"><label class="form-label">Tipo de Plancha</label>{{ form.plate_type }}</div>
+                            <div class="col-md-6 mb-3"><label class="form-label">Espesor</label>{{ form.thickness }}</div>
                         </div>
-
-                        <!-- Tipo de Plancha -->
-                        <div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2 my-3">
-                            <h5 class="text-white font-weight-bolder">Tipo de Plancha</h5>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3"><label>Tipo de Plancha</label>{{ form.plate_type }}</div>
-                            <div class="col-md-6 mb-3"><label>Espesor</label>{{ form.thickness }}</div>
-                        </div>
-
-                        <!-- Fotocelda -->
-                        <div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2 my-3">
-                            <h5 class="text-white font-weight-bolder">Fotocelda</h5>
-                        </div>
-                        <div class="row align-items-center">
+                        <h5 class="text-bold text-primary text-center pt-3 m-0">Fotocelda</h5>
+                        <div class="row px-1 px-md-3 align-items-center">
                             <div class="col-md-12 mb-3">
                                 {% for value, text in form.photocell.field.choices %}
                                 <div class="form-check form-check-inline">
@@ -148,30 +136,22 @@
                                 {% endfor %}
                             </div>
                         </div>
-                        <div class="row" id="photocell_fields" style="display: none;">
-                            <div class="col-md-4 col-sm-6 mb-3"><label>Ancho Fotocelda (mm)</label>{{ form.photocell_width_mm }}</div>
-                            <div class="col-md-4 col-sm-6 mb-3"><label>Largo Fotocelda (mm)</label>{{ form.photocell_length_mm }}</div>
-                            <div class="col-md-4 col-sm-6 mb-3"><label>Distancia entre Fotoceldas (mm)</label>{{ form.distance_between_photocells_mm }}</div>
-                            <div class="col-md-6 mb-3"><label>Tolerancia (mm)</label>{{ form.tolerance_mm }}</div>
-                            <div class="col-md-6 mb-3"><label>Colores Fotocelda</label>{{ form.photocell_colors }}</div>
+                        <div class="row px-1 px-md-3" id="photocell_fields" style="display: none;">
+                            <div class="col-md-4 col-sm-6 mb-3"><label class="form-label">Ancho Fotocelda (mm)</label>{{ form.photocell_width_mm }}</div>
+                            <div class="col-md-4 col-sm-6 mb-3"><label class="form-label">Largo Fotocelda (mm)</label>{{ form.photocell_length_mm }}</div>
+                            <div class="col-md-4 col-sm-6 mb-3"><label class="form-label">Distancia entre Fotoceldas (mm)</label>{{ form.distance_between_photocells_mm }}</div>
+                            <div class="col-md-6 mb-3"><label class="form-label">Tolerancia (mm)</label>{{ form.tolerance_mm }}</div>
+                            <div class="col-md-6 mb-3"><label class="form-label">Colores Fotocelda</label>{{ form.photocell_colors }}</div>
                         </div>
-
-                        <!-- Colores -->
-                        <div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2 my-3">
-                            <h5 class="text-white font-weight-bolder">Colores</h5>
+                        <h5 class="text-bold text-primary text-center pt-3 m-0">Colores</h5>
+                        <div class="row px-1 px-md-3">
+                            <div class="col-md-6 mb-3"><label class="form-label">Total No. de Colores</label>{{ form.total_colors }}</div>
+                            <div class="col-md-6 mb-3"><label class="form-label">Colores de Barra de Corte</label>{{ form.cut_bar_colors }}</div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3"><label>Total No. de Colores</label>{{ form.total_colors }}</div>
-                            <div class="col-md-6 mb-3"><label>Colores de Barra de Corte</label>{{ form.cut_bar_colors }}</div>
-                        </div>
-
-                        <!-- Desplazamiento y Sugerencias -->
-                        <div class="bg-primary shadow-primary border-radius-lg ps-3 pt-2 pb-2 my-3">
-                            <h5 class="text-white font-weight-bolder">Desplazamiento y Sugerencias</h5>
-                        </div>
-                        <div class="row">
+                        <h5 class="text-bold text-primary text-center pt-3 m-0">Desplazamiento y Sugerencias</h5>
+                        <div class="row px-1 px-md-3">
                             <div class="col-md-6 mb-3">
-                                <label>Desplazamiento (mm)</label>
+                                <label class="form-label">Desplazamiento (mm)</label>
                                 <div>
                                 {% for value, text in form.displacement.field.choices %}
                                     <div class="form-check form-check-inline">
@@ -182,14 +162,13 @@
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label>Sugerencias Roll Down</label>
+                                <label class="form-label">Sugerencias Roll Down</label>
                                 {{ form.roll_down_suggestions }}
                             </div>
                         </div>
-
-                        <div class="d-flex justify-content-center mt-4">
-                            <button type="submit" class="btn btn-primary mx-2">Guardar</button>
-                            <button type="button" class="btn btn-secondary mx-2" data-bs-toggle="modal" data-bs-target="#cancelModal">Cancelar</button>
+                        <div class="d-flex justify-content-center col-12 p-0 mt-3">
+                            <button type="submit" class="btn mx-1 mb-0 btn-primary">Guardar</button>
+                            <button type="button" class="btn mx-1 mb-0 btn-secondary" data-bs-toggle="modal" data-bs-target="#cancelModal">Cancelar</button>
                         </div>
                     </form>
                 </div>
@@ -197,21 +176,20 @@
         </div>
     </div>
 </div>
-
 <!-- Modal de Cancelación -->
-<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true" style="user-select: none;">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="cancelModalLabel">Confirmación de Cancelación</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title fw-bold" id="cancelModalLabel">Confirmación de Cancelación</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         ¿Estás seguro de que quieres cancelar? Los cambios no guardados se perderán.
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-        <button type="button" class="btn btn-primary" onClick="window.history.back();">Sí, cancelar</button>
+        <button type="button" class="mb-1 btn btn-secondary" data-bs-dismiss="modal">No</button>
+        <button type="button" class="mb-1 btn btn-primary" onClick="window.history.back();">Sí, cancelar</button>
       </div>
     </div>
   </div>
@@ -220,69 +198,61 @@
 
 {% block javascripts %}
 <script>
-$(document).ready(function() {
-    // Lógica para mostrar/ocultar el campo "Otro" de material suministrado
-    function toggleSuppliedMaterialOther() {
-        if ($('input[name="supplied_material"]:checked').val() === 'otro') {
-            $('#supplied_material_other_input').show();
-        } else {
-            $('#supplied_material_other_input').hide();
-            $('#id_supplied_material_other').val('');
-        }
-    }
-    $('input[name="supplied_material"]').on('change', toggleSuppliedMaterialOther);
-    toggleSuppliedMaterialOther();
+  $(document).ready(function() {
+    // Añadir clases Bootstrap a los elementos del formulario
+    $('#main-form').find('input:not([type=checkbox]), textarea, select').addClass('form-control');
+    $('#main-form').find('input[type=checkbox]').addClass('form-check-input');
 
-    // Lógica para mostrar/ocultar los campos de fotocelda
-    function togglePhotocellFields() {
-        if ($('input[name="photocell"]:checked').val() === 'si') {
-            $('#photocell_fields').show();
-        } else {
-            $('#photocell_fields').hide();
-            $('#photocell_fields input').val('');
-        }
-    }
-    $('input[name="photocell"]').on('change', togglePhotocellFields);
-    togglePhotocellFields();
+    // Añadir clase is-invalid a los campos con errores
+    {% for field in form %}
+        {% if field.errors %}
+            $('#{{ field.id_for_label }}').addClass('is-invalid');
+        {% endif %}
+    {% endfor %}
 
-    // Inicializar Select2 para los campos que lo necesiten
+    // Deshabilitar botones al enviar
+    $('#main-form').on('submit', function() {
+      $(this).find('button[type="submit"]').prop('disabled', true);
+    });
+
+    // Mostrar/ocultar campos de fotocelda
+    $('input[name="photocell"]').on('change', function() {
+      if ($('input[name="photocell"]:checked').val() === 'si') {
+        $('#photocell_fields').show();
+      } else {
+        $('#photocell_fields').hide();
+        $('#photocell_fields input').val('');
+      }
+    });
+    // Inicializar estado de fotocelda
+    if ($('input[name="photocell"]:checked').val() === 'si') {
+      $('#photocell_fields').show();
+    } else {
+      $('#photocell_fields').hide();
+    }
+
+    // Mostrar/ocultar campo "Otro" de material suministrado
+    $('input[name="supplied_material"]').on('change', function() {
+      if ($('input[name="supplied_material"]:checked').val() === 'otro') {
+        $('#supplied_material_other_input').show();
+      } else {
+        $('#supplied_material_other_input').hide();
+        $('#id_supplied_material_other').val('');
+      }
+    });
+    if ($('input[name="supplied_material"]:checked').val() === 'otro') {
+      $('#supplied_material_other_input').show();
+    } else {
+      $('#supplied_material_other_input').hide();
+    }
+
+    // Select2 para campos select
     $('#id_printer, #id_print_type').select2({
-        minimumResultsForSearch: Infinity,
-        width: '100%',
-        selectionCssClass: ':all:',
-        dropdownCssClass: ':all:'
+      minimumResultsForSearch: Infinity,
+      width: '100%',
+      selectionCssClass: 'form-control',
+      dropdownCssClass: 'form-control'
     });
-
-    let tform_idx = {{ tform.total_form_count }};
-    let tform_minlimit = parseInt("{{ tform.min_num|default:0 }}");
-
-    // Agregar nueva fila desde botón superior o inferior
-    $('#add_moret, #add_moretbot').click(function () {
-        let newRow = $('#tempty_form').html().replace(/__prefix__/g, tform_idx);
-        $('#tform_set').append(newRow);
-        tform_idx++;
-        $('#id_tform-TOTAL_FORMS').val(tform_idx);
-    });
-
-    // Eliminar fila (botón por fila)
-    $('#tform_set').on('click', '.remove-trow', function () {
-        let $row = $(this).closest('tr');
-        let rowId = $row.attr('id');
-        if (!rowId) return;
-        let idx = rowId.split('-')[1];
-        if (typeof idx === 'undefined') return;
-        idx = parseInt(idx);
-        // Si la fila es inicial (ya guardada en BD), marca DELETE y oculta
-        if ($('#id_tform-' + idx + '-DELETE').length) {
-            $('#id_tform-' + idx + '-DELETE').prop('checked', true);
-            $row.hide();
-        } else {
-            // Si es nueva, simplemente elimina el HTML y ajusta el contador
-            $row.remove();
-            tform_idx--;
-            $('#id_tform-TOTAL_FORMS').val(tform_idx);
-        }
-    });
-});
+  });
 </script>
 {% endblock javascripts %}
