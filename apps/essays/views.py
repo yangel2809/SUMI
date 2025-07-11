@@ -1809,29 +1809,37 @@ def viewTechSpecs(request, pk):
     return render(request, 'essays/details-test_request.html', context)
 
 #Art Request Crud------------------------------------------------------------------------------------------------------------------------
-@login_required(login_url='/login/')    
-@permission_required('essays.add_artrequest', raise_exception=True)#type:ignore
+@login_required(login_url='/login/')
+@permission_required('essays.add_artrequest', raise_exception=True)
 @transaction.atomic
-def addArtRequest (request, entry_element_id=None):
-    form = ArtRequestForm(request.POST or None)
-    sformset = ArtStructureFormset(request.POST or None, prefix='structures')
+def addArtRequest(request, entry_element_id=None):
+    from .forms import ArtColorFormSet
+    import json
 
     entry_element = get_object_or_404(ArtEntryElement, pk=entry_element_id) if entry_element_id else None
-    
-    context = {'form': form, 'sformset': sformset, 'segment':'requests_art', 'entry_element':entry_element, 'back': True}
-    last_tr = ArtRequest.objects.exclude(deleted=True).order_by('-number')
-    
-    last = last_tr[0].number if last_tr else "03-000000"
 
     if request.method == 'POST':
-        if form.is_valid() and sformset.is_valid():
-            art_request = form.save(commit=False)
-            #validation
-            if art_request.art_number:
-                art_request.art_number = art_request.art_number.upper()
+        form = ArtRequestForm(request.POST)
+        color_formset = ArtColorFormSet(request.POST, prefix='colors')
 
+        if form.is_valid() and color_formset.is_valid():
+            art_request = form.save(commit=False)
+
+            # Procesar y guardar colores del formset
+            color_list = []
+            for color_form in color_formset:
+                if color_form.cleaned_data and not color_form.cleaned_data.get('DELETE', False):
+                    color_list.append({
+                        'color1': color_form.cleaned_data.get('color1', ''),
+                        'color2': color_form.cleaned_data.get('color2', ''),
+                        'color3': color_form.cleaned_data.get('color3', ''),
+                    })
+            art_request.printing_colors = json.dumps(color_list)
+
+            last_tr = ArtRequest.objects.exclude(deleted=True).order_by('-number')
+            last = last_tr[0].number if last_tr else "03-000000"
             if not art_request.number:
-                art_request.number = set_tr_number(str(last)) 
+                art_request.number = set_tr_number(str(last))
 
             if not request.user.has_perm('essays.sign_artrequest'):
                 art_request.reviewer = None
@@ -1843,21 +1851,26 @@ def addArtRequest (request, entry_element_id=None):
 
             art_request.save()
 
-            sform = sformset.save(commit=False)
-            for structure in sform:
-                structure.test_request = art_request
-                if structure.code is not None:
-                    structure.code = structure.code.upper()
-                structure.save()
-
             action = bool(request.POST.get('save_and_view'))
-            
-            if action == True:
+
+            if action:
                 return redirect('view_test_request_art', art_request.id)
-            
+
             return redirect('/test_requests_art/?touched=False')
         else:
-            print(form.errors)
+            print("Errores del formulario:", form.errors)
+            print("Errores del formset de color:", color_formset.errors)
+    else:
+        form = ArtRequestForm()
+        color_formset = ArtColorFormSet(prefix='colors')
+
+    context = {
+        'form': form,
+        'color_formset': color_formset,
+        'segment': 'requests_art',
+        'entry_element': entry_element,
+        'back': True
+    }
     return render(request, 'essays/form-art-request.html', context)
 
 @login_required(login_url='/login/')
@@ -1867,7 +1880,6 @@ def cloneArtRequest(request, pk):
     with CaptureQueriesContext(connection) as context:
 
         test_request = ArtRequest.objects.get(id=pk)
-        test = ArtStructure.objects.filter(test_request__pk=pk)
 
         test_request.id = get_id(ArtRequest) #type:ignore
         test_request.entry_element = None
@@ -1888,16 +1900,6 @@ def cloneArtRequest(request, pk):
 
         test_request_id = test_request
 
-        new_tests = []
-        for ts in test:
-            ts.id = None #type:ignore
-            ts.test_request = test_request_id #type:ignore
-            new_tests.append(ts)
-
-        TestStructure.objects.bulk_create(new_tests)
-
-        #print(f"The function made {len(context)} queries.")
-
     request.session['header'] = 'review'
     return redirect('test_request_art')
 
@@ -1909,7 +1911,6 @@ def viewArtRequest(request, pk):
     print("objeto arte",test_request_obj.signed_techspecs)
     segment = 'test_requests_art'
     back = '/test_requests_art/?touched=True'
-    print("objeto",test_request_obj)
     if test_request_obj.closed == True:
         print("Condición: closed == True")
         segment = 'closed_test_request_art'
